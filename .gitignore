@@ -1,3 +1,4 @@
+@ -1,39 +0,0 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -8,6 +9,7 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/
 *.iws
 *.iml
 .mvm/
@@ -37,3 +39,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+.idea/vcs.xml
+
