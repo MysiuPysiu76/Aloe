@@ -1,14 +1,15 @@
 package com.example.aloe;
 
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,22 +24,20 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         VBox root = new VBox();
 
-        File homeDirectory = new File(System.getProperty("user.home"));
         filesList = new ListView<>();
-
-        File[] files = homeDirectory.listFiles();
-
         loadDirectoryContents(currentDirectory);
 
-        filesList.setOnMouseClicked((event) -> {
+        filesList.setOnMouseClicked(event -> {
             String selectedItem = filesList.getSelectionModel().getSelectedItem();
-            if(selectedItem != null) {
+            if (selectedItem != null) {
                 File selectedFile = new File(currentDirectory, selectedItem);
-                if(selectedFile.isDirectory()) {
+                if (selectedFile.isDirectory()) {
                     loadDirectoryContents(selectedFile);
+                } else {
+                    openFileInBackground(selectedFile);
                 }
             }
         });
@@ -76,7 +75,29 @@ public class Main extends Application {
 
             filesList.getItems().addAll(directories);
             filesList.getItems().addAll(normalFiles);
+        }
+    }
 
+    private void openFileInBackground(File file) {
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() {
+                openFile(file);
+                return null;
+            }
+        };
+        new Thread(task).start();
+    }
+
+    private void openFile(File file) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Desktop is not supported on this system.");
         }
     }
 }
