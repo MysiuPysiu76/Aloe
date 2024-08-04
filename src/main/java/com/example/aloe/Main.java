@@ -3,13 +3,17 @@ package com.example.aloe;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.control.Button;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +22,8 @@ public class Main extends Application {
 
     private File currentDirectory = new File(System.getProperty("user.home"));
     private ListView<String> filesList;
+    private List<File> directoryHistory = new ArrayList<>();
+    private int directoryHistoryPosition = -1;
 
     public static void main(String[] args) {
         launch();
@@ -26,21 +32,32 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         VBox root = new VBox();
+        HBox navigationPanel = new HBox();
 
-        filesList = new ListView<>();
-        loadDirectoryContents(currentDirectory);
+        ButtonBar navigationDirectoryPanel = new ButtonBar();
+        Button prevDirectory = new Button("Previous");
+        Button nextDirectory = new Button("Next");
 
-        filesList.setOnMouseClicked(event -> {
-            String selectedItem = filesList.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                File selectedFile = new File(currentDirectory, selectedItem);
-                if (selectedFile.isDirectory()) {
-                    loadDirectoryContents(selectedFile);
-                } else {
-                    openFileInBackground(selectedFile);
-                }
+        prevDirectory.setOnMouseClicked((event) -> {
+            if (directoryHistoryPosition > 0) {
+                directoryHistoryPosition--;
+                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
             }
         });
+
+        nextDirectory.setOnMouseClicked((event) -> {
+            if (directoryHistoryPosition < directoryHistory.size() - 1) {
+                directoryHistoryPosition++;
+                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+            }
+        });
+
+        navigationDirectoryPanel.getButtons().addAll(prevDirectory, nextDirectory);
+        navigationPanel.getChildren().add(navigationDirectoryPanel);
+        root.getChildren().add(navigationPanel);
+
+        filesList = new ListView<>();
+        loadDirectoryContents(currentDirectory, true);
 
         root.getChildren().add(filesList);
 
@@ -52,9 +69,17 @@ public class Main extends Application {
         stage.show();
     }
 
-    private void loadDirectoryContents(File directory) {
+    private void loadDirectoryContents(File directory, boolean addToHistory) {
         currentDirectory = directory;
         filesList.getItems().clear();
+
+        if (addToHistory) {
+            if (directoryHistoryPosition != directoryHistory.size() - 1) {
+                directoryHistory = new ArrayList<>(directoryHistory.subList(0, directoryHistoryPosition + 1));
+            }
+            directoryHistory.add(directory);
+            directoryHistoryPosition++;
+        }
 
         File[] files = currentDirectory.listFiles();
 
@@ -76,6 +101,18 @@ public class Main extends Application {
             filesList.getItems().addAll(directories);
             filesList.getItems().addAll(normalFiles);
         }
+
+        filesList.setOnMouseClicked(event -> {
+            String selectedItem = filesList.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                File selectedFile = new File(currentDirectory, selectedItem);
+                if (selectedFile.isDirectory()) {
+                    loadDirectoryContents(selectedFile, true);
+                } else {
+                    openFileInBackground(selectedFile);
+                }
+            }
+        });
     }
 
     private void openFileInBackground(File file) {
