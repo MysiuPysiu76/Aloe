@@ -43,11 +43,16 @@ public class Main extends Application {
         filesMenu.setMinWidth(100);
         filesMenu.setMaxWidth(270);
 
+        Button reload = new Button("Reload");
+        reload.setOnMouseClicked((event) -> {
+            loadDirectoryContents(currentDirectory, false);
+        });
+
         ListView<String> filesMenuList = new ListView<>();
         filesMenuList.getItems().addAll("Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos");
         filesMenu.getChildren().add(filesMenuList);
 
-        filesMenuList.setOnMouseClicked(event -> {
+        filesMenuList.setOnMouseClicked((event) -> {
             String selectedItem = filesMenuList.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 File selectedFile = new File(System.getProperty("user.home"), selectedItem);
@@ -80,7 +85,7 @@ public class Main extends Application {
         });
 
         navigationDirectoryPanel.getButtons().addAll(prevDirectory, nextDirectory);
-        navigationPanel.getChildren().add(navigationDirectoryPanel);
+        navigationPanel.getChildren().addAll(navigationDirectoryPanel, reload);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
@@ -165,5 +170,9 @@ public class Main extends Application {
         } else {
             System.out.println("Desktop is not supported on this system.");
         }
+    }
+
+    private void refreshCurrentDirectory() {
+        loadDirectoryContents(currentDirectory, false);
     }
 }
