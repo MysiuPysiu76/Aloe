@@ -5,6 +5,8 @@ import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -33,6 +35,31 @@ public class Main extends Application {
     public void start(Stage stage) {
         VBox root = new VBox();
         HBox navigationPanel = new HBox();
+        SplitPane filesPanel = new SplitPane();
+        VBox filesMenu = new VBox();
+        VBox filesBox = new VBox();
+
+        filesPanel.setDividerPositions(0.2);
+        filesMenu.setMinWidth(100);
+        filesMenu.setMaxWidth(270);
+
+        ListView<String> filesMenuList = new ListView<>();
+        filesMenuList.getItems().addAll("Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos");
+        filesMenu.getChildren().add(filesMenuList);
+
+        filesMenuList.setOnMouseClicked(event -> {
+            String selectedItem = filesMenuList.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                File selectedFile = new File(System.getProperty("user.home"), selectedItem);
+                if (selectedFile.isDirectory()) {
+                    loadDirectoryContents(selectedFile, true);
+                } else {
+                    openFileInBackground(selectedFile);
+                }
+            }
+        });
+
+        filesPanel.getItems().addAll(filesMenu, filesBox);
 
         ButtonBar navigationDirectoryPanel = new ButtonBar();
         Button prevDirectory = new Button("Previous");
@@ -54,12 +81,12 @@ public class Main extends Application {
 
         navigationDirectoryPanel.getButtons().addAll(prevDirectory, nextDirectory);
         navigationPanel.getChildren().add(navigationDirectoryPanel);
-        root.getChildren().add(navigationPanel);
+        root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
         loadDirectoryContents(currentDirectory, true);
 
-        root.getChildren().add(filesList);
+        filesBox.getChildren().add(filesList);
 
         Scene scene = new Scene(root, 950, 550);
         stage.setTitle("Files");
@@ -103,13 +130,15 @@ public class Main extends Application {
         }
 
         filesList.setOnMouseClicked(event -> {
-            String selectedItem = filesList.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                File selectedFile = new File(currentDirectory, selectedItem);
-                if (selectedFile.isDirectory()) {
-                    loadDirectoryContents(selectedFile, true);
-                } else {
-                    openFileInBackground(selectedFile);
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                String selectedItem = filesList.getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    File selectedFile = new File(currentDirectory, selectedItem);
+                    if (selectedFile.isDirectory()) {
+                        loadDirectoryContents(selectedFile, true);
+                    } else {
+                        openFileInBackground(selectedFile);
+                    }
                 }
             }
         });
