@@ -3,16 +3,13 @@ package com.example.aloe;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
@@ -26,6 +23,7 @@ public class Main extends Application {
     private ListView<String> filesList;
     private List<File> directoryHistory = new ArrayList<>();
     private int directoryHistoryPosition = -1;
+    boolean isHiddenFilesShow = false;
 
     public static void main(String[] args) {
         launch();
@@ -42,11 +40,7 @@ public class Main extends Application {
         filesPanel.setDividerPositions(0.2);
         filesMenu.setMinWidth(100);
         filesMenu.setMaxWidth(270);
-
-        Button reload = new Button("Reload");
-        reload.setOnMouseClicked((event) -> {
-            loadDirectoryContents(currentDirectory, false);
-        });
+        filesMenu.setPrefWidth(160);
 
         ListView<String> filesMenuList = new ListView<>();
         filesMenuList.getItems().addAll("Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos");
@@ -66,6 +60,7 @@ public class Main extends Application {
 
         filesPanel.getItems().addAll(filesMenu, filesBox);
 
+        //navigate history buttons
         ButtonBar navigationDirectoryPanel = new ButtonBar();
         Button prevDirectory = new Button("Previous");
         Button nextDirectory = new Button("Next");
@@ -84,8 +79,23 @@ public class Main extends Application {
             }
         });
 
+        //reload files list button
+        Button reload = new Button("Reload");
+        reload.setOnMouseClicked((event) -> {
+            loadDirectoryContents(currentDirectory, false);
+        });
+
+        //show hidden files button
+        CheckBox showHiddenFiles = new CheckBox("Hidden files");
+        showHiddenFiles.setSelected(false);
+
+        showHiddenFiles.setOnAction(event -> {
+            isHiddenFilesShow = !isHiddenFilesShow;
+            refreshCurrentDirectory();
+        });
+
         navigationDirectoryPanel.getButtons().addAll(prevDirectory, nextDirectory);
-        navigationPanel.getChildren().addAll(navigationDirectoryPanel, reload);
+        navigationPanel.getChildren().addAll(navigationDirectoryPanel, reload, showHiddenFiles);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
@@ -105,6 +115,7 @@ public class Main extends Application {
         currentDirectory = directory;
         filesList.getItems().clear();
 
+        //adding the directory to history
         if (addToHistory) {
             if (directoryHistoryPosition != directoryHistory.size() - 1) {
                 directoryHistory = new ArrayList<>(directoryHistory.subList(0, directoryHistoryPosition + 1));
@@ -120,6 +131,11 @@ public class Main extends Application {
             List<String> normalFiles = new ArrayList<>();
 
             for (File file : files) {
+                if(!isHiddenFilesShow) {
+                    if(file.getName().startsWith(".")) {
+                        continue;
+                    }
+                }
                 if (file.isDirectory()) {
                     directories.add(file.getName());
                 } else {
