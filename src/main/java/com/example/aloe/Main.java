@@ -2,11 +2,16 @@ package com.example.aloe;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.awt.Desktop;
@@ -22,8 +27,12 @@ public class Main extends Application {
     private File currentDirectory = new File(System.getProperty("user.home"));
     private ListView<String> filesList;
     private List<File> directoryHistory = new ArrayList<>();
+    private VBox filesBox;
+    private FlowPane filesGrid;
+
     private int directoryHistoryPosition = -1;
-    boolean isHiddenFilesShow = false;
+    private boolean isGridView = true;
+    private boolean isHiddenFilesShow = false;
 
     public static void main(String[] args) {
         launch();
@@ -35,7 +44,61 @@ public class Main extends Application {
         HBox navigationPanel = new HBox();
         SplitPane filesPanel = new SplitPane();
         VBox filesMenu = new VBox();
-        VBox filesBox = new VBox();
+        filesBox = new VBox();
+        filesGrid = new FlowPane();
+        filesGrid.setPadding(new Insets(10));
+        filesGrid.setHgap(20);
+        filesGrid.setVgap(20);
+
+        // Adjust spacing dynamically
+        filesGrid.widthProperty().addListener((obs, oldWidth, newWidth) -> {
+            adjustSpacing(filesGrid, newWidth.doubleValue());
+        });
+
+        // Navigation buttons
+        ButtonBar navigationDirectoryPanel = new ButtonBar();
+        Button prevDirectory = new Button("Previous");
+        Button nextDirectory = new Button("Next");
+
+        prevDirectory.setOnMouseClicked((event) -> {
+            if (directoryHistoryPosition > 0) {
+                directoryHistoryPosition--;
+                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+            }
+        });
+
+        nextDirectory.setOnMouseClicked((event) -> {
+            if (directoryHistoryPosition < directoryHistory.size() - 1) {
+                directoryHistoryPosition++;
+                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+            }
+        });
+
+        // Reload files list button
+        Button reload = new Button("Reload");
+        reload.setOnMouseClicked((event) -> {
+            loadDirectoryContents(currentDirectory, false);
+        });
+
+        // Show hidden files button
+        CheckBox showHiddenFiles = new CheckBox("Hidden files");
+        showHiddenFiles.setSelected(false);
+        showHiddenFiles.setOnAction(event -> {
+            isHiddenFilesShow = !isHiddenFilesShow;
+            refreshCurrentDirectory();
+        });
+
+        // Change display to grid or list
+        Button changeDisplay = new Button("List");
+        changeDisplay.setOnMouseClicked(event -> {
+            isGridView = !isGridView;
+            refreshCurrentDirectory();
+            if(isGridView) {
+                changeDisplay.setText("List");
+            } else {
+                changeDisplay.setText("Grid");
+            }
+        });
 
         filesPanel.setDividerPositions(0.2);
         filesMenu.setMinWidth(100);
@@ -60,50 +123,15 @@ public class Main extends Application {
 
         filesPanel.getItems().addAll(filesMenu, filesBox);
 
-        //navigate history buttons
-        ButtonBar navigationDirectoryPanel = new ButtonBar();
-        Button prevDirectory = new Button("Previous");
-        Button nextDirectory = new Button("Next");
-
-        prevDirectory.setOnMouseClicked((event) -> {
-            if (directoryHistoryPosition > 0) {
-                directoryHistoryPosition--;
-                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-            }
-        });
-
-        nextDirectory.setOnMouseClicked((event) -> {
-            if (directoryHistoryPosition < directoryHistory.size() - 1) {
-                directoryHistoryPosition++;
-                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-            }
-        });
-
-        //reload files list button
-        Button reload = new Button("Reload");
-        reload.setOnMouseClicked((event) -> {
-            loadDirectoryContents(currentDirectory, false);
-        });
-
-        //show hidden files button
-        CheckBox showHiddenFiles = new CheckBox("Hidden files");
-        showHiddenFiles.setSelected(false);
-
-        showHiddenFiles.setOnAction(event -> {
-            isHiddenFilesShow = !isHiddenFilesShow;
-            refreshCurrentDirectory();
-        });
-
         navigationDirectoryPanel.getButtons().addAll(prevDirectory, nextDirectory);
-        navigationPanel.getChildren().addAll(navigationDirectoryPanel, reload, showHiddenFiles);
+        navigationPanel.getChildren().addAll(navigationDirectoryPanel, reload, showHiddenFiles, changeDisplay);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
+
         loadDirectoryContents(currentDirectory, true);
 
-        filesBox.getChildren().add(filesList);
-
-        Scene scene = new Scene(root, 950, 550);
+        Scene scene = new Scene(root, 965, 550);
         stage.setTitle("Files");
         stage.setScene(scene);
         stage.setMinHeight(350);
@@ -111,11 +139,34 @@ public class Main extends Application {
         stage.show();
     }
 
+    private void adjustSpacing(FlowPane grid, double width) {
+        int elementWidth = 90;
+        int gap = 20;
+
+        int elementsInRow = (int) (width / (elementWidth + gap));
+        if (elementsInRow > 0) {
+            double totalElementWidth = elementsInRow * elementWidth + (elementsInRow - 1) * gap;
+            double remainingSpace = width - totalElementWidth;
+
+            if (elementsInRow == 1) {
+                grid.setPadding(new Insets(10, remainingSpace / 2, 10, remainingSpace / 2));
+            } else {
+                grid.setPadding(new Insets(10, 0, 10, 0));
+            }
+        } else {
+            grid.setPadding(new Insets(10));
+        }
+    }
+
     private void loadDirectoryContents(File directory, boolean addToHistory) {
         currentDirectory = directory;
+
+        // Clear previous contents to avoid duplication
+        filesBox.getChildren().clear();
+        filesGrid.getChildren().clear();
         filesList.getItems().clear();
 
-        //adding the directory to history
+        // Add directory to history
         if (addToHistory) {
             if (directoryHistoryPosition != directoryHistory.size() - 1) {
                 directoryHistory = new ArrayList<>(directoryHistory.subList(0, directoryHistoryPosition + 1));
@@ -131,8 +182,8 @@ public class Main extends Application {
             List<String> normalFiles = new ArrayList<>();
 
             for (File file : files) {
-                if(!isHiddenFilesShow) {
-                    if(file.getName().startsWith(".")) {
+                if (!isHiddenFilesShow) {
+                    if (file.getName().startsWith(".")) {
                         continue;
                     }
                 }
@@ -146,8 +197,32 @@ public class Main extends Application {
             Collections.sort(directories);
             Collections.sort(normalFiles);
 
-            filesList.getItems().addAll(directories);
-            filesList.getItems().addAll(normalFiles);
+            if (isGridView) {
+                for (String dirName : directories) {
+                    VBox box = createFileBox(dirName, true);
+                    box.setOnMouseClicked(event -> {
+                        loadDirectoryContents(new File(currentDirectory, dirName), true);
+                    });
+                    filesGrid.getChildren().add(box);
+                }
+
+                for (String fileName : normalFiles) {
+                    VBox box = createFileBox(fileName, false);
+                    box.setOnMouseClicked(event -> {
+                        openFileInBackground(new File(currentDirectory, fileName));
+                    });
+                    filesGrid.getChildren().add(box);
+                }
+
+                // Create a ScrollPane for the grid view
+                ScrollPane scrollPane = new ScrollPane(filesGrid);
+                scrollPane.setFitToWidth(true);
+                filesBox.getChildren().add(scrollPane);
+            } else {
+                filesList.getItems().addAll(directories);
+                filesList.getItems().addAll(normalFiles);
+                filesBox.getChildren().add(filesList);
+            }
         }
 
         filesList.setOnMouseClicked(event -> {
@@ -163,6 +238,37 @@ public class Main extends Application {
                 }
             }
         });
+    }
+
+    private VBox createFileBox(String name, boolean isDirectory) {
+        VBox fileBox = new VBox();
+        fileBox.setMinWidth(90);
+        fileBox.setPrefWidth(90);
+        fileBox.setMaxWidth(90);
+        fileBox.setAlignment(Pos.TOP_CENTER);
+        fileBox.setSpacing(10);
+
+        ImageView icon = new ImageView();
+        if (isDirectory) {
+            icon.setImage(new Image(getClass().getResourceAsStream("/icons/folder.png")));
+        } else {
+            icon.setImage(new Image(getClass().getResourceAsStream("/icons/file.png")));
+        }
+        icon.setFitHeight(60);
+        icon.setFitWidth(60);
+
+        Label fileName = new Label(name);
+        fileName.setWrapText(true);
+        fileName.setTextOverrun(OverrunStyle.CLIP);
+        fileName.setMaxWidth(90);
+        fileName.setAlignment(Pos.CENTER);
+        fileName.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
+
+        fileBox.getChildren().addAll(icon, fileName);
+        fileBox.setPadding(new Insets(10, 0, 0, 0));
+        fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
+
+        return fileBox;
     }
 
     private void openFileInBackground(File file) {
