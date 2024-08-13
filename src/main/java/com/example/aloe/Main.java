@@ -7,9 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -25,10 +23,10 @@ import java.util.List;
 public class Main extends Application {
 
     private File currentDirectory = new File(System.getProperty("user.home"));
-    private ListView<String> filesList;
     private List<File> directoryHistory = new ArrayList<>();
+    private ListView<String> filesList;
     private VBox filesBox;
-    private FlowPane filesGrid;
+    private ScrollPane filesPane = new ScrollPane();
 
     private int directoryHistoryPosition = -1;
     private boolean isGridView = true;
@@ -37,6 +35,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch();
     }
+    private int x;
 
     @Override
     public void start(Stage stage) {
@@ -44,16 +43,10 @@ public class Main extends Application {
         HBox navigationPanel = new HBox();
         SplitPane filesPanel = new SplitPane();
         VBox filesMenu = new VBox();
-        filesBox = new VBox();
-        filesGrid = new FlowPane();
-        filesGrid.setPadding(new Insets(10));
-        filesGrid.setHgap(20);
-        filesGrid.setVgap(20);
 
-        // Adjust spacing dynamically
-        filesGrid.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-            adjustSpacing(filesGrid, newWidth.doubleValue());
-        });
+        filesPanel.getItems().addAll(filesMenu, filesPane);
+
+        filesBox = new VBox();
 
         // Navigation buttons
         ButtonBar navigationDirectoryPanel = new ButtonBar();
@@ -101,7 +94,7 @@ public class Main extends Application {
         });
 
         filesPanel.setDividerPositions(0.2);
-        filesMenu.setMinWidth(100);
+        filesMenu.setMinWidth(120);
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
 
@@ -121,7 +114,7 @@ public class Main extends Application {
             }
         });
 
-        filesPanel.getItems().addAll(filesMenu, filesBox);
+        filesMenuList.setPadding(new Insets(5));
 
         navigationDirectoryPanel.getButtons().addAll(prevDirectory, nextDirectory);
         navigationPanel.getChildren().addAll(navigationDirectoryPanel, reload, showHiddenFiles, changeDisplay);
@@ -130,13 +123,21 @@ public class Main extends Application {
         filesList = new ListView<>();
 
         loadDirectoryContents(currentDirectory, true);
+        VBox.setVgrow(filesMenuList, Priority.ALWAYS);
 
-        Scene scene = new Scene(root, 965, 550);
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+            filesPanel.setMinHeight(stage.getHeight());
+//            filesBox.setMinHeight(stage.getHeight());
+//            filesList.setMinHeight(newValue.doubleValue());
+        });
+
+        Scene scene = new Scene(root, 935, 550);
         stage.setTitle("Files");
         stage.setScene(scene);
         stage.setMinHeight(350);
         stage.setMinWidth(700);
         stage.show();
+        x = (int)filesPanel.getHeight();
     }
 
     private void adjustSpacing(FlowPane grid, double width) {
@@ -161,9 +162,11 @@ public class Main extends Application {
     private void loadDirectoryContents(File directory, boolean addToHistory) {
         currentDirectory = directory;
 
+        FlowPane grid = new FlowPane();
+        grid.setPadding(new Insets(10, 10, 100, 10));
+
         // Clear previous contents to avoid duplication
         filesBox.getChildren().clear();
-        filesGrid.getChildren().clear();
         filesList.getItems().clear();
 
         // Add directory to history
@@ -203,7 +206,7 @@ public class Main extends Application {
                     box.setOnMouseClicked(event -> {
                         loadDirectoryContents(new File(currentDirectory, dirName), true);
                     });
-                    filesGrid.getChildren().add(box);
+                    grid.getChildren().add(box);
                 }
 
                 for (String fileName : normalFiles) {
@@ -211,19 +214,20 @@ public class Main extends Application {
                     box.setOnMouseClicked(event -> {
                         openFileInBackground(new File(currentDirectory, fileName));
                     });
-                    filesGrid.getChildren().add(box);
+                    grid.getChildren().add(box);
                 }
 
-                // Create a ScrollPane for the grid view
-                ScrollPane scrollPane = new ScrollPane(filesGrid);
-                scrollPane.setFitToWidth(true);
-                filesBox.getChildren().add(scrollPane);
+                filesPane.setFitToWidth(true);
+                filesPane.setContent(grid);
             } else {
                 filesList.getItems().addAll(directories);
                 filesList.getItems().addAll(normalFiles);
                 filesBox.getChildren().add(filesList);
+                filesPane.setContent(filesBox);
             }
         }
+
+//        filesList.setMinHeight(100);
 
         filesList.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
@@ -242,9 +246,9 @@ public class Main extends Application {
 
     private VBox createFileBox(String name, boolean isDirectory) {
         VBox fileBox = new VBox();
-        fileBox.setMinWidth(90);
-        fileBox.setPrefWidth(90);
-        fileBox.setMaxWidth(90);
+        fileBox.setMinWidth(100);
+        fileBox.setPrefWidth(100);
+        fileBox.setMaxWidth(100);
         fileBox.setAlignment(Pos.TOP_CENTER);
         fileBox.setSpacing(10);
 
@@ -265,7 +269,7 @@ public class Main extends Application {
         fileName.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
 
         fileBox.getChildren().addAll(icon, fileName);
-        fileBox.setPadding(new Insets(10, 0, 0, 0));
+        fileBox.setPadding(new Insets(5));
         fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
 
         return fileBox;
