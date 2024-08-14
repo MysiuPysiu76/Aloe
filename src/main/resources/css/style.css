@@ -1,0 +1,11 @@
+
+.prev-directory {
+    -fx-background-radius: 4px 0 0 4px;
+    -fx-border-radius: 4px 0 0 4px;
+    /*-fx-border-color: transparent;*/
+}
+
+.next-directory {
+    -fx-border-radius: 0 4px 4px 0;
+    -fx-background-radius: 0 4px 4px 0;
+}

@@ -10,6 +10,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 import java.awt.Desktop;
@@ -33,9 +35,8 @@ public class Main extends Application {
     private boolean isHiddenFilesShow = false;
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
-    private int x;
 
     @Override
     public void start(Stage stage) {
@@ -48,10 +49,44 @@ public class Main extends Application {
 
         filesBox = new VBox();
 
-        // Navigation buttons
-        ButtonBar navigationDirectoryPanel = new ButtonBar();
-        Button prevDirectory = new Button("Previous");
-        Button nextDirectory = new Button("Next");
+        navigationPanel.setPadding(new Insets(6));
+
+        Line line1 = new Line(10, 5 , 5,10);
+        Line line2 = new Line(5, 10, 10, 15);
+
+        line1.setStroke(Color.BLACK);
+        line1.setStrokeWidth(2.5);
+        line2.setStroke(Color.BLACK);
+        line2.setStrokeWidth(2.5);
+
+        Pane pane = new Pane();
+        pane.getChildren().addAll(line1, line2);
+
+        Button prevDirectory = new Button();
+        prevDirectory.getStyleClass().add("prev-directory");
+
+        prevDirectory.setGraphic(pane);
+        prevDirectory.setPadding(new Insets(7, 13, 10, 10));
+        prevDirectory.setAlignment(Pos.CENTER);
+
+
+        Button nextDirectory = new Button();
+        nextDirectory.getStyleClass().add("next-directory");
+
+        Line line3 = new Line(5, 5, 10, 10);
+        Line line4 = new Line(10, 10, 5, 15);
+
+        line3.setStroke(Color.BLACK);
+        line3.setStrokeWidth(2.5);
+        line4.setStroke(Color.BLACK);
+        line4.setStrokeWidth(2.5);
+
+        Pane pane2 = new Pane();
+        pane2.getChildren().addAll(line3, line4);
+
+        nextDirectory.setPadding(new Insets(7, 13, 10, 10));
+        nextDirectory.setAlignment(Pos.CENTER);
+        nextDirectory.setGraphic(pane2);
 
         prevDirectory.setOnMouseClicked((event) -> {
             if (directoryHistoryPosition > 0) {
@@ -116,8 +151,7 @@ public class Main extends Application {
 
         filesMenuList.setPadding(new Insets(5));
 
-        navigationDirectoryPanel.getButtons().addAll(prevDirectory, nextDirectory);
-        navigationPanel.getChildren().addAll(navigationDirectoryPanel, reload, showHiddenFiles, changeDisplay);
+        navigationPanel.getChildren().addAll(prevDirectory, nextDirectory, reload, showHiddenFiles, changeDisplay);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
@@ -127,17 +161,15 @@ public class Main extends Application {
 
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
             filesPanel.setMinHeight(stage.getHeight());
-//            filesBox.setMinHeight(stage.getHeight());
-//            filesList.setMinHeight(newValue.doubleValue());
         });
 
         Scene scene = new Scene(root, 935, 550);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setTitle("Files");
         stage.setScene(scene);
         stage.setMinHeight(350);
         stage.setMinWidth(700);
         stage.show();
-        x = (int)filesPanel.getHeight();
     }
 
     private void adjustSpacing(FlowPane grid, double width) {
@@ -226,8 +258,6 @@ public class Main extends Application {
                 filesPane.setContent(filesBox);
             }
         }
-
-//        filesList.setMinHeight(100);
 
         filesList.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
