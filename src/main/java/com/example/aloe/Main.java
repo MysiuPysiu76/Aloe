@@ -28,11 +28,14 @@ public class Main extends Application {
     private List<File> directoryHistory = new ArrayList<>();
     private ListView<String> filesList;
     private VBox filesBox;
+    private SplitPane filesPanel = new SplitPane();
     private ScrollPane filesPane = new ScrollPane();
+    private VBox filesMenu = new VBox();
 
     private int directoryHistoryPosition = -1;
     private boolean isGridView = true;
     private boolean isHiddenFilesShow = false;
+    private boolean isMenuHidden = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -42,8 +45,6 @@ public class Main extends Application {
     public void start(Stage stage) {
         VBox root = new VBox();
         HBox navigationPanel = new HBox();
-        SplitPane filesPanel = new SplitPane();
-        VBox filesMenu = new VBox();
 
         filesPanel.getItems().addAll(filesMenu, filesPane);
 
@@ -51,62 +52,12 @@ public class Main extends Application {
 
         navigationPanel.setPadding(new Insets(6));
 
-        Line line1 = new Line(10, 5 , 5,10);
-        Line line2 = new Line(5, 10, 10, 15);
-
-        line1.setStroke(Color.BLACK);
-        line1.setStrokeWidth(2.5);
-        line2.setStroke(Color.BLACK);
-        line2.setStrokeWidth(2.5);
-
-        Pane pane = new Pane();
-        pane.getChildren().addAll(line1, line2);
-
-        Button prevDirectory = new Button();
-        prevDirectory.getStyleClass().add("prev-directory");
-
-        prevDirectory.setGraphic(pane);
-        prevDirectory.setPadding(new Insets(7, 13, 10, 10));
-        prevDirectory.setAlignment(Pos.CENTER);
-
-
-        Button nextDirectory = new Button();
-        nextDirectory.getStyleClass().add("next-directory");
-
-        Line line3 = new Line(5, 5, 10, 10);
-        Line line4 = new Line(10, 10, 5, 15);
-
-        line3.setStroke(Color.BLACK);
-        line3.setStrokeWidth(2.5);
-        line4.setStroke(Color.BLACK);
-        line4.setStrokeWidth(2.5);
-
-        Pane pane2 = new Pane();
-        pane2.getChildren().addAll(line3, line4);
-
-        nextDirectory.setPadding(new Insets(7, 13, 10, 10));
-        nextDirectory.setAlignment(Pos.CENTER);
-        nextDirectory.setGraphic(pane2);
-
-        prevDirectory.setOnMouseClicked((event) -> {
-            if (directoryHistoryPosition > 0) {
-                directoryHistoryPosition--;
-                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-            }
-        });
-
-        nextDirectory.setOnMouseClicked((event) -> {
-            if (directoryHistoryPosition < directoryHistory.size() - 1) {
-                directoryHistoryPosition++;
-                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-            }
-        });
-
         // Reload files list button
         Button reload = new Button("Reload");
-        reload.setOnMouseClicked((event) -> {
+        reload.setOnMouseClicked(event -> {
             loadDirectoryContents(currentDirectory, false);
         });
+        reload.setPadding(new Insets(5, 10, 5, 10));
 
         // Show hidden files button
         CheckBox showHiddenFiles = new CheckBox("Hidden files");
@@ -126,6 +77,20 @@ public class Main extends Application {
             } else {
                 changeDisplay.setText("Grid");
             }
+        });
+
+        CheckBox showFilesMenu = new CheckBox("Show Menu");
+
+        showFilesMenu.setSelected(true);
+        showFilesMenu.setOnAction(event -> {
+            if(isMenuHidden) {
+                filesPanel.getItems().addFirst(filesMenu);
+                filesMenu.setMaxWidth(160);
+            } else {
+                filesPanel.getItems().remove(filesMenu);
+            }
+            isMenuHidden = !isMenuHidden;
+
         });
 
         filesPanel.setDividerPositions(0.2);
@@ -151,7 +116,7 @@ public class Main extends Application {
 
         filesMenuList.setPadding(new Insets(5));
 
-        navigationPanel.getChildren().addAll(prevDirectory, nextDirectory, reload, showHiddenFiles, changeDisplay);
+        navigationPanel.getChildren().addAll(getNavigateButton("prev"), getNavigateButton("next"), reload, showHiddenFiles, changeDisplay, showFilesMenu);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
@@ -163,6 +128,8 @@ public class Main extends Application {
             filesPanel.setMinHeight(stage.getHeight());
         });
 
+        navigationPanel.setMargin(reload, new Insets(5, 15, 5, 15));
+
         Scene scene = new Scene(root, 935, 550);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setTitle("Files");
@@ -170,6 +137,50 @@ public class Main extends Application {
         stage.setMinHeight(350);
         stage.setMinWidth(700);
         stage.show();
+    }
+
+    private Button getNavigateButton(String type) {
+        Line line1;
+        Line line2;
+        Button button = new Button();
+
+        if(type.equals("prev")) {
+            line1 = new Line(10, 5 , 5,10);
+            line2 = new Line(5, 10, 10, 15);
+
+            button.setOnMouseClicked(event -> {
+                if (directoryHistoryPosition > 0) {
+                    directoryHistoryPosition--;
+                    loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+                }
+            });
+            button.getStyleClass().add("prev-directory");
+        } else if (type.equals("next")) {
+            line1 = new Line(5, 5, 10, 10);
+            line2 = new Line(10, 10, 5, 15);
+
+            button.setOnMouseClicked(event -> {
+                if (directoryHistoryPosition < directoryHistory.size() - 1) {
+                    directoryHistoryPosition++;
+                    loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+                }
+            });
+
+            button.getStyleClass().add("next-directory");
+        } else {
+            throw new IllegalArgumentException("Incorrect button type");
+        }
+
+        line1.setStroke(Color.BLACK);
+        line2.setStroke(Color.BLACK);
+        line1.setStrokeWidth(2.5);
+        line2.setStrokeWidth(2.5);
+
+        button.setPadding(new Insets(7, 13, 10, 10));
+        button.setAlignment(Pos.CENTER);
+        button.setGraphic(new Pane(line1, line2));
+
+        return button;
     }
 
     private void adjustSpacing(FlowPane grid, double width) {
