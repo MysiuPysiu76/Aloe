@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
@@ -312,7 +313,7 @@ public class Main extends Application {
         fileBox.getChildren().addAll(icon, fileName);
         fileBox.setPadding(new Insets(5));
         fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
-
+        getFileOptions(fileBox, name);
         return fileBox;
     }
 
@@ -341,5 +342,31 @@ public class Main extends Application {
 
     private void refreshCurrentDirectory() {
         loadDirectoryContents(currentDirectory, false);
+    }
+
+    private void deleteFile(File file) {
+        if(file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    deleteFile(f);
+                }
+            }
+        }
+        file.delete();
+    }
+
+    private void getFileOptions(Node item, String name) {
+        ContextMenu menu = new ContextMenu();
+        MenuItem deleteItem = new MenuItem("Delete");
+        menu.getItems().addAll(deleteItem);
+        deleteItem.setOnAction(event -> {
+            deleteFile(new File(currentDirectory, name));
+            refreshCurrentDirectory();
+        });
+
+        item.setOnContextMenuRequested(event -> {
+            menu.show(item, event.getScreenX(), event.getScreenY());
+        });
     }
 }
