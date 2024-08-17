@@ -81,7 +81,6 @@ public class Main extends Application {
         });
 
         CheckBox showFilesMenu = new CheckBox("Show Menu");
-
         showFilesMenu.setSelected(true);
         showFilesMenu.setOnAction(event -> {
             if(isMenuHidden) {
@@ -358,8 +357,13 @@ public class Main extends Application {
 
     private void getFileOptions(Node item, String name) {
         ContextMenu menu = new ContextMenu();
+        MenuItem renameItem = new MenuItem("Rename");
+        renameItem.setOnAction(event -> {
+            renameFile(new File(currentDirectory, name));
+            refreshCurrentDirectory();
+        });
+
         MenuItem deleteItem = new MenuItem("Delete");
-        menu.getItems().addAll(deleteItem);
         deleteItem.setOnAction(event -> {
             deleteFile(new File(currentDirectory, name));
             refreshCurrentDirectory();
@@ -368,5 +372,63 @@ public class Main extends Application {
         item.setOnContextMenuRequested(event -> {
             menu.show(item, event.getScreenX(), event.getScreenY());
         });
+
+        menu.getItems().addAll(renameItem, deleteItem);
+    }
+
+    private void renameFile(File file) {
+        Dialog<String> dialog = new Dialog<>();
+        if(file.isDirectory()) {
+            dialog.setTitle("Rename Directory");
+        } else {
+            dialog.setTitle("Rename File");
+        }
+
+        VBox dialogContent = new VBox();
+        dialogContent.setPadding(new Insets(5));
+
+        TextField name = new TextField(file.getName());
+        Label error = new Label();
+        error.setStyle("-fx-text-fill: red;");
+
+        dialogContent.getChildren().addAll(name, error);
+        dialog.getDialogPane().setContent(dialogContent);
+
+        ButtonType renameButtonType = new ButtonType("Rename", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(renameButtonType, ButtonType.CANCEL);
+
+        Button renameButton = (Button) dialog.getDialogPane().lookupButton(renameButtonType);
+
+        name.textProperty().addListener((observable, oldValue, newValue) -> {
+            String validationError = validateFileName(newValue);
+            if (validationError != null) {
+                error.setText(validationError);
+                renameButton.setDisable(true);
+            } else {
+                error.setText("");
+                renameButton.setDisable(false);
+            }
+        });
+
+        renameButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            String newName = name.getText().trim();
+            File newFile = new File(currentDirectory, newName);
+
+            if(file.renameTo(newFile)) {
+                refreshCurrentDirectory();
+            } else {
+                error.setText("Could not rename: " + newName);
+                event.consume();
+            }
+        });
+        dialog.showAndWait();
+    }
+
+    private String validateFileName(String name) {
+        if(name.isEmpty()) {
+            return "Name cannot be empty";
+        }
+
+        return null;
     }
 }
