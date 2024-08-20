@@ -1,6 +1,7 @@
 package com.example.aloe;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,6 +40,8 @@ public class Main extends Application {
     private boolean isHiddenFilesShow = false;
     private boolean isMenuHidden = false;
 
+    ContextMenu menu = new ContextMenu();
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -46,6 +50,14 @@ public class Main extends Application {
     public void start(Stage stage) {
         VBox root = new VBox();
         HBox navigationPanel = new HBox();
+
+        getDirectoryOptions();
+
+        filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                directoryMenu.hide();
+            }
+        });
 
         filesPanel.getItems().addAll(filesMenu, filesPane);
 
@@ -355,25 +367,40 @@ public class Main extends Application {
         file.delete();
     }
 
-    private void getFileOptions(Node item, String name) {
-        ContextMenu menu = new ContextMenu();
-        MenuItem renameItem = new MenuItem("Rename");
-        renameItem.setOnAction(event -> {
-            renameFile(new File(currentDirectory, name));
+    ContextMenu directoryMenu = new ContextMenu();
+
+    private void getDirectoryOptions() {
+        MenuItem newDirectory = new MenuItem("New Folder");
+        newDirectory.setOnAction(event -> {
+           createDirectory();
+           refreshCurrentDirectory();
+        });
+        directoryMenu.getItems().addAll(newDirectory);
+        filesPane.setOnContextMenuRequested(event -> {
+            directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
+        });
+    }
+
+    private void getFileOptions(Node item, String fileName) {
+        ContextMenu fileMenu = new ContextMenu();
+        MenuItem rename = new MenuItem("Rename");
+        rename.setOnAction(event -> {
+            renameFile(new File(currentDirectory, fileName));
             refreshCurrentDirectory();
         });
 
-        MenuItem deleteItem = new MenuItem("Delete");
-        deleteItem.setOnAction(event -> {
-            deleteFile(new File(currentDirectory, name));
-            refreshCurrentDirectory();
+        MenuItem delete = new MenuItem("Delete");
+        delete.setOnAction(event -> {
+            deleteFile(new File(currentDirectory, fileName));
+           refreshCurrentDirectory();
         });
+        fileMenu.getItems().addAll(rename, delete);
 
         item.setOnContextMenuRequested(event -> {
-            menu.show(item, event.getScreenX(), event.getScreenY());
+            fileMenu.show(item, event.getScreenX(), event.getScreenY());
+            directoryMenu.hide();
+            event.consume();
         });
-
-        menu.getItems().addAll(renameItem, deleteItem);
     }
 
     private void renameFile(File file) {
@@ -428,7 +455,46 @@ public class Main extends Application {
         if(name.isEmpty()) {
             return "Name cannot be empty";
         }
-
         return null;
+    }
+
+    private void createDirectory() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Create Folder");
+
+        VBox dialogContent = new VBox();
+        dialogContent.setPadding(new Insets(5));
+        TextField name = new TextField("New Folder");
+        Label error = new Label();
+        error.setStyle("-fx-text-fill: red;");
+        dialogContent.getChildren().addAll(name, error);
+        dialog.getDialogPane().setContent(dialogContent);
+
+        ButtonType renameButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(renameButtonType, ButtonType.CANCEL);
+        Button newDirectoryButton = (Button) dialog.getDialogPane().lookupButton(renameButtonType);
+
+        name.textProperty().addListener((observable, oldValue, newValue) -> {
+            String validationError = validateFileName(newValue);
+            if (validationError != null) {
+                error.setText(validationError);
+                newDirectoryButton.setDisable(true);
+            } else {
+                error.setText("");
+                newDirectoryButton.setDisable(false);
+            }
+        });
+
+        newDirectoryButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            String newName = name.getText().trim();
+            File newFile = new File(currentDirectory, newName);
+            if (!newFile.exists()) {
+                if(!newFile.mkdir()) {
+
+                }
+            }
+        });
+
+        dialog.showAndWait();
     }
 }

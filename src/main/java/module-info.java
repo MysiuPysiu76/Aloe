@@ -11,6 +11,7 @@ module com.example.aloe {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires annotations;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;
