@@ -9,3 +9,15 @@
     -fx-border-radius: 0 4px 4px 0;
     -fx-background-radius: 0 4px 4px 0;
 }
+
+.menu-option {
+    -fx-background-color: #f4f4f4;
+    -fx-border-color: #f4f4f4;
+    -fx-padding: 5px 13px;
+    -fx-font-size: 13.5px;
+    -fx-text-fill: #434242;
+}
+
+.menu-option:hover {
+    -fx-background-color: #d6d6d6;
+}

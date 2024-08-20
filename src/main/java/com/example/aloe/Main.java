@@ -47,6 +47,7 @@ public class Main extends Application {
         HBox navigationPanel = new HBox();
 
         getDirectoryOptions();
+        initDirectoryListInMenu();
 
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
@@ -103,23 +104,6 @@ public class Main extends Application {
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
 
-        ListView<String> filesMenuList = new ListView<>();
-        filesMenuList.getItems().addAll("Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos");
-        filesMenu.getChildren().add(filesMenuList);
-
-        filesMenuList.setOnMouseClicked((event) -> {
-            String selectedItem = filesMenuList.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                File selectedFile = new File(System.getProperty("user.home"), selectedItem);
-                if (selectedFile.isDirectory()) {
-                    loadDirectoryContents(selectedFile, true);
-                } else {
-                    openFileInBackground(selectedFile);
-                }
-            }
-        });
-
-        filesMenuList.setPadding(new Insets(5));
 
         navigationPanel.getChildren().addAll(getNavigateButton("prev"), getNavigateButton("next"), reload, showHiddenFiles, changeDisplay, showFilesMenu);
         root.getChildren().addAll(navigationPanel, filesPanel);
@@ -127,7 +111,6 @@ public class Main extends Application {
         filesList = new ListView<>();
 
         loadDirectoryContents(currentDirectory, true);
-        VBox.setVgrow(filesMenuList, Priority.ALWAYS);
 
         stage.heightProperty().addListener((observable, oldValue, newValue) -> {
             filesPanel.setMinHeight(stage.getHeight());
@@ -537,5 +520,34 @@ public class Main extends Application {
             }
         });
         dialog.showAndWait();
+    }
+
+    private Map<String, String> directoryListInMenu = new LinkedHashMap<>();
+
+    private void initDirectoryListInMenu() {
+        directoryListInMenu.put(System.getProperty("user.home"), "Home");
+        directoryListInMenu.put(System.getProperty("user.home") + "/Desktop", "Desktop");
+        directoryListInMenu.put(System.getProperty("user.home") + "/Documents", "Documents");
+        directoryListInMenu.put(System.getProperty("user.home") + "/Downloads", "Downloads");
+        directoryListInMenu.put(System.getProperty("user.home") + "/Music", "Music");
+        directoryListInMenu.put(System.getProperty("user.home") + "/Pictures", "Pictures");
+        directoryListInMenu.put(System.getProperty("user.home") + "/Videos", "Videos");
+        loadDirectoryListInMenu();
+    }
+
+    private void loadDirectoryListInMenu() {
+        for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
+            Button button = new Button(entry.getValue());
+            button.getStyleClass().add("menu-option");
+            button.setOnMouseClicked(event -> {
+                loadDirectoryContents(new File(entry.getKey()), true);
+            });
+
+            button.setAlignment(Pos.CENTER_LEFT);
+            filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {
+                button.setMinWidth(newValue.doubleValue());
+            });
+            filesMenu.getChildren().add(button);
+        }
     }
 }
