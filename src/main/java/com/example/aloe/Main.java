@@ -1,7 +1,6 @@
 package com.example.aloe;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,16 +20,14 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Main extends Application {
 
     private File currentDirectory = new File(System.getProperty("user.home"));
     private List<File> directoryHistory = new ArrayList<>();
     private ListView<String> filesList;
-    private VBox filesBox;
+    private VBox filesBox = new VBox();
     private SplitPane filesPanel = new SplitPane();
     private ScrollPane filesPane = new ScrollPane();
     private VBox filesMenu = new VBox();
@@ -39,8 +36,6 @@ public class Main extends Application {
     private boolean isGridView = true;
     private boolean isHiddenFilesShow = false;
     private boolean isMenuHidden = false;
-
-    ContextMenu menu = new ContextMenu();
 
     public static void main(String[] args) {
         launch(args);
@@ -60,8 +55,6 @@ public class Main extends Application {
         });
 
         filesPanel.getItems().addAll(filesMenu, filesPane);
-
-        filesBox = new VBox();
 
         navigationPanel.setPadding(new Insets(6));
 
@@ -375,7 +368,12 @@ public class Main extends Application {
            createDirectory();
            refreshCurrentDirectory();
         });
-        directoryMenu.getItems().addAll(newDirectory);
+        MenuItem newFile = new MenuItem("New file");
+        newFile.setOnAction(event -> {
+           createFile();
+           refreshCurrentDirectory();
+        });
+        directoryMenu.getItems().addAll(newDirectory, newFile);
         filesPane.setOnContextMenuRequested(event -> {
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
         });
@@ -470,9 +468,9 @@ public class Main extends Application {
         dialogContent.getChildren().addAll(name, error);
         dialog.getDialogPane().setContent(dialogContent);
 
-        ButtonType renameButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(renameButtonType, ButtonType.CANCEL);
-        Button newDirectoryButton = (Button) dialog.getDialogPane().lookupButton(renameButtonType);
+        ButtonType createDirectoryButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(createDirectoryButtonType, ButtonType.CANCEL);
+        Button newDirectoryButton = (Button) dialog.getDialogPane().lookupButton(createDirectoryButtonType);
 
         name.textProperty().addListener((observable, oldValue, newValue) -> {
             String validationError = validateFileName(newValue);
@@ -495,6 +493,49 @@ public class Main extends Application {
             }
         });
 
+        dialog.showAndWait();
+    }
+
+    private void createFile() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Create File");
+
+        VBox dialogContent = new VBox();
+        dialogContent.setPadding(new Insets(5));
+        TextField name = new TextField("New File.txt");
+        Label error = new Label();
+        error.setStyle("-fx-text-fill: red;");
+        dialogContent.getChildren().addAll(name, error);
+        dialog.getDialogPane().setContent(dialogContent);
+
+        ButtonType createFileButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(createFileButtonType, ButtonType.CANCEL);
+        Button newFileButton = (Button) dialog.getDialogPane().lookupButton(createFileButtonType);
+
+        name.textProperty().addListener((observable, oldValue, newValue) -> {
+            String validationError = validateFileName(newValue);
+            if (validationError != null) {
+                error.setText(validationError);
+                newFileButton.setDisable(true);
+            } else {
+                error.setText("");
+                newFileButton.setDisable(false);
+            }
+        });
+
+        newFileButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            String newName = name.getText().trim();
+            File newFile = new File(currentDirectory, newName);
+            if (!newFile.exists()) {
+                try {
+                    if(!newFile.createNewFile()) {
+
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
         dialog.showAndWait();
     }
 }
