@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -106,8 +107,7 @@ public class Main extends Application {
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
 
-
-        navigationPanel.getChildren().addAll(getNavigateButton("prev"), getNavigateButton("next"), reload, showHiddenFiles, changeDisplay, showFilesMenu);
+        navigationPanel.getChildren().addAll(getNavigatePrevButton(), getNavigateParentButton(), getNavigateNextButton(), reload, showHiddenFiles, changeDisplay, showFilesMenu);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
@@ -129,46 +129,107 @@ public class Main extends Application {
         stage.show();
     }
 
-    private Button getNavigateButton(String type) {
-        Line line1;
-        Line line2;
-        Button button = new Button();
-
-        if(type.equals("prev")) {
-            line1 = new Line(10, 5 , 5,10);
-            line2 = new Line(5, 10, 10, 15);
-
-            button.setOnMouseClicked(event -> {
-                if (directoryHistoryPosition > 0) {
-                    directoryHistoryPosition--;
-                    loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-                }
-            });
-            button.getStyleClass().add("prev-directory");
-        } else if (type.equals("next")) {
-            line1 = new Line(5, 5, 10, 10);
-            line2 = new Line(10, 10, 5, 15);
-
-            button.setOnMouseClicked(event -> {
-                if (directoryHistoryPosition < directoryHistory.size() - 1) {
-                    directoryHistoryPosition++;
-                    loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-                }
-            });
-
-            button.getStyleClass().add("next-directory");
-        } else {
-            throw new IllegalArgumentException("Incorrect button type");
-        }
+    private Pane getLeftArrow() {
+        Line line1 = new Line(10, 5, 5, 10);
+        Line line2 = new Line(5, 10, 10, 15);
 
         line1.setStroke(Color.BLACK);
-        line2.setStroke(Color.BLACK);
         line1.setStrokeWidth(2.5);
+        line2.setStroke(Color.BLACK);
         line2.setStrokeWidth(2.5);
 
-        button.setPadding(new Insets(7, 13, 10, 10));
+        return new Pane(line1, line2);
+    }
+
+    private Pane getRightArrow() {
+        Line line1 = new Line(5, 5, 10, 10);
+        Line line2 = new Line(10, 10, 5, 15);
+
+        line1.setStroke(Color.BLACK);
+        line1.setStrokeWidth(2.5);
+        line2.setStroke(Color.BLACK);
+        line2.setStrokeWidth(2.5);
+
+        return new Pane(line1, line2);
+    }
+
+    private Button getNavigateNextButton() {
+        Button button = new Button();
+        Tooltip tooltip = new Tooltip("Next Directory");
+
+        button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
-        button.setGraphic(new Pane(line1, line2));
+        button.setGraphic(getRightArrow());
+        button.setPadding(new Insets(7, 13, 10, 10));
+        button.getStyleClass().add("next-directory");
+
+        button.setOnMouseClicked(event -> {
+            if (directoryHistoryPosition < directoryHistory.size() - 1) {
+                directoryHistoryPosition++;
+                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+            }
+        });
+
+        tooltip.setShowDelay(Duration.seconds(1));
+        tooltip.setHideDelay(Duration.seconds(10));
+        button.setOnMouseExited(event -> tooltip.hide());
+
+        return button;
+    }
+
+    private Button getNavigatePrevButton() {
+        Button button = new Button();
+        Tooltip tooltip = new Tooltip("Prev Directory");
+
+        button.setTooltip(tooltip);
+        button.setAlignment(Pos.CENTER);
+        button.setGraphic(getLeftArrow());
+        button.setPadding(new Insets(7, 13, 10, 10));
+        button.getStyleClass().add("prev-directory");
+
+        button.setOnMouseClicked(event -> {
+            if (directoryHistoryPosition > 0) {
+                directoryHistoryPosition--;
+                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+            }
+        });
+
+        tooltip.setShowDelay(Duration.seconds(1));
+        tooltip.setHideDelay(Duration.seconds(10));
+        button.setOnMouseExited(event -> tooltip.hide());
+
+        return button;
+    }
+
+    private Pane getTopArrow() {
+        Line line1 = new Line(5, 10, 10 ,5);
+        Line line2 = new Line(10, 5, 15, 10);
+
+        line1.setStroke(Color.BLACK);
+        line1.setStrokeWidth(2.5);
+        line2.setStroke(Color.BLACK);
+        line2.setStrokeWidth(2.5);
+
+        return new Pane(line1, line2);
+    }
+
+    private Button getNavigateParentButton() {
+        Button button = new Button();
+        Tooltip tooltip = new Tooltip("Parent Directory");
+
+        button.setTooltip(tooltip);
+        button.setAlignment(Pos.CENTER);
+        button.setGraphic(getTopArrow());
+        button.setPadding(new Insets(8, 10, 10, 10));
+        button.getStyleClass().add("parent-directory");
+
+        button.setOnMouseClicked(event -> {
+            getParentDirectory();
+        });
+
+        tooltip.setShowDelay(Duration.seconds(1));
+        tooltip.setHideDelay(Duration.seconds(10));
+        button.setOnMouseExited(event -> tooltip.hide());
 
         return button;
     }
@@ -277,11 +338,13 @@ public class Main extends Application {
 
     private VBox createFileBox(String name, boolean isDirectory) {
         VBox fileBox = new VBox();
+
         fileBox.setMinWidth(100);
         fileBox.setPrefWidth(100);
         fileBox.setMaxWidth(100);
         fileBox.setAlignment(Pos.TOP_CENTER);
         fileBox.setSpacing(10);
+        fileBox.getStyleClass().add("file-box");
 
         ImageView icon = new ImageView();
         if (isDirectory) {
@@ -368,10 +431,8 @@ public class Main extends Application {
             }
             refreshCurrentDirectory();
         });
-//        paste.setDisable(isClipboardNull());
         directoryMenu.getItems().addAll(newDirectory, newFile, paste);
         filesPane.setOnContextMenuRequested(event -> {
-//            getDirectoryOptions();
             paste.setDisable(isClipboardNull());
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
         });
@@ -611,5 +672,11 @@ public class Main extends Application {
 
     private boolean isClipboardNull() {
         return clipboardOfCopiedFile == null;
+    }
+
+    private void getParentDirectory() {
+        if(currentDirectory.getPath() != "/") {
+            loadDirectoryContents(new File(currentDirectory.getParent()), true);
+        }
     }
 }

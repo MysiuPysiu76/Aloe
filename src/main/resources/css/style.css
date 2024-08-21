@@ -5,6 +5,11 @@
     /*-fx-border-color: transparent;*/
 }
 
+.parent-directory {
+    -fx-background-radius: 0 0 0 0;
+    -fx-border-radius: 0 0 0 0;
+}
+
 .next-directory {
     -fx-border-radius: 0 4px 4px 0;
     -fx-background-radius: 0 4px 4px 0;
@@ -15,9 +20,13 @@
     -fx-border-color: #f4f4f4;
     -fx-padding: 5px 13px;
     -fx-font-size: 13.5px;
-    -fx-text-fill: #434242;
+    -fx-text-fill: #5a5a5a;
 }
 
 .menu-option:hover {
+    -fx-background-color: #d6d6d6;
+}
+
+.file-box:hover {
     -fx-background-color: #d6d6d6;
 }
