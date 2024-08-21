@@ -20,6 +20,8 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class Main extends Application {
@@ -27,10 +29,10 @@ public class Main extends Application {
     private File currentDirectory = new File(System.getProperty("user.home"));
     private List<File> directoryHistory = new ArrayList<>();
     private ListView<String> filesList;
-    private VBox filesBox = new VBox();
-    private SplitPane filesPanel = new SplitPane();
-    private ScrollPane filesPane = new ScrollPane();
-    private VBox filesMenu = new VBox();
+    private final VBox filesBox = new VBox();
+    private final SplitPane filesPanel = new SplitPane();
+    private final ScrollPane filesPane = new ScrollPane();
+    private final VBox filesMenu = new VBox();
 
     private int directoryHistoryPosition = -1;
     private boolean isGridView = true;
@@ -116,7 +118,7 @@ public class Main extends Application {
             filesPanel.setMinHeight(stage.getHeight());
         });
 
-        navigationPanel.setMargin(reload, new Insets(5, 15, 5, 15));
+        HBox.setMargin(reload, new Insets(5, 15, 5, 15));
 
         Scene scene = new Scene(root, 935, 550);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
@@ -346,6 +348,7 @@ public class Main extends Application {
     ContextMenu directoryMenu = new ContextMenu();
 
     private void getDirectoryOptions() {
+        directoryMenu.getItems().clear();
         MenuItem newDirectory = new MenuItem("New Folder");
         newDirectory.setOnAction(event -> {
            createDirectory();
@@ -356,14 +359,32 @@ public class Main extends Application {
            createFile();
            refreshCurrentDirectory();
         });
-        directoryMenu.getItems().addAll(newDirectory, newFile);
+        MenuItem paste = new MenuItem("Paste");
+        paste.setOnAction(event -> {
+            try {
+                pasteFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            refreshCurrentDirectory();
+        });
+//        paste.setDisable(isClipboardNull());
+        directoryMenu.getItems().addAll(newDirectory, newFile, paste);
         filesPane.setOnContextMenuRequested(event -> {
+//            getDirectoryOptions();
+            paste.setDisable(isClipboardNull());
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
         });
     }
 
     private void getFileOptions(Node item, String fileName) {
         ContextMenu fileMenu = new ContextMenu();
+        MenuItem copy = new MenuItem("Copy");
+        copy.setOnAction(event -> {
+           copyFile(new File(currentDirectory, fileName));
+           refreshCurrentDirectory();
+        });
+
         MenuItem rename = new MenuItem("Rename");
         rename.setOnAction(event -> {
             renameFile(new File(currentDirectory, fileName));
@@ -375,7 +396,7 @@ public class Main extends Application {
             deleteFile(new File(currentDirectory, fileName));
            refreshCurrentDirectory();
         });
-        fileMenu.getItems().addAll(rename, delete);
+        fileMenu.getItems().addAll(copy, rename, delete);
 
         item.setOnContextMenuRequested(event -> {
             fileMenu.show(item, event.getScreenX(), event.getScreenY());
@@ -549,5 +570,46 @@ public class Main extends Application {
             });
             filesMenu.getChildren().add(button);
         }
+    }
+
+    private File clipboardOfCopiedFile = null;
+
+    private void copyFile(File file) {
+        clipboardOfCopiedFile = file;
+    }
+
+    private void pasteFile() throws IOException {
+        if(!isClipboardNull()) {
+            File newFile = new File(currentDirectory, clipboardOfCopiedFile.getName());
+            if(clipboardOfCopiedFile.isDirectory()) {
+                copyDirectoryToDestination(clipboardOfCopiedFile, newFile);
+            } else {
+                copyFileToDestination(clipboardOfCopiedFile, newFile);
+            }
+
+        }
+    }
+
+    private void copyFileToDestination(File source, File destination) throws IOException {
+        Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private void copyDirectoryToDestination(File source, File destination) throws IOException {
+        if(!destination.exists()) {
+            destination.mkdir();
+        }
+        for (String file : Objects.requireNonNull(source.list())) {
+            File sourceFile = new File(source, file);
+            File destinationFile = new File(destination, file);
+            if (sourceFile.isDirectory()) {
+                copyDirectoryToDestination(sourceFile, destinationFile);
+            } else {
+                copyFileToDestination(sourceFile, destinationFile);
+            }
+        }
+    }
+
+    private boolean isClipboardNull() {
+        return clipboardOfCopiedFile == null;
     }
 }
