@@ -15,12 +15,17 @@
     -fx-background-radius: 0 4px 4px 0;
 }
 
+.arrow-line {
+    -fx-stroke: black;
+    -fx-stroke-width: 2.5;
+}
+
 .menu-option {
     -fx-background-color: #f4f4f4;
     -fx-border-color: #f4f4f4;
     -fx-padding: 5px 13px;
     -fx-font-size: 13.5px;
-    -fx-text-fill: #5a5a5a;
+    -fx-text-fill: #525252;
 }
 
 .menu-option:hover {
@@ -30,3 +35,4 @@
 .file-box:hover {
     -fx-background-color: #d6d6d6;
 }
+

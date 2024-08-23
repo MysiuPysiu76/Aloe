@@ -12,8 +12,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -61,6 +59,8 @@ public class Main extends Application {
         filesPanel.getItems().addAll(filesMenu, filesPane);
 
         navigationPanel.setPadding(new Insets(6));
+
+        SplitPane.setResizableWithParent(filesMenu, false);
 
         // Reload files list button
         Button reload = new Button("Reload");
@@ -129,37 +129,13 @@ public class Main extends Application {
         stage.show();
     }
 
-    private Pane getLeftArrow() {
-        Line line1 = new Line(10, 5, 5, 10);
-        Line line2 = new Line(5, 10, 10, 15);
-
-        line1.setStroke(Color.BLACK);
-        line1.setStrokeWidth(2.5);
-        line2.setStroke(Color.BLACK);
-        line2.setStrokeWidth(2.5);
-
-        return new Pane(line1, line2);
-    }
-
-    private Pane getRightArrow() {
-        Line line1 = new Line(5, 5, 10, 10);
-        Line line2 = new Line(10, 10, 5, 15);
-
-        line1.setStroke(Color.BLACK);
-        line1.setStrokeWidth(2.5);
-        line2.setStroke(Color.BLACK);
-        line2.setStrokeWidth(2.5);
-
-        return new Pane(line1, line2);
-    }
-
     private Button getNavigateNextButton() {
         Button button = new Button();
         Tooltip tooltip = new Tooltip("Next Directory");
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
-        button.setGraphic(getRightArrow());
+        button.setGraphic(ArrowLoader.getRightArrow());
         button.setPadding(new Insets(7, 13, 10, 10));
         button.getStyleClass().add("next-directory");
 
@@ -183,7 +159,7 @@ public class Main extends Application {
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
-        button.setGraphic(getLeftArrow());
+        button.setGraphic(ArrowLoader.getLeftArrow());
         button.setPadding(new Insets(7, 13, 10, 10));
         button.getStyleClass().add("prev-directory");
 
@@ -201,26 +177,14 @@ public class Main extends Application {
         return button;
     }
 
-    private Pane getTopArrow() {
-        Line line1 = new Line(5, 10, 10 ,5);
-        Line line2 = new Line(10, 5, 15, 10);
-
-        line1.setStroke(Color.BLACK);
-        line1.setStrokeWidth(2.5);
-        line2.setStroke(Color.BLACK);
-        line2.setStrokeWidth(2.5);
-
-        return new Pane(line1, line2);
-    }
-
     private Button getNavigateParentButton() {
         Button button = new Button();
         Tooltip tooltip = new Tooltip("Parent Directory");
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
-        button.setGraphic(getTopArrow());
-        button.setPadding(new Insets(8, 10, 10, 10));
+        button.setGraphic(ArrowLoader.getTopArrow());
+        button.setPadding(new Insets(9, 11, 9, 8));
         button.getStyleClass().add("parent-directory");
 
         button.setOnMouseClicked(event -> {
@@ -298,7 +262,9 @@ public class Main extends Application {
                 for (String dirName : directories) {
                     VBox box = createFileBox(dirName, true);
                     box.setOnMouseClicked(event -> {
-                        loadDirectoryContents(new File(currentDirectory, dirName), true);
+                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                            loadDirectoryContents(new File(currentDirectory, dirName), true);
+                        }
                     });
                     grid.getChildren().add(box);
                 }
@@ -306,7 +272,9 @@ public class Main extends Application {
                 for (String fileName : normalFiles) {
                     VBox box = createFileBox(fileName, false);
                     box.setOnMouseClicked(event -> {
-                        openFileInBackground(new File(currentDirectory, fileName));
+                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                            openFileInBackground(new File(currentDirectory, fileName));
+                        }
                     });
                     grid.getChildren().add(box);
                 }
@@ -647,7 +615,6 @@ public class Main extends Application {
             } else {
                 copyFileToDestination(clipboardOfCopiedFile, newFile);
             }
-
         }
     }
 
