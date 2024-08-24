@@ -272,7 +272,7 @@ public class Main extends Application {
                 for (String fileName : normalFiles) {
                     VBox box = createFileBox(fileName, false);
                     box.setOnMouseClicked(event -> {
-                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
                             openFileInBackground(new File(currentDirectory, fileName));
                         }
                     });
@@ -586,19 +586,36 @@ public class Main extends Application {
     }
 
     private void loadDirectoryListInMenu() {
+        filesMenu.getChildren().clear();
         for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
             Button button = new Button(entry.getValue());
             button.getStyleClass().add("menu-option");
-            button.setOnMouseClicked(event -> {
-                loadDirectoryContents(new File(entry.getKey()), true);
-            });
-
             button.setAlignment(Pos.CENTER_LEFT);
+            getMenuItemsOptions(button, entry.getKey());
+            button.setOnMouseClicked(event -> {
+                if(event.getButton() == MouseButton.PRIMARY) {
+                    loadDirectoryContents(new File(entry.getKey()), true);
+                }
+            });
             filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {
                 button.setMinWidth(newValue.doubleValue());
             });
             filesMenu.getChildren().add(button);
         }
+    }
+
+    private void getMenuItemsOptions(Node item, String key) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem remove = new MenuItem("Remove");
+        contextMenu.getItems().add(remove);
+        remove.setOnAction(event -> {
+            directoryListInMenu.remove(key);
+            loadDirectoryListInMenu();
+        });
+        item.setOnContextMenuRequested(event -> {
+            contextMenu.show(item, event.getScreenX(), event.getScreenY());
+            event.consume();
+        });
     }
 
     private File clipboardOfCopiedFile = null;
