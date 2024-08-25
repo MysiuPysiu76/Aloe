@@ -219,6 +219,7 @@ public class Main extends Application {
 
     private void loadDirectoryContents(File directory, boolean addToHistory) {
         currentDirectory = directory;
+        filesPane.setVvalue(0);
 
         FlowPane grid = new FlowPane();
         grid.setPadding(new Insets(10, 10, 100, 10));
@@ -607,13 +608,17 @@ public class Main extends Application {
 
     private void getMenuItemsOptions(Node item, String key, String value) {
         ContextMenu contextMenu = new ContextMenu();
+        MenuItem open = new MenuItem("Open");
+        open.setOnAction(event -> {
+            loadDirectoryContents(new File(key), true);
+        });
         MenuItem edit = new MenuItem("Edit");
         edit.setOnAction(event -> {
             editDirectoryInMenu(key, value);
             loadDirectoryListInMenu();
         });
         MenuItem remove = new MenuItem("Remove");
-        contextMenu.getItems().addAll(edit, remove);
+        contextMenu.getItems().addAll(open, edit, remove);
         remove.setOnAction(event -> {
             removeDirectoryFromMenu(key);
             loadDirectoryListInMenu();
