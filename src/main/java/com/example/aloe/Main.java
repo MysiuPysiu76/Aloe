@@ -409,6 +409,11 @@ public class Main extends Application {
 
     private void getFileOptions(Node item, String fileName) {
         ContextMenu fileMenu = new ContextMenu();
+        MenuItem open = new MenuItem("Open");
+        open.setOnAction(event -> {
+            openFileInOptions(new File(currentDirectory, fileName));
+        });
+
         MenuItem copy = new MenuItem("Copy");
         copy.setOnAction(event -> {
            copyFile(new File(currentDirectory, fileName));
@@ -426,13 +431,21 @@ public class Main extends Application {
             deleteFile(new File(currentDirectory, fileName));
            refreshCurrentDirectory();
         });
-        fileMenu.getItems().addAll(copy, rename, delete);
+        fileMenu.getItems().addAll(open, copy, rename, delete);
 
         item.setOnContextMenuRequested(event -> {
             fileMenu.show(item, event.getScreenX(), event.getScreenY());
             directoryMenu.hide();
             event.consume();
         });
+    }
+
+    private void openFileInOptions(File file) {
+        if (file.isDirectory()) {
+            loadDirectoryContents(file, true);
+        } else {
+            openFileInBackground(file);
+        }
     }
 
     private void renameFile(File file) {
