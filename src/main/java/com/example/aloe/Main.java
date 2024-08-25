@@ -103,7 +103,7 @@ public class Main extends Application {
         });
 
         filesPanel.setDividerPositions(0.2);
-        filesMenu.setMinWidth(120);
+        filesMenu.setMinWidth(100);
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
 
@@ -591,7 +591,8 @@ public class Main extends Application {
             Button button = new Button(entry.getValue());
             button.getStyleClass().add("menu-option");
             button.setAlignment(Pos.CENTER_LEFT);
-            getMenuItemsOptions(button, entry.getKey());
+            button.setPrefWidth(filesMenu.getWidth());
+            getMenuItemsOptions(button, entry.getKey(), entry.getValue());
             button.setOnMouseClicked(event -> {
                 if(event.getButton() == MouseButton.PRIMARY) {
                     loadDirectoryContents(new File(entry.getKey()), true);
@@ -604,18 +605,64 @@ public class Main extends Application {
         }
     }
 
-    private void getMenuItemsOptions(Node item, String key) {
+    private void getMenuItemsOptions(Node item, String key, String value) {
         ContextMenu contextMenu = new ContextMenu();
+        MenuItem edit = new MenuItem("Edit");
+        edit.setOnAction(event -> {
+            editDirectoryInMenu(key, value);
+            loadDirectoryListInMenu();
+        });
         MenuItem remove = new MenuItem("Remove");
-        contextMenu.getItems().add(remove);
+        contextMenu.getItems().addAll(edit, remove);
         remove.setOnAction(event -> {
-            directoryListInMenu.remove(key);
+            removeDirectoryFromMenu(key);
             loadDirectoryListInMenu();
         });
         item.setOnContextMenuRequested(event -> {
             contextMenu.show(item, event.getScreenX(), event.getScreenY());
             event.consume();
         });
+    }
+
+    private void editDirectoryInMenu(String key, String value) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Edit Directory");
+
+        VBox dialogContent = new VBox();
+        dialogContent.setPadding(new Insets(5));
+        TextField name = new TextField(value);
+        TextField path = new TextField(key);
+        Label error = new Label();
+        error.setStyle("-fx-text-fill: red;");
+        dialogContent.getChildren().addAll(name, path, error);
+        dialog.getDialogPane().setContent(dialogContent);
+
+        ButtonType editButtonType = new ButtonType("Edit", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(editButtonType, ButtonType.CANCEL);
+        Button editButton = (Button) dialog.getDialogPane().lookupButton(editButtonType);
+
+        editButton.setOnAction(event -> {
+           replaceItemInDirectoryList(key, path.getText().trim(), name.getText().trim());
+        });
+
+        dialog.showAndWait();
+    }
+
+    private void removeDirectoryFromMenu(String key) {
+        directoryListInMenu.remove(key);
+    }
+
+    private void replaceItemInDirectoryList(String oldKey, String newKey, String newValue) {
+        LinkedHashMap<String, String> tempMap = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
+            if(entry.getKey().equals(oldKey)) {
+                tempMap.put(newKey, newValue);
+            } else {
+                tempMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        directoryListInMenu.clear();
+        directoryListInMenu.putAll(tempMap);
     }
 
     private File clipboardOfCopiedFile = null;
