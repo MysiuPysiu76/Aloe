@@ -1,8 +1,11 @@
 
+.navigate-button {
+
+}
+
 .prev-directory {
     -fx-background-radius: 4px 0 0 4px;
     -fx-border-radius: 4px 0 0 4px;
-    /*-fx-border-color: transparent;*/
 }
 
 .parent-directory {
@@ -21,9 +24,8 @@
 }
 
 .menu-option {
-    -fx-background-color: #f4f4f4;
-    -fx-border-color: #f4f4f4;
-    -fx-padding: 5px 13px;
+    -fx-background-color: transparent;
+    -fx-padding: 6px 13px;
     -fx-font-size: 13.5px;
     -fx-text-fill: #525252;
 }
@@ -34,4 +36,13 @@
 
 .file-box:hover {
     -fx-background-color: #d6d6d6;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-padding: 0;
+    -fx-pref-width: 12px;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-radius: 4;
 }

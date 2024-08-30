@@ -1,6 +1,8 @@
 package com.example.aloe;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -28,15 +30,24 @@ public class Main extends Application {
     private File currentDirectory = new File(System.getProperty("user.home"));
     private List<File> directoryHistory = new ArrayList<>();
     private ListView<String> filesList;
-    private final VBox filesBox = new VBox();
-    private final SplitPane filesPanel = new SplitPane();
-    private final ScrollPane filesPane = new ScrollPane();
-    private final VBox filesMenu = new VBox();
+
+    private HBox navigationPanel = new HBox();
+    private VBox filesBox = new VBox();
+    private SplitPane filesPanel = new SplitPane();
+    private ScrollPane filesMenu = new ScrollPane();
+    private ScrollPane filesPane = new ScrollPane();
+
+    private Scene scene;
+
+    private Button parrentDir = getNavigateParentButton();
 
     private int directoryHistoryPosition = -1;
     private boolean isGridView = true;
     private boolean isHiddenFilesShow = false;
     private boolean isMenuHidden = false;
+    private VBox root = new VBox();
+
+    FlowPane grid;
 
     public static void main(String[] args) {
         launch(args);
@@ -44,11 +55,20 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox root = new VBox();
-        HBox navigationPanel = new HBox();
+        root.getStyleClass().add("root");
+
+        scene = new Scene(root, 935, 500);
+
+        navigationPanel.getStyleClass().add("navigation-panel");
+        filesPanel.getStyleClass().add("navigation-panel");
+
+        filesPane.getStyleClass().add("files-pane");
+        filesPanel.getStyleClass().add("files-panel");
+        filesMenu.getStyleClass().add("files-menu");
 
         getDirectoryOptions();
         initDirectoryListInMenu();
+        filesPanel.setMinHeight(root.getHeight() - navigationPanel.getHeight());
 
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
@@ -64,6 +84,7 @@ public class Main extends Application {
 
         // Reload files list button
         Button reload = new Button("Reload");
+        reload.getStyleClass().add("reload-button");
         reload.setOnMouseClicked(event -> {
             loadDirectoryContents(currentDirectory, false);
         });
@@ -99,7 +120,17 @@ public class Main extends Application {
                 filesPanel.getItems().remove(filesMenu);
             }
             isMenuHidden = !isMenuHidden;
+        });
 
+        CheckBox darkMode = new CheckBox("Dark Mode");
+        darkMode.setOnAction(event -> {
+            if(darkMode.isSelected()) {
+                darkMode.setText("Light Mode");
+                scene.getStylesheets().add(getClass().getResource("/css/style_dark.css").toExternalForm());
+            } else {
+                darkMode.setText("Dark Mode");
+                scene.getStylesheets().remove(getClass().getResource("/css/style_dark.css").toExternalForm());
+            }
         });
 
         filesPanel.setDividerPositions(0.2);
@@ -107,37 +138,42 @@ public class Main extends Application {
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
 
-        navigationPanel.getChildren().addAll(getNavigatePrevButton(), getNavigateParentButton(), getNavigateNextButton(), reload, showHiddenFiles, changeDisplay, showFilesMenu);
+        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), reload, showHiddenFiles, changeDisplay, showFilesMenu, darkMode);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
 
         loadDirectoryContents(currentDirectory, true);
 
-        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
-            filesPanel.setMinHeight(stage.getHeight());
-        });
-
         HBox.setMargin(reload, new Insets(5, 15, 5, 15));
 
-        Scene scene = new Scene(root, 935, 550);
+        root.heightProperty().addListener((observable, oldValue, newValue) -> {
+            filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
+        });
+
+//        root.widthProperty().addListener((observable, oldValue, newValue) -> {
+//            grid.setMinHeight(grid.getHeight() + 65);
+//            grid.setMaxHeight(grid.getHeight() + 75);
+//        });
+
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
         stage.setTitle("Files");
-        stage.setScene(scene);
         stage.setMinHeight(350);
         stage.setMinWidth(700);
+        stage.setScene(scene);
         stage.show();
     }
 
     private Button getNavigateNextButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip("Next Directory");
+        Tooltip tooltip = new Tooltip("Next Folder");
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getRightArrow());
         button.setPadding(new Insets(7, 13, 10, 10));
-        button.getStyleClass().add("next-directory");
+        button.getStyleClass().addAll("next-directory", "navigate-button");
 
         button.setOnMouseClicked(event -> {
             if (directoryHistoryPosition < directoryHistory.size() - 1) {
@@ -155,13 +191,13 @@ public class Main extends Application {
 
     private Button getNavigatePrevButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip("Prev Directory");
+        Tooltip tooltip = new Tooltip("Prev Folder");
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getLeftArrow());
         button.setPadding(new Insets(7, 13, 10, 10));
-        button.getStyleClass().add("prev-directory");
+        button.getStyleClass().addAll("prev-directory", "navigate-button");
 
         button.setOnMouseClicked(event -> {
             if (directoryHistoryPosition > 0) {
@@ -179,13 +215,13 @@ public class Main extends Application {
 
     private Button getNavigateParentButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip("Parent Directory");
+        Tooltip tooltip = new Tooltip("Parent Folder");
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getTopArrow());
         button.setPadding(new Insets(9, 11, 9, 8));
-        button.getStyleClass().add("parent-directory");
+        button.getStyleClass().addAll("parent-directory", "navigate-button");
 
         button.setOnMouseClicked(event -> {
             getParentDirectory();
@@ -198,22 +234,11 @@ public class Main extends Application {
         return button;
     }
 
-    private void adjustSpacing(FlowPane grid, double width) {
-        int elementWidth = 90;
-        int gap = 20;
-
-        int elementsInRow = (int) (width / (elementWidth + gap));
-        if (elementsInRow > 0) {
-            double totalElementWidth = elementsInRow * elementWidth + (elementsInRow - 1) * gap;
-            double remainingSpace = width - totalElementWidth;
-
-            if (elementsInRow == 1) {
-                grid.setPadding(new Insets(10, remainingSpace / 2, 10, remainingSpace / 2));
-            } else {
-                grid.setPadding(new Insets(10, 0, 10, 0));
-            }
+    private void checkParentDirectory() {
+        if (currentDirectory.getPath() == "/") {
+            parrentDir.setDisable(true);
         } else {
-            grid.setPadding(new Insets(10));
+            parrentDir.setDisable(false);
         }
     }
 
@@ -221,14 +246,16 @@ public class Main extends Application {
         currentDirectory = directory;
         filesPane.setVvalue(0);
 
-        FlowPane grid = new FlowPane();
-        grid.setPadding(new Insets(10, 10, 100, 10));
+        checkParentDirectory();
 
-        // Clear previous contents to avoid duplication
-        filesBox.getChildren().clear();
+        grid = new FlowPane();
+        grid.setPadding(new Insets(5));
+        grid.getStyleClass().add("files-grid");
+        filesPane.setPadding(new Insets(5, 10, 10, 10));
+        FlowPane.setMargin(grid, new Insets(5, 10, 10, 10));
+
         filesList.getItems().clear();
 
-        // Add directory to history
         if (addToHistory) {
             if (directoryHistoryPosition != directoryHistory.size() - 1) {
                 directoryHistory = new ArrayList<>(directoryHistory.subList(0, directoryHistoryPosition + 1));
@@ -282,28 +309,42 @@ public class Main extends Application {
 
                 filesPane.setFitToWidth(true);
                 filesPane.setContent(grid);
+                filesPane.getStyleClass().add("files-pane");
+
+                heightListener = new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                        grid.setMinHeight(grid.getHeight() + 65);
+                        grid.setMaxHeight(grid.getHeight() + 75);
+                        grid.heightProperty().removeListener(heightListener);
+                    }
+                };
+
+                grid.heightProperty().addListener(heightListener);
             } else {
                 filesList.getItems().addAll(directories);
                 filesList.getItems().addAll(normalFiles);
                 filesBox.getChildren().add(filesList);
                 filesPane.setContent(filesBox);
+
+                filesList.setOnMouseClicked(event -> {
+                    if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                        String selectedItem = filesList.getSelectionModel().getSelectedItem();
+                        if (selectedItem != null) {
+                            File selectedFile = new File(currentDirectory, selectedItem);
+                            if (selectedFile.isDirectory()) {
+                                loadDirectoryContents(selectedFile, true);
+                            } else {
+                                openFileInBackground(selectedFile);
+                            }
+                        }
+                    }
+                });
             }
         }
-
-        filesList.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                String selectedItem = filesList.getSelectionModel().getSelectedItem();
-                if (selectedItem != null) {
-                    File selectedFile = new File(currentDirectory, selectedItem);
-                    if (selectedFile.isDirectory()) {
-                        loadDirectoryContents(selectedFile, true);
-                    } else {
-                        openFileInBackground(selectedFile);
-                    }
-                }
-            }
-        });
     }
+
+    ChangeListener<Number> heightListener;
 
     private VBox createFileBox(String name, boolean isDirectory) {
         VBox fileBox = new VBox();
@@ -600,12 +641,13 @@ public class Main extends Application {
     }
 
     private void loadDirectoryListInMenu() {
-        filesMenu.getChildren().clear();
+        VBox containers = new VBox();
+        filesMenu.getStyleClass().add("menu");
         for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
             Button button = new Button(entry.getValue());
             button.getStyleClass().add("menu-option");
             button.setAlignment(Pos.CENTER_LEFT);
-            button.setPrefWidth(filesMenu.getWidth());
+            button.setPrefWidth(filesMenu.getHeight());
             getMenuItemsOptions(button, entry.getKey(), entry.getValue());
             button.setOnMouseClicked(event -> {
                 if(event.getButton() == MouseButton.PRIMARY) {
@@ -615,8 +657,9 @@ public class Main extends Application {
             filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {
                 button.setMinWidth(newValue.doubleValue());
             });
-            filesMenu.getChildren().add(button);
+            containers.getChildren().add(button);
         }
+        filesMenu.setContent(containers);
     }
 
     private void getMenuItemsOptions(Node item, String key, String value) {
