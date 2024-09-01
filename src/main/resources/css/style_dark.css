@@ -72,3 +72,16 @@
     -fx-background-color: #353535;
     -fx-background-radius: 4;
 }
+
+.context-menu {
+    -fx-background-color: #424141;
+}
+
+.context-menu-item {
+    -fx-text-fill: #e6e6e6;
+}
+
+
+.menu-item .label {
+    -fx-text-fill: #eee;
+}

@@ -67,6 +67,7 @@ public class Main extends Application {
         filesMenu.getStyleClass().add("files-menu");
 
         getDirectoryOptions();
+        getMenuOptions();
         initDirectoryListInMenu();
         filesPanel.setMinHeight(root.getHeight() - navigationPanel.getHeight());
 
@@ -674,15 +675,65 @@ public class Main extends Application {
             loadDirectoryListInMenu();
         });
         MenuItem remove = new MenuItem("Remove");
-        contextMenu.getItems().addAll(open, edit, remove);
         remove.setOnAction(event -> {
             removeDirectoryFromMenu(key);
             loadDirectoryListInMenu();
         });
+        contextMenu.getItems().addAll(open, edit, remove);
         item.setOnContextMenuRequested(event -> {
             contextMenu.show(item, event.getScreenX(), event.getScreenY());
+            menuOptions.hide();
             event.consume();
         });
+    }
+
+    ContextMenu menuOptions = new ContextMenu();
+
+    private void getMenuOptions() {
+        menuOptions.getItems().clear();
+        MenuItem add = new MenuItem("Add");
+        add.setOnAction(event -> {
+            addDirectoryInMenu();
+            loadDirectoryListInMenu();
+        });
+        menuOptions.getItems().add(add);
+        filesMenu.setOnContextMenuRequested(event -> {
+            menuOptions.show(filesMenu, event.getScreenX(), event.getScreenY());
+        });
+        filesMenu.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                menuOptions.hide();
+            }
+        });
+    }
+
+    private void addDirectoryInMenu() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Add Directory");
+
+        VBox dialogContent = new VBox();
+        dialogContent.setPadding(new Insets(5));
+        TextField name = new TextField("Name");
+        TextField path = new TextField("/path/to/directory");
+        Label error = new Label();
+        error.setStyle("-fx-text-fill: red;");
+        dialogContent.getChildren().addAll(name, path, error);
+        dialog.getDialogPane().setContent(dialogContent);
+
+        ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+        Button addButton = (Button) dialog.getDialogPane().lookupButton(addButtonType);
+
+        addButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            addDirectoryListInMenu(path.getText(), name.getText());
+        });
+
+        dialog.showAndWait();
+    }
+
+    private void addDirectoryListInMenu(String key, String value) {
+        directoryListInMenu.put(key, value);
+        loadDirectoryListInMenu();
     }
 
     private void editDirectoryInMenu(String key, String value) {
