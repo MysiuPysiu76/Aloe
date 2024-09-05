@@ -1,0 +1,20 @@
+{
+  "root.title": "Pliki",
+  "context-menu.open": "Otwórz",
+  "context-menu.add": "Dodaj",
+  "context-menu.delete": "Usuń",
+  "context-menu.copy": "Kopiuj",
+  "context-menu.paste": "Wklej",
+  "context-menu.edit": "Edytuj",
+  "context-menu.remove": "Usuń",
+  "context-menu.new-file": "Nowy Plik",
+  "context-menu.new-folder": "Nowy Folder",
+  "context-menu.rename": "Zmień nazwę",
+  "tooltip.navigate-next": "Następny Katalog",
+  "tooltip.navigate-parent": "Katalog Nadrzędny",
+  "tooltip.navigate-prev": "Poprzedni Katalog",
+  "navigate.reload": "Odśwież",
+  "navigate.dark-mode": "Tryb Ciemny",
+  "navigate.light-mode": "Tryb Jasny",
+  "navigate.hidden-files": "Ukryte pliki"
+}

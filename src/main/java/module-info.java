@@ -12,6 +12,7 @@ module com.example.aloe {
     requires com.almasb.fxgl.all;
     requires java.desktop;
     requires annotations;
+    requires com.fasterxml.jackson.databind;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;

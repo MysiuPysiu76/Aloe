@@ -47,7 +47,7 @@ public class Main extends Application {
     private boolean isMenuHidden = false;
     private VBox root = new VBox();
 
-    FlowPane grid;
+    private FlowPane grid;
 
     public static void main(String[] args) {
         launch(args);
@@ -83,22 +83,6 @@ public class Main extends Application {
 
         SplitPane.setResizableWithParent(filesMenu, false);
 
-        // Reload files list button
-        Button reload = new Button("Reload");
-        reload.getStyleClass().add("reload-button");
-        reload.setOnMouseClicked(event -> {
-            loadDirectoryContents(currentDirectory, false);
-        });
-        reload.setPadding(new Insets(5, 10, 5, 10));
-
-        // Show hidden files button
-        CheckBox showHiddenFiles = new CheckBox("Hidden files");
-        showHiddenFiles.setSelected(false);
-        showHiddenFiles.setOnAction(event -> {
-            isHiddenFilesShow = !isHiddenFilesShow;
-            refreshCurrentDirectory();
-        });
-
         // Change display to grid or list
         Button changeDisplay = new Button("List");
         changeDisplay.setOnMouseClicked(event -> {
@@ -123,14 +107,14 @@ public class Main extends Application {
             isMenuHidden = !isMenuHidden;
         });
 
-        CheckBox darkMode = new CheckBox("Dark Mode");
+        CheckBox darkMode = new CheckBox(Translator.translate("navigate.dark-mode"));
         darkMode.setOnAction(event -> {
             if(darkMode.isSelected()) {
-                darkMode.setText("Light Mode");
-                scene.getStylesheets().add(getClass().getResource("/css/style_dark.css").toExternalForm());
+                darkMode.setText(Translator.translate("navigate.light-mode"));
+                scene.getStylesheets().add(getClass().getResource("/assets/css/style_dark.css").toExternalForm());
             } else {
-                darkMode.setText("Dark Mode");
-                scene.getStylesheets().remove(getClass().getResource("/css/style_dark.css").toExternalForm());
+                darkMode.setText(Translator.translate("navigate.dark-mode"));
+                scene.getStylesheets().remove(getClass().getResource("/assets/css/style_dark.css").toExternalForm());
             }
         });
 
@@ -139,14 +123,13 @@ public class Main extends Application {
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
 
-        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), reload, showHiddenFiles, changeDisplay, showFilesMenu, darkMode);
+        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), getShowHiddenFilesButton(), changeDisplay, showFilesMenu, darkMode);
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
 
         loadDirectoryContents(currentDirectory, true);
 
-        HBox.setMargin(reload, new Insets(5, 15, 5, 15));
 
         root.heightProperty().addListener((observable, oldValue, newValue) -> {
             filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
@@ -157,9 +140,9 @@ public class Main extends Application {
 //            grid.setMaxHeight(grid.getHeight() + 75);
 //        });
 
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/css/style.css").toExternalForm());
 
-        stage.setTitle("Files");
+        stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
         stage.setMinWidth(700);
         stage.setScene(scene);
@@ -168,7 +151,7 @@ public class Main extends Application {
 
     private Button getNavigateNextButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip("Next Folder");
+        Tooltip tooltip = new Tooltip(Translator.translate("tooltip.navigate-next"));
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
@@ -183,16 +166,33 @@ public class Main extends Application {
             }
         });
 
-        tooltip.setShowDelay(Duration.seconds(1));
-        tooltip.setHideDelay(Duration.seconds(10));
-        button.setOnMouseExited(event -> tooltip.hide());
-
         return button;
+    }
+
+    private Button getReloadButton() {
+        Button reload = new Button(Translator.translate("navigate.reload"));
+        reload.getStyleClass().add("reload-button");
+        reload.setOnMouseClicked(event -> {
+            loadDirectoryContents(currentDirectory, false);
+        });
+        reload.setPadding(new Insets(5, 10, 5, 10));
+        HBox.setMargin(reload, new Insets(5, 15, 5, 15));
+        return reload;
+    }
+
+    private CheckBox getShowHiddenFilesButton() {
+        CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
+        showHiddenFiles.setSelected(false);
+        showHiddenFiles.setOnAction(event -> {
+            isHiddenFilesShow = !isHiddenFilesShow;
+            refreshCurrentDirectory();
+        });
+        return showHiddenFiles;
     }
 
     private Button getNavigatePrevButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip("Prev Folder");
+        Tooltip tooltip = new Tooltip(Translator.translate("tooltip.navigate-prev"));
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
@@ -207,16 +207,12 @@ public class Main extends Application {
             }
         });
 
-        tooltip.setShowDelay(Duration.seconds(1));
-        tooltip.setHideDelay(Duration.seconds(10));
-        button.setOnMouseExited(event -> tooltip.hide());
-
         return button;
     }
 
     private Button getNavigateParentButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip("Parent Folder");
+        Tooltip tooltip = new Tooltip(Translator.translate("tooltip.navigate-parent"));
 
         button.setTooltip(tooltip);
         button.setAlignment(Pos.CENTER);
@@ -227,10 +223,6 @@ public class Main extends Application {
         button.setOnMouseClicked(event -> {
             getParentDirectory();
         });
-
-        tooltip.setShowDelay(Duration.seconds(1));
-        tooltip.setHideDelay(Duration.seconds(10));
-        button.setOnMouseExited(event -> tooltip.hide());
 
         return button;
     }
@@ -359,9 +351,9 @@ public class Main extends Application {
 
         ImageView icon = new ImageView();
         if (isDirectory) {
-            icon.setImage(new Image(getClass().getResourceAsStream("/icons/folder.png")));
+            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         } else {
-            icon.setImage(new Image(getClass().getResourceAsStream("/icons/file.png")));
+            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
         }
         icon.setFitHeight(60);
         icon.setFitWidth(60);
@@ -423,17 +415,17 @@ public class Main extends Application {
 
     private void getDirectoryOptions() {
         directoryMenu.getItems().clear();
-        MenuItem newDirectory = new MenuItem("New Folder");
+        MenuItem newDirectory = new MenuItem(Translator.translate("context-menu.new-folder"));
         newDirectory.setOnAction(event -> {
            createDirectory();
            refreshCurrentDirectory();
         });
-        MenuItem newFile = new MenuItem("New file");
+        MenuItem newFile = new MenuItem(Translator.translate("context-menu.new-file"));
         newFile.setOnAction(event -> {
            createFile();
            refreshCurrentDirectory();
         });
-        MenuItem paste = new MenuItem("Paste");
+        MenuItem paste = new MenuItem(Translator.translate("context-menu.paste"));
         paste.setOnAction(event -> {
             try {
                 pasteFile();
@@ -451,24 +443,24 @@ public class Main extends Application {
 
     private void getFileOptions(Node item, String fileName) {
         ContextMenu fileMenu = new ContextMenu();
-        MenuItem open = new MenuItem("Open");
+        MenuItem open = new MenuItem(Translator.translate("context-menu.open"));
         open.setOnAction(event -> {
             openFileInOptions(new File(currentDirectory, fileName));
         });
 
-        MenuItem copy = new MenuItem("Copy");
+        MenuItem copy = new MenuItem(Translator.translate("context-menu.copy"));
         copy.setOnAction(event -> {
            copyFile(new File(currentDirectory, fileName));
            refreshCurrentDirectory();
         });
 
-        MenuItem rename = new MenuItem("Rename");
+        MenuItem rename = new MenuItem(Translator.translate("context-menu.rename"));
         rename.setOnAction(event -> {
             renameFile(new File(currentDirectory, fileName));
             refreshCurrentDirectory();
         });
 
-        MenuItem delete = new MenuItem("Delete");
+        MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             deleteFile(new File(currentDirectory, fileName));
            refreshCurrentDirectory();
@@ -665,16 +657,16 @@ public class Main extends Application {
 
     private void getMenuItemsOptions(Node item, String key, String value) {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem open = new MenuItem("Open");
+        MenuItem open = new MenuItem(Translator.translate("context-menu.open"));
         open.setOnAction(event -> {
             loadDirectoryContents(new File(key), true);
         });
-        MenuItem edit = new MenuItem("Edit");
+        MenuItem edit = new MenuItem(Translator.translate("context-menu.edit"));
         edit.setOnAction(event -> {
             editDirectoryInMenu(key, value);
             loadDirectoryListInMenu();
         });
-        MenuItem remove = new MenuItem("Remove");
+        MenuItem remove = new MenuItem(Translator.translate("context-menu.remove"));
         remove.setOnAction(event -> {
             removeDirectoryFromMenu(key);
             loadDirectoryListInMenu();
@@ -691,7 +683,7 @@ public class Main extends Application {
 
     private void getMenuOptions() {
         menuOptions.getItems().clear();
-        MenuItem add = new MenuItem("Add");
+        MenuItem add = new MenuItem(Translator.translate("context-menu.add"));
         add.setOnAction(event -> {
             addDirectoryInMenu();
             loadDirectoryListInMenu();

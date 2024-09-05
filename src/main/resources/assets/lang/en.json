@@ -1,0 +1,20 @@
+{
+  "root.title": "Files",
+  "context-menu.open": "Open",
+  "context-menu.add": "Add",
+  "context-menu.delete": "Delete",
+  "context-menu.copy": "Copy",
+  "context-menu.paste": "Paste",
+  "context-menu.edit": "Edit",
+  "context-menu.remove": "Remove",
+  "context-menu.new-file": "New File",
+  "context-menu.new-folder": "New Folder",
+  "context-menu.rename": "Rename",
+  "tooltip.navigate-next": "Next Directory",
+  "tooltip.navigate-parent": "Parent Directory",
+  "tooltip.navigate-prev": "Previous Directory",
+  "navigate.reload": "Refresh",
+  "navigate.dark-mode": "Dark Mode",
+  "navigate.light-mode": "Light Mode",
+  "navigate.hidden-files": "Hidden files"
+}
