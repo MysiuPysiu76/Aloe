@@ -14,8 +14,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import org.controlsfx.control.PopOver;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -36,7 +38,6 @@ public class Main extends Application {
     private SplitPane filesPanel = new SplitPane();
     private ScrollPane filesMenu = new ScrollPane();
     private ScrollPane filesPane = new ScrollPane();
-
     private Scene scene;
 
     private Button parrentDir = getNavigateParentButton();
@@ -123,13 +124,15 @@ public class Main extends Application {
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
 
-        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), getShowHiddenFilesButton(), changeDisplay, showFilesMenu, darkMode);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         filesList = new ListView<>();
 
         loadDirectoryContents(currentDirectory, true);
-
 
         root.heightProperty().addListener((observable, oldValue, newValue) -> {
             filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
@@ -165,7 +168,6 @@ public class Main extends Application {
                 loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
             }
         });
-
         return button;
     }
 
@@ -182,12 +184,41 @@ public class Main extends Application {
 
     private CheckBox getShowHiddenFilesButton() {
         CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
+        VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
         showHiddenFiles.setSelected(false);
         showHiddenFiles.setOnAction(event -> {
             isHiddenFilesShow = !isHiddenFilesShow;
             refreshCurrentDirectory();
         });
         return showHiddenFiles;
+    }
+
+    private Button getNavigateOptionsButton() {
+        PopOver popOver = new PopOver();
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        popOver.setDetachable(false);
+        popOver.setDetachable(true);
+        VBox container = new VBox(getShowHiddenFilesButton());
+        popOver.setContentNode(container);
+        Button button = new Button("options");
+        HBox.setMargin(button, new Insets(5, 10, 5, 10));
+//        button.setGraphic(ArrowLoader.getRightArrow());
+        button.setOnMouseClicked(event -> {
+            if (popOver.isShowing()) {
+                popOver.hide();
+            } else {
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+                popOver.show(button);
+            }
+        });
+
+        return button;
     }
 
     private Button getNavigatePrevButton() {
@@ -206,7 +237,6 @@ public class Main extends Application {
                 loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
             }
         });
-
         return button;
     }
 
