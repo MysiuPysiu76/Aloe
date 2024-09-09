@@ -1,0 +1,18 @@
+
+.about-name {
+    -fx-font-weight: 700;
+}
+
+.about-version {
+    -fx-font-weight: 600;
+    -fx-padding: 5px;
+}
+
+.about-description {
+    -fx-padding: 10px 5px 10px 5px;
+}
+
+.about-warranty {
+    -fx-padding: 10px 0 0 7px;
+    -fx-text-alignment: center;
+}

@@ -14,9 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.controlsfx.control.PopOver;
 
 import java.awt.Desktop;
@@ -198,11 +197,14 @@ public class Main extends Application {
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         popOver.setDetachable(false);
         popOver.setDetachable(true);
-        VBox container = new VBox(getShowHiddenFilesButton());
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        Button aboutButton = new Button(Translator.translate("navigate.about-button"));
+        aboutButton.setOnMouseClicked(e -> openWindowButton());
+        container.getChildren().addAll(getShowHiddenFilesButton(), aboutButton);
         popOver.setContentNode(container);
         Button button = new Button("options");
         HBox.setMargin(button, new Insets(5, 10, 5, 10));
-//        button.setGraphic(ArrowLoader.getRightArrow());
         button.setOnMouseClicked(event -> {
             if (popOver.isShowing()) {
                 popOver.hide();
@@ -219,6 +221,50 @@ public class Main extends Application {
         });
 
         return button;
+    }
+
+    private void openWindowButton() {
+        Stage window = new Stage();
+        window.setResizable(false);
+        window.initStyle(StageStyle.UNIFIED);
+
+        VBox container = new VBox();
+        container.setAlignment(Pos.TOP_CENTER);
+
+        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
+        icon.setFitHeight(120);
+        icon.setFitWidth(120);
+        VBox.setMargin(icon, new Insets(25, 10, 25, 10));
+
+        Label name = new Label("Aloe");
+        name.getStyleClass().add("about-name");
+        name.setPadding(new Insets(25, 10, 5, 10));
+
+        Label version = new Label("0.2.7");
+        version.getStyleClass().add("about-version");
+
+        Label description = new Label(Translator.translate("window.about.description"));
+        description.getStyleClass().add("about-description");
+
+        Hyperlink link = new Hyperlink(Translator.translate("window.about.website"));
+        link.setOnAction(event -> {
+            getHostServices().showDocument("https://github.com/Meiroth73/Aloe");
+        });
+
+        Label warranty = new Label(Translator.translate("window.about.warranty"));
+        warranty.setTextOverrun(OverrunStyle.CLIP);
+        warranty.setMaxWidth(250);
+        warranty.setAlignment(Pos.CENTER);
+        warranty.getStyleClass().add("about-warranty");
+        warranty.setWrapText(true);
+
+        container.getChildren().addAll(icon, name, version, description, link, warranty);
+
+        Scene scene = new Scene(container, 300  , 370);
+        scene.getStylesheets().add(getClass().getResource("/assets/css/style_about.css").toExternalForm());
+        window.setScene(scene);
+        window.setTitle(Translator.translate("window.about.title"));
+        window.show();
     }
 
     private Button getNavigatePrevButton() {

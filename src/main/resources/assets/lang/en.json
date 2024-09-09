@@ -16,5 +16,10 @@
   "navigate.reload": "Refresh",
   "navigate.dark-mode": "Dark Mode",
   "navigate.light-mode": "Light Mode",
-  "navigate.hidden-files": "Hidden files"
+  "navigate.hidden-files": "Hidden files",
+  "navigate.about-button": "About Files",
+  "window.about.title": "About Aloe",
+  "window.about.description": "Access and organise your files",
+  "window.about.website": "Project Website",
+  "window.about.warranty": "This program comes with absolutely no warranty."
 }

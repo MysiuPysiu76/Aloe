@@ -120,9 +120,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
-
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
