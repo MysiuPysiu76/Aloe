@@ -1,4 +1,8 @@
 
+.text-center {
+    -fx-text-alignment: center;
+}
+
 .about-name {
     -fx-font-weight: 700;
 }
@@ -14,5 +18,4 @@
 
 .about-warranty {
     -fx-padding: 10px 0 0 7px;
-    -fx-text-alignment: center;
 }

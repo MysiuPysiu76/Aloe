@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.controlsfx.control.PopOver;
+import org.controlsfx.control.SegmentedButton;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -229,8 +230,37 @@ public class Main extends Application {
         window.initStyle(StageStyle.UNIFIED);
 
         VBox container = new VBox();
-        container.setAlignment(Pos.TOP_CENTER);
+        VBox aboutContainer = getAboutContainer();
+        VBox creatorContainer = getCreatorContainer();
 
+
+        ToggleButton aboutButton = new ToggleButton(Translator.translate("window.about.about"));
+        aboutButton.setSelected(true);
+        aboutButton.setMinWidth(150);
+
+        ToggleButton creatorButton = new ToggleButton(Translator.translate("window.about.creator"));
+        creatorButton.setMinWidth(150);
+
+        SegmentedButton switchButtons = new SegmentedButton(aboutButton, creatorButton);
+        container.getChildren().addAll(switchButtons, aboutContainer);
+        creatorButton.setOnMouseClicked(event -> {
+            container.getChildren().clear();
+            container.getChildren().addAll(switchButtons, creatorContainer);
+        });
+        aboutButton.setOnMouseClicked(event -> {
+            container.getChildren().clear();
+            container.getChildren().addAll(switchButtons, aboutContainer);
+        });
+
+        Scene scene = new Scene(container, 300  , 390);
+        scene.getStylesheets().add(getClass().getResource("/assets/css/style_about.css").toExternalForm());
+        window.setScene(scene);
+        window.setTitle(Translator.translate("window.about.title"));
+        window.show();
+    }
+
+    private VBox getAboutContainer() {
+        VBox aboutContainer = new VBox();
         ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         icon.setFitHeight(120);
         icon.setFitWidth(120);
@@ -240,7 +270,7 @@ public class Main extends Application {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.2.7");
+        Label version = new Label("0.2.8");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -255,16 +285,51 @@ public class Main extends Application {
         warranty.setTextOverrun(OverrunStyle.CLIP);
         warranty.setMaxWidth(250);
         warranty.setAlignment(Pos.CENTER);
-        warranty.getStyleClass().add("about-warranty");
+        warranty.getStyleClass().addAll("about-warranty", "text-center");
         warranty.setWrapText(true);
 
-        container.getChildren().addAll(icon, name, version, description, link, warranty);
+        aboutContainer.getChildren().addAll(icon, name, version, description, link, warranty);
+        aboutContainer.setAlignment(Pos.TOP_CENTER);
+        return aboutContainer;
+    }
 
-        Scene scene = new Scene(container, 300  , 370);
-        scene.getStylesheets().add(getClass().getResource("/assets/css/style_about.css").toExternalForm());
-        window.setScene(scene);
-        window.setTitle(Translator.translate("window.about.title"));
-        window.show();
+    private VBox getCreatorContainer() {
+        VBox creatorContainer = new VBox();
+
+        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
+        icon.setFitHeight(100);
+        icon.setFitWidth(100);
+        VBox.setMargin(icon, new Insets(25, 10, 25, 10));
+
+        Label name = new Label("Aloe");
+        name.getStyleClass().add("about-name");
+        name.setPadding(new Insets(25, 10, 5, 10));
+
+        Label inspiration = new Label(Translator.translate("window.about.inspiration"));
+        inspiration.setPadding(new Insets(25, 10, 10, 10));
+        inspiration.setTextOverrun(OverrunStyle.CLIP);
+        inspiration.setMaxWidth(250);
+        inspiration.setAlignment(Pos.CENTER);
+        inspiration.getStyleClass().add("text-center");
+        inspiration.setWrapText(true);
+
+        Hyperlink linkCreator = new Hyperlink(Translator.translate("window.about.creator-website"));
+        linkCreator.getStyleClass().add("text-center");
+        linkCreator.setPadding(new Insets(5, 10, 10, 10));
+        linkCreator.setOnAction(event -> {
+           getHostServices().showDocument("https://github.com/Meiroth73");
+        });
+
+        Label usedIcons = new Label(Translator.translate("window.about.used-icons"));
+
+        Hyperlink linkIcons = new Hyperlink("Flaticon");
+        linkIcons.setOnAction(event -> {
+            getHostServices().showDocument("https://www.flaticon.com/");
+        });
+
+        creatorContainer.getChildren().addAll(icon, name, inspiration, linkCreator, usedIcons, linkIcons);
+        creatorContainer.setAlignment(Pos.TOP_CENTER);
+        return creatorContainer;
     }
 
     private Button getNavigatePrevButton() {
@@ -304,7 +369,7 @@ public class Main extends Application {
     }
 
     private void checkParentDirectory() {
-        if (currentDirectory.getPath() == "/") {
+        if (currentDirectory.getPath().equals("/")) {
             parrentDir.setDisable(true);
         } else {
             parrentDir.setDisable(false);
