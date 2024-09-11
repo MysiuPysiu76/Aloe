@@ -6,28 +6,20 @@ import javafx.scene.shape.Line;
 public class ArrowLoader {
 
     public static Pane getTopArrow() {
-        Line line1 = new Line(5, 10, 10, 5);
-        Line line2 = new Line(10, 5, 15, 10);
-
-        line1.getStyleClass().add("arrow-line");
-        line2.getStyleClass().add("arrow-line");
-
-        return new Pane(line1, line2);
+        return ArrowLoader.createArrow(5, 10, 10, 5, 10, 5, 15, 10);
     }
 
     public static Pane getRightArrow() {
-        Line line1 = new Line(5, 5, 10, 10);
-        Line line2 = new Line(10, 10, 5, 15);
-
-        line1.getStyleClass().add("arrow-line");
-        line2.getStyleClass().add("arrow-line");
-
-        return new Pane(line1, line2);
+        return ArrowLoader.createArrow(5, 5, 10, 10, 10, 10, 5, 15);
     }
 
     public static Pane getLeftArrow() {
-        Line line1 = new Line(10, 5, 5, 10);
-        Line line2 = new Line(5, 10, 10, 15);
+        return ArrowLoader.createArrow(10, 5, 5, 10, 5, 10, 10, 15);
+    }
+
+    private static Pane createArrow(double v1, double v2, double v3, double v4, double v5, double v6, double v7, double v8) {
+        Line line1 = new Line(v1, v2, v3, v4);
+        Line line2 = new Line(v5, v6, v7, v8);
 
         line1.getStyleClass().add("arrow-line");
         line2.getStyleClass().add("arrow-line");

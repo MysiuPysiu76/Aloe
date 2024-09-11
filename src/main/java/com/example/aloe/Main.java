@@ -79,9 +79,7 @@ public class Main extends Application {
         });
 
         filesPanel.getItems().addAll(filesMenu, filesPane);
-
         navigationPanel.setPadding(new Insets(6));
-
         SplitPane.setResizableWithParent(filesMenu, false);
 
         // Change display to grid or list
@@ -138,11 +136,6 @@ public class Main extends Application {
             filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
         });
 
-//        root.widthProperty().addListener((observable, oldValue, newValue) -> {
-//            grid.setMinHeight(grid.getHeight() + 65);
-//            grid.setMaxHeight(grid.getHeight() + 75);
-//        });
-
         scene.getStylesheets().add(getClass().getResource("/assets/css/style.css").toExternalForm());
 
         stage.setTitle(Translator.translate("root.title"));
@@ -154,9 +147,7 @@ public class Main extends Application {
 
     private Button getNavigateNextButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip(Translator.translate("tooltip.navigate-next"));
-
-        button.setTooltip(tooltip);
+        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-next")));
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getRightArrow());
         button.setPadding(new Insets(7, 13, 10, 10));
@@ -230,10 +221,16 @@ public class Main extends Application {
         window.initStyle(StageStyle.UNIFIED);
 
         VBox container = new VBox();
-        VBox aboutContainer = getAboutContainer();
-        VBox creatorContainer = getCreatorContainer();
+        container.getChildren().addAll(getSegmentedButtons(container, getAboutContainer(), getCreatorContainer()), getAboutContainer());
 
+        Scene scene = new Scene(container, 300  , 390);
+        scene.getStylesheets().add(getClass().getResource("/assets/css/style_about.css").toExternalForm());
+        window.setScene(scene);
+        window.setTitle(Translator.translate("window.about.title"));
+        window.show();
+    }
 
+    private SegmentedButton getSegmentedButtons(VBox container, VBox aboutContainer, VBox creatorContainer) {
         ToggleButton aboutButton = new ToggleButton(Translator.translate("window.about.about"));
         aboutButton.setSelected(true);
         aboutButton.setMinWidth(150);
@@ -241,22 +238,18 @@ public class Main extends Application {
         ToggleButton creatorButton = new ToggleButton(Translator.translate("window.about.creator"));
         creatorButton.setMinWidth(150);
 
-        SegmentedButton switchButtons = new SegmentedButton(aboutButton, creatorButton);
-        container.getChildren().addAll(switchButtons, aboutContainer);
-        creatorButton.setOnMouseClicked(event -> {
-            container.getChildren().clear();
-            container.getChildren().addAll(switchButtons, creatorContainer);
-        });
+        SegmentedButton segmentedButton = new SegmentedButton(aboutButton, creatorButton);
+
         aboutButton.setOnMouseClicked(event -> {
             container.getChildren().clear();
-            container.getChildren().addAll(switchButtons, aboutContainer);
+            container.getChildren().addAll(segmentedButton, aboutContainer);
+        });
+        creatorButton.setOnMouseClicked(event -> {
+            container.getChildren().clear();
+            container.getChildren().addAll(segmentedButton, creatorContainer);
         });
 
-        Scene scene = new Scene(container, 300  , 390);
-        scene.getStylesheets().add(getClass().getResource("/assets/css/style_about.css").toExternalForm());
-        window.setScene(scene);
-        window.setTitle(Translator.translate("window.about.title"));
-        window.show();
+        return segmentedButton;
     }
 
     private VBox getAboutContainer() {
@@ -270,7 +263,7 @@ public class Main extends Application {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.2.8");
+        Label version = new Label("0.3.0");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -295,7 +288,6 @@ public class Main extends Application {
 
     private VBox getCreatorContainer() {
         VBox creatorContainer = new VBox();
-
         ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
         icon.setFitHeight(100);
         icon.setFitWidth(100);
@@ -334,9 +326,7 @@ public class Main extends Application {
 
     private Button getNavigatePrevButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip(Translator.translate("tooltip.navigate-prev"));
-
-        button.setTooltip(tooltip);
+        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-prev")));
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getLeftArrow());
         button.setPadding(new Insets(7, 13, 10, 10));
@@ -353,9 +343,7 @@ public class Main extends Application {
 
     private Button getNavigateParentButton() {
         Button button = new Button();
-        Tooltip tooltip = new Tooltip(Translator.translate("tooltip.navigate-parent"));
-
-        button.setTooltip(tooltip);
+        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-parent")));
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getTopArrow());
         button.setPadding(new Insets(9, 11, 9, 8));
