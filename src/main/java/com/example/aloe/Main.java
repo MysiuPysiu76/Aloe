@@ -3,7 +3,6 @@ package com.example.aloe;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,17 +18,12 @@ import javafx.stage.StageStyle;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SegmentedButton;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class Main extends Application {
 
-    private File currentDirectory = new File(System.getProperty("user.home"));
     private List<File> directoryHistory = new ArrayList<>();
     private ListView<String> filesList;
 
@@ -127,10 +121,9 @@ public class Main extends Application {
 
         navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
         root.getChildren().addAll(navigationPanel, filesPanel);
-
         filesList = new ListView<>();
 
-        loadDirectoryContents(currentDirectory, true);
+        loadDirectoryContents(FilesOperations.getCurrentDirectory(), true);
 
         root.heightProperty().addListener((observable, oldValue, newValue) -> {
             filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
@@ -166,7 +159,7 @@ public class Main extends Application {
         Button reload = new Button(Translator.translate("navigate.reload"));
         reload.getStyleClass().add("reload-button");
         reload.setOnMouseClicked(event -> {
-            loadDirectoryContents(currentDirectory, false);
+            loadDirectoryContents(FilesOperations.getCurrentDirectory(), false);
         });
         reload.setPadding(new Insets(5, 10, 5, 10));
         HBox.setMargin(reload, new Insets(5, 15, 5, 15));
@@ -357,7 +350,7 @@ public class Main extends Application {
     }
 
     private void checkParentDirectory() {
-        if (currentDirectory.getPath().equals("/")) {
+        if (FilesOperations.getCurrentDirectory().getPath().equals("/")) {
             parrentDir.setDisable(true);
         } else {
             parrentDir.setDisable(false);
@@ -365,7 +358,7 @@ public class Main extends Application {
     }
 
     private void loadDirectoryContents(File directory, boolean addToHistory) {
-        currentDirectory = directory;
+        FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);
 
         checkParentDirectory();
@@ -386,7 +379,7 @@ public class Main extends Application {
             directoryHistoryPosition++;
         }
 
-        File[] files = currentDirectory.listFiles();
+        File[] files = FilesOperations.getCurrentDirectory().listFiles();
 
         if (files != null) {
             List<String> directories = new ArrayList<>();
@@ -413,7 +406,7 @@ public class Main extends Application {
                     VBox box = createFileBox(dirName, true);
                     box.setOnMouseClicked(event -> {
                         if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                            loadDirectoryContents(new File(currentDirectory, dirName), true);
+                            loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), dirName), true);
                         }
                     });
                     grid.getChildren().add(box);
@@ -423,7 +416,7 @@ public class Main extends Application {
                     VBox box = createFileBox(fileName, false);
                     box.setOnMouseClicked(event -> {
                         if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
-                            openFileInBackground(new File(currentDirectory, fileName));
+                            FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
                         }
                     });
                     grid.getChildren().add(box);
@@ -453,11 +446,11 @@ public class Main extends Application {
                     if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                         String selectedItem = filesList.getSelectionModel().getSelectedItem();
                         if (selectedItem != null) {
-                            File selectedFile = new File(currentDirectory, selectedItem);
+                            File selectedFile = new File(FilesOperations.getCurrentDirectory(), selectedItem);
                             if (selectedFile.isDirectory()) {
                                 loadDirectoryContents(selectedFile, true);
                             } else {
-                                openFileInBackground(selectedFile);
+                                FilesOperations.openFileInBackground(selectedFile);
                             }
                         }
                     }
@@ -501,43 +494,8 @@ public class Main extends Application {
         return fileBox;
     }
 
-    private void openFileInBackground(File file) {
-        Task<Void> task = new Task<>() {
-            @Override
-            protected Void call() {
-                openFile(file);
-                return null;
-            }
-        };
-        new Thread(task).start();
-    }
-
-    private void openFile(File file) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().open(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Desktop is not supported on this system.");
-        }
-    }
-
     private void refreshCurrentDirectory() {
-        loadDirectoryContents(currentDirectory, false);
-    }
-
-    private void deleteFile(File file) {
-        if(file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    deleteFile(f);
-                }
-            }
-        }
-        file.delete();
+        loadDirectoryContents(FilesOperations.getCurrentDirectory(), false);
     }
 
     ContextMenu directoryMenu = new ContextMenu();
@@ -556,16 +514,12 @@ public class Main extends Application {
         });
         MenuItem paste = new MenuItem(Translator.translate("context-menu.paste"));
         paste.setOnAction(event -> {
-            try {
-                pasteFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            FilesOperations.pasteFile();
             refreshCurrentDirectory();
         });
         directoryMenu.getItems().addAll(newDirectory, newFile, paste);
         filesPane.setOnContextMenuRequested(event -> {
-            paste.setDisable(isClipboardNull());
+            paste.setDisable(FilesOperations.isClipboardEmpty());
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
         });
     }
@@ -574,24 +528,24 @@ public class Main extends Application {
         ContextMenu fileMenu = new ContextMenu();
         MenuItem open = new MenuItem(Translator.translate("context-menu.open"));
         open.setOnAction(event -> {
-            openFileInOptions(new File(currentDirectory, fileName));
+            openFileInOptions(new File(FilesOperations.getCurrentDirectory(), fileName));
         });
 
         MenuItem copy = new MenuItem(Translator.translate("context-menu.copy"));
         copy.setOnAction(event -> {
-           copyFile(new File(currentDirectory, fileName));
+           FilesOperations.copyFile(new File(FilesOperations.getCurrentDirectory(), fileName));
            refreshCurrentDirectory();
         });
 
         MenuItem rename = new MenuItem(Translator.translate("context-menu.rename"));
         rename.setOnAction(event -> {
-            renameFile(new File(currentDirectory, fileName));
+            renameFile(new File(FilesOperations.getCurrentDirectory(), fileName));
             refreshCurrentDirectory();
         });
 
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
-            deleteFile(new File(currentDirectory, fileName));
+            FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName));
            refreshCurrentDirectory();
         });
         fileMenu.getItems().addAll(open, copy, rename, delete);
@@ -607,7 +561,7 @@ public class Main extends Application {
         if (file.isDirectory()) {
             loadDirectoryContents(file, true);
         } else {
-            openFileInBackground(file);
+           FilesOperations.openFileInBackground(file);
         }
     }
 
@@ -647,7 +601,7 @@ public class Main extends Application {
 
         renameButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
             String newName = name.getText().trim();
-            File newFile = new File(currentDirectory, newName);
+            File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
 
             if(file.renameTo(newFile)) {
                 refreshCurrentDirectory();
@@ -695,14 +649,13 @@ public class Main extends Application {
 
         newDirectoryButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
             String newName = name.getText().trim();
-            File newFile = new File(currentDirectory, newName);
+            File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
             if (!newFile.exists()) {
                 if(!newFile.mkdir()) {
 
                 }
             }
         });
-
         dialog.showAndWait();
     }
 
@@ -735,7 +688,7 @@ public class Main extends Application {
 
         newFileButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
             String newName = name.getText().trim();
-            File newFile = new File(currentDirectory, newName);
+            File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
             if (!newFile.exists()) {
                 try {
                     if(!newFile.createNewFile()) {
@@ -898,49 +851,9 @@ public class Main extends Application {
         directoryListInMenu.putAll(tempMap);
     }
 
-    private File clipboardOfCopiedFile = null;
-
-    private void copyFile(File file) {
-        clipboardOfCopiedFile = file;
-    }
-
-    private void pasteFile() throws IOException {
-        if(!isClipboardNull()) {
-            File newFile = new File(currentDirectory, clipboardOfCopiedFile.getName());
-            if(clipboardOfCopiedFile.isDirectory()) {
-                copyDirectoryToDestination(clipboardOfCopiedFile, newFile);
-            } else {
-                copyFileToDestination(clipboardOfCopiedFile, newFile);
-            }
-        }
-    }
-
-    private void copyFileToDestination(File source, File destination) throws IOException {
-        Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    }
-
-    private void copyDirectoryToDestination(File source, File destination) throws IOException {
-        if(!destination.exists()) {
-            destination.mkdir();
-        }
-        for (String file : Objects.requireNonNull(source.list())) {
-            File sourceFile = new File(source, file);
-            File destinationFile = new File(destination, file);
-            if (sourceFile.isDirectory()) {
-                copyDirectoryToDestination(sourceFile, destinationFile);
-            } else {
-                copyFileToDestination(sourceFile, destinationFile);
-            }
-        }
-    }
-
-    private boolean isClipboardNull() {
-        return clipboardOfCopiedFile == null;
-    }
-
     private void getParentDirectory() {
-        if(currentDirectory.getPath() != "/") {
-            loadDirectoryContents(new File(currentDirectory.getParent()), true);
+        if(FilesOperations.getCurrentDirectory().getPath() != "/") {
+            loadDirectoryContents(new File(FilesOperations.getCurrentDirectory().getParent()), true);
         }
     }
 }
