@@ -1,8 +1,4 @@
 
-.navigate-button {
-
-}
-
 .prev-directory {
     -fx-background-radius: 4px 0 0 4px;
     -fx-border-radius: 4px 0 0 4px;
@@ -45,4 +41,12 @@
 
 .scroll-pane .scroll-bar:vertical .thumb {
     -fx-background-radius: 4;
+}
+
+.selected-file {
+    -fx-background-color: #d6d4d4;
+}
+
+.selected-file:hover {
+    -fx-background-color: rgba(187, 187, 187, 0.58);
 }

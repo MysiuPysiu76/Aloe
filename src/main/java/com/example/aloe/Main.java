@@ -88,6 +88,10 @@ public class Main extends Application {
             }
         });
 
+        filesPane.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            removeSelectionFromFiles();
+        });
+
         CheckBox showFilesMenu = new CheckBox("Show Menu");
         showFilesMenu.setSelected(true);
         showFilesMenu.setOnAction(event -> {
@@ -204,7 +208,6 @@ public class Main extends Application {
                 popOver.show(button);
             }
         });
-
         return button;
     }
 
@@ -256,7 +259,7 @@ public class Main extends Application {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.3.0");
+        Label version = new Label("0.3.2");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -302,7 +305,7 @@ public class Main extends Application {
         linkCreator.getStyleClass().add("text-center");
         linkCreator.setPadding(new Insets(5, 10, 10, 10));
         linkCreator.setOnAction(event -> {
-           getHostServices().showDocument("https://github.com/Meiroth73");
+            getHostServices().showDocument("https://github.com/Meiroth73");
         });
 
         Label usedIcons = new Label(Translator.translate("window.about.used-icons"));
@@ -357,9 +360,13 @@ public class Main extends Application {
         }
     }
 
+    private List<VBox> selectedFiles = new ArrayList<>();
+
     private void loadDirectoryContents(File directory, boolean addToHistory) {
+        removeSelectionFromFiles();
         FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);
+
 
         checkParentDirectory();
 
@@ -407,6 +414,9 @@ public class Main extends Application {
                     box.setOnMouseClicked(event -> {
                         if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                             loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), dirName), true);
+                        } else {
+                            selectFile(box, event);
+                            event.consume();
                         }
                     });
                     grid.getChildren().add(box);
@@ -415,8 +425,11 @@ public class Main extends Application {
                 for (String fileName : normalFiles) {
                     VBox box = createFileBox(fileName, false);
                     box.setOnMouseClicked(event -> {
-                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                             FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
+                        } else {
+                            selectFile(box, event);
+                            event.consume();
                         }
                     });
                     grid.getChildren().add(box);
@@ -444,6 +457,7 @@ public class Main extends Application {
 
                 filesList.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+
                         String selectedItem = filesList.getSelectionModel().getSelectedItem();
                         if (selectedItem != null) {
                             File selectedFile = new File(FilesOperations.getCurrentDirectory(), selectedItem);
@@ -459,6 +473,22 @@ public class Main extends Application {
         }
     }
 
+    private void selectFile(VBox fileBox, MouseEvent event) {
+        if(!event.isControlDown() && event.getButton() == MouseButton.PRIMARY) {
+            removeSelectionFromFiles();
+        }
+
+        selectedFiles.add(fileBox);
+        fileBox.getStyleClass().add("selected-file");
+    }
+
+    private void removeSelectionFromFiles() {
+        for (VBox file : selectedFiles) {
+            file.getStyleClass().remove("selected-file");
+        }
+        selectedFiles.clear();
+    }
+
     ChangeListener<Number> heightListener;
 
     private VBox createFileBox(String name, boolean isDirectory) {
@@ -467,8 +497,9 @@ public class Main extends Application {
         fileBox.setMinWidth(100);
         fileBox.setPrefWidth(100);
         fileBox.setMaxWidth(100);
+        fileBox.setPadding(new Insets(125, 0, 0, 0));
         fileBox.setAlignment(Pos.TOP_CENTER);
-        fileBox.setSpacing(10);
+        fileBox.setSpacing(5);
         fileBox.getStyleClass().add("file-box");
 
         ImageView icon = new ImageView();
@@ -488,7 +519,7 @@ public class Main extends Application {
         fileName.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
 
         fileBox.getChildren().addAll(icon, fileName);
-        fileBox.setPadding(new Insets(5));
+        fileBox.setPadding(new Insets(0, 5, 15, 5));
         fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
         getFileOptions(fileBox, name);
         return fileBox;
@@ -504,13 +535,13 @@ public class Main extends Application {
         directoryMenu.getItems().clear();
         MenuItem newDirectory = new MenuItem(Translator.translate("context-menu.new-folder"));
         newDirectory.setOnAction(event -> {
-           createDirectory();
-           refreshCurrentDirectory();
+            createDirectory();
+            refreshCurrentDirectory();
         });
         MenuItem newFile = new MenuItem(Translator.translate("context-menu.new-file"));
         newFile.setOnAction(event -> {
-           createFile();
-           refreshCurrentDirectory();
+            createFile();
+            refreshCurrentDirectory();
         });
         MenuItem paste = new MenuItem(Translator.translate("context-menu.paste"));
         paste.setOnAction(event -> {
@@ -519,12 +550,18 @@ public class Main extends Application {
         });
         directoryMenu.getItems().addAll(newDirectory, newFile, paste);
         filesPane.setOnContextMenuRequested(event -> {
+            removeSelectionFromFiles();
             paste.setDisable(FilesOperations.isClipboardEmpty());
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
+            event.consume();
         });
     }
 
-    private void getFileOptions(Node item, String fileName) {
+    private boolean isSelected(VBox fileBox) {
+        return selectedFiles.contains(fileBox);
+    }
+
+    private void getFileOptions(VBox item, String fileName) {
         ContextMenu fileMenu = new ContextMenu();
         MenuItem open = new MenuItem(Translator.translate("context-menu.open"));
         open.setOnAction(event -> {
@@ -533,8 +570,8 @@ public class Main extends Application {
 
         MenuItem copy = new MenuItem(Translator.translate("context-menu.copy"));
         copy.setOnAction(event -> {
-           FilesOperations.copyFile(new File(FilesOperations.getCurrentDirectory(), fileName));
-           refreshCurrentDirectory();
+            FilesOperations.copyFile(new File(FilesOperations.getCurrentDirectory(), fileName));
+            refreshCurrentDirectory();
         });
 
         MenuItem rename = new MenuItem(Translator.translate("context-menu.rename"));
@@ -546,12 +583,17 @@ public class Main extends Application {
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName));
-           refreshCurrentDirectory();
+            refreshCurrentDirectory();
         });
         fileMenu.getItems().addAll(open, copy, rename, delete);
 
         item.setOnContextMenuRequested(event -> {
-            fileMenu.show(item, event.getScreenX(), event.getScreenY());
+            if(isSelected(item) && selectedFiles.size() == 1) {
+                fileMenu.show(item, event.getScreenX(), event.getScreenY());
+            } else {
+                fileMenu.show(item, event.getScreenX(), event.getScreenY());
+                removeSelectionFromFiles();
+            }
             directoryMenu.hide();
             event.consume();
         });
@@ -561,7 +603,7 @@ public class Main extends Application {
         if (file.isDirectory()) {
             loadDirectoryContents(file, true);
         } else {
-           FilesOperations.openFileInBackground(file);
+            FilesOperations.openFileInBackground(file);
         }
     }
 
@@ -828,7 +870,7 @@ public class Main extends Application {
         Button editButton = (Button) dialog.getDialogPane().lookupButton(editButtonType);
 
         editButton.setOnAction(event -> {
-           replaceItemInDirectoryList(key, path.getText().trim(), name.getText().trim());
+            replaceItemInDirectoryList(key, path.getText().trim(), name.getText().trim());
         });
 
         dialog.showAndWait();
