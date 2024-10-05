@@ -36,24 +36,6 @@ public class FilesOperations {
         currentDirectory = directory;
     }
 
-    public static void pasteFile() {
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        List<File> filesFromClipboard = clipboard.getFiles();
-        if (filesFromClipboard != null && !filesFromClipboard.isEmpty()) {
-            File fileFromClipboard = filesFromClipboard.get(0);
-            File destinationFile = new File(getCurrentDirectory(), fileFromClipboard.getName());
-            try {
-                if (fileFromClipboard.isDirectory()) {
-                    copyDirectoryToDestination(fileFromClipboard, destinationFile);
-                } else {
-                    copyFileToDestination(fileFromClipboard, destinationFile);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static boolean isClipboardEmpty() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         List<File> filesFromClipboard = clipboard.getFiles();
@@ -111,6 +93,37 @@ public class FilesOperations {
             }
         } else {
             System.out.println("Desktop is not supported on this system.");
+        }
+    }
+
+    public static void copyFilesToClipboard(List<File> files) {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putFiles(files);
+        clipboard.setContent(content);
+    }
+
+    public static void pasteFilesFromClipboard() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        List<File> filesFromClipboard = clipboard.getFiles();
+
+        if (filesFromClipboard != null && !filesFromClipboard.isEmpty()) {
+            for (File fileFromClipboard : filesFromClipboard) {
+                File destinationFile = new File(getCurrentDirectory(), fileFromClipboard.getName());
+                try {
+                    if (fileFromClipboard.isDirectory()) {
+                        copyDirectoryToDestination(fileFromClipboard, destinationFile);
+                    } else {
+                        copyFileToDestination(fileFromClipboard, destinationFile);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

@@ -135,6 +135,8 @@ public class Main extends Application {
 
         scene.getStylesheets().add(getClass().getResource("/assets/css/style.css").toExternalForm());
 
+        createMultiSelectionFilesContextMenu();
+
         stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
         stage.setMinWidth(700);
@@ -259,7 +261,7 @@ public class Main extends Application {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.3.2");
+        Label version = new Label("0.3.3");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -545,7 +547,7 @@ public class Main extends Application {
         });
         MenuItem paste = new MenuItem(Translator.translate("context-menu.paste"));
         paste.setOnAction(event -> {
-            FilesOperations.pasteFile();
+            FilesOperations.pasteFilesFromClipboard();
             refreshCurrentDirectory();
         });
         directoryMenu.getItems().addAll(newDirectory, newFile, paste);
@@ -590,13 +592,43 @@ public class Main extends Application {
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
+            } else if (isSelected(item)) {
+                multiSelectionFilesContextMenu.show(item, event.getScreenX(), event.getScreenY());
             } else {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
+                directoryMenu.hide();
                 removeSelectionFromFiles();
             }
-            directoryMenu.hide();
             event.consume();
         });
+    }
+
+    private ContextMenu multiSelectionFilesContextMenu;
+
+    public void createMultiSelectionFilesContextMenu() {
+        multiSelectionFilesContextMenu = new ContextMenu();
+        MenuItem copyS = new MenuItem(Translator.translate("context-menu.copy"));
+        copyS.setOnAction(event -> {
+            copySelectedFiles();
+        });
+        multiSelectionFilesContextMenu.getItems().addAll(copyS);
+    }
+
+    private void copySelectedFiles() {
+        if (selectedFiles.isEmpty()) {
+            return;
+        }
+
+        List<File> filesToCopy = new ArrayList<>();
+
+        for (VBox fileBox : selectedFiles) {
+            Label fileNameLabel = (Label) fileBox.getChildren().get(1);
+            String fileName = fileNameLabel.getText();
+
+            File file = new File(FilesOperations.getCurrentDirectory(), fileName);
+            filesToCopy.add(file);
+        }
+        FilesOperations.copyFilesToClipboard(filesToCopy);
     }
 
     private void openFileInOptions(File file) {
