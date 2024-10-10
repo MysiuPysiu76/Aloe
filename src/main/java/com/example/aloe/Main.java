@@ -261,7 +261,7 @@ public class Main extends Application {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.3.3");
+        Label version = new Label("0.3.4");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -607,11 +607,23 @@ public class Main extends Application {
 
     public void createMultiSelectionFilesContextMenu() {
         multiSelectionFilesContextMenu = new ContextMenu();
-        MenuItem copyS = new MenuItem(Translator.translate("context-menu.copy"));
-        copyS.setOnAction(event -> {
+        MenuItem copy = new MenuItem(Translator.translate("context-menu.copy"));
+        copy.setOnAction(event -> {
             copySelectedFiles();
         });
-        multiSelectionFilesContextMenu.getItems().addAll(copyS);
+        MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
+        delete.setOnAction(event -> {
+            deleteSelectedFiles();
+            refreshCurrentDirectory();
+        });
+        multiSelectionFilesContextMenu.getItems().addAll(copy, delete);
+    }
+
+    public void deleteSelectedFiles() {
+        for (VBox fileBox : selectedFiles) {
+            Label fileName = (Label) fileBox.getChildren().get(1);
+            FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName.getText()));
+        }
     }
 
     private void copySelectedFiles() {
