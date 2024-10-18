@@ -26,5 +26,17 @@
   "window.about.creator": "Creator",
   "window.about.inspiration": "This app is inspired by PopOS! 22.04 nautilus",
   "window.about.used-icons": "This app use icons from:",
-  "window.about.creator-website": "Creator website"
+  "window.about.creator-website": "Creator website",
+  "context-menu.properties": "Properties",
+  "window.properties.folder-properties" : "Folder Properties",
+  "window.properties.file-properties" : "File Properties",
+  "window.properties.file-name" : "Name: ",
+  "window.properties.file-path": "Path: ",
+  "window.properties.file-type": "Type: ",
+  "window.properties.file-size": "Size: ",
+  "window.properties.file-parent": "Parent: ",
+  "window.properties.folder-contents": "Contents: ",
+  "window.properties.file-created": "Created: ",
+  "window.properties.file-modified": "Modified: ",
+  "window.properties.folder": "Folder"
 }

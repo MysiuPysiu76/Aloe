@@ -2,6 +2,7 @@ module com.example.aloe {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
+    requires java.sql;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
@@ -13,6 +14,7 @@ module com.example.aloe {
     requires java.desktop;
     requires annotations;
     requires com.fasterxml.jackson.databind;
+    requires org.apache.tika.core;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;

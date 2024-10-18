@@ -13,13 +13,25 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SegmentedButton;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Main extends Application {
@@ -33,7 +45,6 @@ public class Main extends Application {
     private ScrollPane filesMenu = new ScrollPane();
     private ScrollPane filesPane = new ScrollPane();
     private Scene scene;
-
     private Button parrentDir = getNavigateParentButton();
 
     private int directoryHistoryPosition = -1;
@@ -41,7 +52,7 @@ public class Main extends Application {
     private boolean isHiddenFilesShow = false;
     private boolean isMenuHidden = false;
     private VBox root = new VBox();
-
+    Stage stage;
     private FlowPane grid;
 
     public static void main(String[] args) {
@@ -51,7 +62,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         root.getStyleClass().add("root");
-
+        this.stage = stage;
         scene = new Scene(root, 935, 500);
 
         navigationPanel.getStyleClass().add("navigation-panel");
@@ -146,6 +157,7 @@ public class Main extends Application {
 
     private Button getNavigateNextButton() {
         Button button = new Button();
+        button.setFocusTraversable(false);
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-next")));
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getRightArrow());
@@ -261,7 +273,7 @@ public class Main extends Application {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.3.4");
+        Label version = new Label("0.3.5");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -324,6 +336,7 @@ public class Main extends Application {
 
     private Button getNavigatePrevButton() {
         Button button = new Button();
+        button.setFocusTraversable(false);
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-prev")));
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getLeftArrow());
@@ -341,6 +354,7 @@ public class Main extends Application {
 
     private Button getNavigateParentButton() {
         Button button = new Button();
+        button.setFocusTraversable(false);
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-parent")));
         button.setAlignment(Pos.CENTER);
         button.setGraphic(ArrowLoader.getTopArrow());
@@ -350,7 +364,6 @@ public class Main extends Application {
         button.setOnMouseClicked(event -> {
             getParentDirectory();
         });
-
         return button;
     }
 
@@ -368,8 +381,6 @@ public class Main extends Application {
         removeSelectionFromFiles();
         FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);
-
-
         checkParentDirectory();
 
         grid = new FlowPane();
@@ -499,6 +510,7 @@ public class Main extends Application {
         fileBox.setMinWidth(100);
         fileBox.setPrefWidth(100);
         fileBox.setMaxWidth(100);
+        fileBox.setMaxHeight(200);
         fileBox.setPadding(new Insets(125, 0, 0, 0));
         fileBox.setAlignment(Pos.TOP_CENTER);
         fileBox.setSpacing(5);
@@ -587,8 +599,17 @@ public class Main extends Application {
             FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName));
             refreshCurrentDirectory();
         });
-        fileMenu.getItems().addAll(open, copy, rename, delete);
 
+        MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
+        properties.setOnAction(event -> {
+            try {
+                openPropertiesWindow(item, fileName);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        fileMenu.getItems().addAll(open, copy, rename, delete, properties);
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
@@ -601,6 +622,83 @@ public class Main extends Application {
             }
             event.consume();
         });
+    }
+
+    private ArrayList<String> getFilePropertiesNames() {
+        ArrayList<String> names = new ArrayList<>();
+        names.add(Translator.translate("window.properties.file-name"));
+        names.add(Translator.translate("window.properties.file-path"));
+        names.add(Translator.translate("window.properties.file-type"));
+        names.add(Translator.translate("window.properties.file-size"));
+        names.add(Translator.translate("window.properties.file-parent"));
+        names.add(Translator.translate("window.properties.file-created"));
+        names.add(Translator.translate("window.properties.file-modified"));
+        return names;
+    }
+
+    private void openPropertiesWindow(VBox box, String fileName) throws IOException {
+        Stage window = new Stage();
+        VBox root = new VBox();
+        window.setMinHeight(380);
+        window.setMinWidth(330);
+        window.initModality(Modality.WINDOW_MODAL);
+        window.initStyle(StageStyle.UNIFIED);
+
+        ImageView icon = new ImageView();
+        icon.setFitHeight(75);
+        icon.setFitWidth(75);
+        VBox iconWrapper = new VBox();
+        iconWrapper.setAlignment(Pos.TOP_CENTER);
+        iconWrapper.getChildren().add(icon);
+        VBox.setMargin(icon, new Insets(30, 10, 10, 2));
+
+        File file = new File(FilesOperations.getCurrentDirectory(), fileName);
+
+        List<String> names = getFilePropertiesNames();
+
+        List<String> values = new ArrayList<>();
+        values.add(file.getName());
+        values.add(file.getPath());
+        long size = file.length();
+        values.add("" + size);
+        values.add(file.getParent());
+        BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+        FileTime creationTime = attrs.creationTime();
+        String a = creationTime.toString();
+        values.add(OffsetDateTime.parse(a).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+        LocalDateTime modifiedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
+        values.add(modifiedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+
+        if (file.isFile()) {
+            window.setTitle(Translator.translate("window.properties.file-properties"));
+            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
+            values.add(2, new Tika().detect(file));
+        } else {
+            window.setTitle(Translator.translate("window.properties.folder-properties"));
+            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
+            values.add(2, Translator.translate("window.properties.folder"));
+            names.add(5, Translator.translate("window.properties.folder-contents"));
+            values.add(5,  Files.list(Path.of(file.getPath())).count() + "");
+        }
+        root.getChildren().addAll(iconWrapper);
+        GridPane fileData = new GridPane();
+
+        for (int i = 0; i < names.size(); i++) {
+            Label name = new Label(names.get(i));
+            name.setAlignment(Pos.CENTER_RIGHT);
+            name.setPadding(new Insets(4, 10, 4, 0));
+            name.getStyleClass().add("name");
+            name.setMinWidth(110);
+            name.setMaxWidth(110);
+            Text value = new Text(values.get(i));
+            fileData.add(name, 0, i);
+            fileData.add(value, 1, i);
+        }
+        root.getChildren().add(fileData);
+        Scene scene = new Scene(root, 330, 390);
+        window.setScene(scene);
+        window.initOwner(stage);
+        window.showAndWait();
     }
 
     private ContextMenu multiSelectionFilesContextMenu;
