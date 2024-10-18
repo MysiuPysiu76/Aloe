@@ -636,6 +636,63 @@ public class Main extends Application {
         return names;
     }
 
+    private  ArrayList<String> getFilePropertiesValues(File file) throws IOException {
+        ArrayList<String> values = new ArrayList<>();
+        values.add(file.getName());
+        values.add(file.getPath());
+        values.add(convertBytesByUnit(file.length()));
+        values.add(file.getParent());
+        BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+        FileTime creationTime = attrs.creationTime();
+        String creationTimeString = creationTime.toString();
+        values.add(OffsetDateTime.parse(creationTimeString).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+        LocalDateTime modifiedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
+        values.add(modifiedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+        return values;
+    }
+
+    private boolean useBinaryUnits = true;
+
+    private String convertBytesByUnit(long size) {
+        if (useBinaryUnits) {
+            return convertBytesToGiB(size);
+        } else {
+            return convertBytesToGB(size);
+        }
+    }
+
+    private String convertBytesToGiB(long size) {
+        if(size < 1024) {
+            return size + Translator.translate("units.bytes");
+        } else if(size < 1024 * 1024) {
+            return String.format("%.1f KiB (%d %s)", size / 1024.0, size, Translator.translate("units.bytes"));
+        } else if(size < 1024 * 1024 * 1024) {
+            return String.format("%.1f MiB (%d %s)", size / (1024.0 * 1024.0), size, Translator.translate("units.bytes"));
+        } else if(size < 1024L * 1024 * 1024 * 1024) {
+            return String.format("%.1f GiB (%d %s)", size / (1024.0 * 1024.0 * 1024.0), size, Translator.translate("units.bytes"));
+        } else if(size < 1024L * 1024 * 1024 * 1024 * 1024) {
+            return String.format("%.1f TiB (%d %s)", size / (1024 * 1024.0 * 1024.0 * 1024), size, Translator.translate("units.bytes"));
+        } else {
+            return String.format("%.1f PiB (%d %s)", size / (1024 * 1024.0 * 1024.0 * 1024 * 1024), size, Translator.translate("units.bytes"));
+        }
+    }
+
+    private String convertBytesToGB(long size) {
+        if(size < 1000) {
+            return size + Translator.translate("units.bytes");
+        } else if(size < 1000 * 1000) {
+            return String.format("%.1f KB (%d %s)", size / 1000.0, size, Translator.translate("units.bytes"));
+        } else if(size < 1000 * 1000 * 1000) {
+            return String.format("%.1f MB (%d %s)", size / (1000.0 * 1000.0), size, Translator.translate("units.bytes"));
+        } else if(size < 1000L * 1000 * 1000 * 1000) {
+            return String.format("%.1f GB (%d %s)", size / (1000.0 * 1000.0 * 1000.0), size, Translator.translate("units.bytes"));
+        } else if(size < 1000L * 1000 * 1000 * 1000 * 1000) {
+            return String.format("%.1f TB (%d %s)", size / (1000 * 1000.0 * 1000.0 * 1000), size, Translator.translate("units.bytes"));
+        } else {
+            return String.format("%.1f PB (%d %s)", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000), size, Translator.translate("units.bytes"));
+        }
+    }
+
     private void openPropertiesWindow(VBox box, String fileName) throws IOException {
         Stage window = new Stage();
         VBox root = new VBox();
@@ -653,21 +710,8 @@ public class Main extends Application {
         VBox.setMargin(icon, new Insets(30, 10, 10, 2));
 
         File file = new File(FilesOperations.getCurrentDirectory(), fileName);
-
         List<String> names = getFilePropertiesNames();
-
-        List<String> values = new ArrayList<>();
-        values.add(file.getName());
-        values.add(file.getPath());
-        long size = file.length();
-        values.add("" + size);
-        values.add(file.getParent());
-        BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-        FileTime creationTime = attrs.creationTime();
-        String a = creationTime.toString();
-        values.add(OffsetDateTime.parse(a).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-        LocalDateTime modifiedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
-        values.add(modifiedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+        List<String> values = getFilePropertiesValues(file);
 
         if (file.isFile()) {
             window.setTitle(Translator.translate("window.properties.file-properties"));
@@ -690,7 +734,7 @@ public class Main extends Application {
             name.getStyleClass().add("name");
             name.setMinWidth(110);
             name.setMaxWidth(110);
-            Text value = new Text(values.get(i));
+            Label value = new Label(values.get(i));
             fileData.add(name, 0, i);
             fileData.add(value, 1, i);
         }
