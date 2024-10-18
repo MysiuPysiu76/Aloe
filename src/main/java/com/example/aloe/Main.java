@@ -13,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -636,11 +635,15 @@ public class Main extends Application {
         return names;
     }
 
-    private  ArrayList<String> getFilePropertiesValues(File file) throws IOException {
+    private ArrayList<String> getFilePropertiesValues(File file) throws IOException {
         ArrayList<String> values = new ArrayList<>();
         values.add(file.getName());
         values.add(file.getPath());
-        values.add(convertBytesByUnit(file.length()));
+        if(file.isDirectory()) {
+            values.add(convertBytesByUnit(calculateDirectorySize(file)));
+        } else {
+            values.add(convertBytesByUnit(file.length()));
+        }
         values.add(file.getParent());
         BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
         FileTime creationTime = attrs.creationTime();
@@ -649,6 +652,21 @@ public class Main extends Application {
         LocalDateTime modifiedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
         values.add(modifiedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         return values;
+    }
+
+    private long calculateDirectorySize(File file) {
+        long size = 0;
+        File[] files = file.listFiles();
+        if (files != null) {
+            for(File f : files) {
+                if(f.isFile()) {
+                    size += f.length();
+                } else {
+                    size += calculateDirectorySize(f);
+                }
+            }
+        }
+        return size;
     }
 
     private boolean useBinaryUnits = true;
@@ -722,7 +740,7 @@ public class Main extends Application {
             icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
             values.add(2, Translator.translate("window.properties.folder"));
             names.add(5, Translator.translate("window.properties.folder-contents"));
-            values.add(5,  Files.list(Path.of(file.getPath())).count() + "");
+            values.add(5,  Files.list(Path.of(file.getPath())).count() + Translator.translate("window.properties.items"));
         }
         root.getChildren().addAll(iconWrapper);
         GridPane fileData = new GridPane();
@@ -774,7 +792,6 @@ public class Main extends Application {
         }
 
         List<File> filesToCopy = new ArrayList<>();
-
         for (VBox fileBox : selectedFiles) {
             Label fileNameLabel = (Label) fileBox.getChildren().get(1);
             String fileName = fileNameLabel.getText();

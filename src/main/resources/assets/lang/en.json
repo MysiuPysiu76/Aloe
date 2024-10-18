@@ -39,5 +39,6 @@
   "window.properties.file-created": "Created: ",
   "window.properties.file-modified": "Modified: ",
   "window.properties.folder": "Folder",
+  "window.properties.items": " items",
   "units.bytes": " bytes"
 }
