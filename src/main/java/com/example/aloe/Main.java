@@ -632,6 +632,7 @@ public class Main extends Application {
         names.add(Translator.translate("window.properties.file-parent"));
         names.add(Translator.translate("window.properties.file-created"));
         names.add(Translator.translate("window.properties.file-modified"));
+        names.add(Translator.translate("window.properties.free-space"));
         return names;
     }
 
@@ -640,9 +641,9 @@ public class Main extends Application {
         values.add(file.getName());
         values.add(file.getPath());
         if(file.isDirectory()) {
-            values.add(convertBytesByUnit(calculateDirectorySize(file)));
+            values.add(convertBytesByUnit(calculateDirectorySize(file)) + " (" + file.length() + Translator.translate("units.bytes") + ")");
         } else {
-            values.add(convertBytesByUnit(file.length()));
+            values.add(convertBytesByUnit(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")");
         }
         values.add(file.getParent());
         BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
@@ -651,6 +652,7 @@ public class Main extends Application {
         values.add(OffsetDateTime.parse(creationTimeString).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
         LocalDateTime modifiedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
         values.add(modifiedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+        values.add(convertBytesByUnit(file.getFreeSpace()));
         return values;
     }
 
@@ -681,33 +683,33 @@ public class Main extends Application {
 
     private String convertBytesToGiB(long size) {
         if(size < 1024) {
-            return size + Translator.translate("units.bytes");
+            return "";
         } else if(size < 1024 * 1024) {
-            return String.format("%.1f KiB (%d %s)", size / 1024.0, size, Translator.translate("units.bytes"));
+            return String.format("%.1f KiB ", size / 1024.0);
         } else if(size < 1024 * 1024 * 1024) {
-            return String.format("%.1f MiB (%d %s)", size / (1024.0 * 1024.0), size, Translator.translate("units.bytes"));
+            return String.format("%.1f MiB ", size / (1024.0 * 1024.0));
         } else if(size < 1024L * 1024 * 1024 * 1024) {
-            return String.format("%.1f GiB (%d %s)", size / (1024.0 * 1024.0 * 1024.0), size, Translator.translate("units.bytes"));
+            return String.format("%.1f GiB ", size / (1024.0 * 1024.0 * 1024.0));
         } else if(size < 1024L * 1024 * 1024 * 1024 * 1024) {
-            return String.format("%.1f TiB (%d %s)", size / (1024 * 1024.0 * 1024.0 * 1024), size, Translator.translate("units.bytes"));
+            return String.format("%.1f TiB ", size / (1024 * 1024.0 * 1024.0 * 1024));
         } else {
-            return String.format("%.1f PiB (%d %s)", size / (1024 * 1024.0 * 1024.0 * 1024 * 1024), size, Translator.translate("units.bytes"));
+            return String.format("%.1f PiB ", size / (1024 * 1024.0 * 1024.0 * 1024 * 1024));
         }
     }
 
     private String convertBytesToGB(long size) {
         if(size < 1000) {
-            return size + Translator.translate("units.bytes");
+            return "";
         } else if(size < 1000 * 1000) {
-            return String.format("%.1f KB (%d %s)", size / 1000.0, size, Translator.translate("units.bytes"));
+            return String.format("%.1f KB ", size / 1000.0);
         } else if(size < 1000 * 1000 * 1000) {
-            return String.format("%.1f MB (%d %s)", size / (1000.0 * 1000.0), size, Translator.translate("units.bytes"));
+            return String.format("%.1f MB ", size / (1000.0 * 1000.0));
         } else if(size < 1000L * 1000 * 1000 * 1000) {
-            return String.format("%.1f GB (%d %s)", size / (1000.0 * 1000.0 * 1000.0), size, Translator.translate("units.bytes"));
+            return String.format("%.1f GB ", size / (1000.0 * 1000.0 * 1000.0));
         } else if(size < 1000L * 1000 * 1000 * 1000 * 1000) {
-            return String.format("%.1f TB (%d %s)", size / (1000 * 1000.0 * 1000.0 * 1000), size, Translator.translate("units.bytes"));
+            return String.format("%.1f TB ", size / (1000 * 1000.0 * 1000.0 * 1000));
         } else {
-            return String.format("%.1f PB (%d %s)", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000), size, Translator.translate("units.bytes"));
+            return String.format("%.1f PB ", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000));
         }
     }
 
@@ -742,8 +744,8 @@ public class Main extends Application {
             names.add(5, Translator.translate("window.properties.folder-contents"));
             values.add(5,  Files.list(Path.of(file.getPath())).count() + Translator.translate("window.properties.items"));
         }
-        root.getChildren().addAll(iconWrapper);
         GridPane fileData = new GridPane();
+        VBox.setMargin(fileData, new Insets(20, 0, 0, 0));
 
         for (int i = 0; i < names.size(); i++) {
             Label name = new Label(names.get(i));
@@ -756,7 +758,7 @@ public class Main extends Application {
             fileData.add(name, 0, i);
             fileData.add(value, 1, i);
         }
-        root.getChildren().add(fileData);
+        root.getChildren().addAll(iconWrapper, fileData);
         Scene scene = new Scene(root, 330, 390);
         window.setScene(scene);
         window.initOwner(stage);
