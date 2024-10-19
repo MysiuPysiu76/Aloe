@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -535,6 +536,54 @@ public class Main extends Application {
         fileBox.setPadding(new Insets(0, 5, 15, 5));
         fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
         getFileOptions(fileBox, name);
+
+        fileBox.setOnDragDetected(event -> {
+            Dragboard db = fileBox.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+
+            List<String> fileNamesToDrag = new ArrayList<>();
+            if (selectedFiles.contains(fileBox)) {
+                for (VBox selectedFile : selectedFiles) {
+                    Label fileNameLabel = (Label) selectedFile.getChildren().get(1);
+                    fileNamesToDrag.add(fileNameLabel.getText());
+                }
+            } else {
+                fileNamesToDrag.add(name);
+            }
+
+            content.putString(String.join(",", fileNamesToDrag));
+            db.setContent(content);
+            event.consume();
+        });
+
+        fileBox.setOnDragOver(event -> {
+            if (event.getGestureSource() != fileBox && event.getDragboard().hasString() && isDirectory) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        fileBox.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                String[] draggedFileNames = db.getString().split(",");
+                File targetDirectory = new File(FilesOperations.getCurrentDirectory(), name);
+                if (targetDirectory.isDirectory()) {
+                    for (String draggedFileName : draggedFileNames) {
+                        File draggedFile = new File(FilesOperations.getCurrentDirectory(), draggedFileName);
+                        if (draggedFile.exists()) {
+                            draggedFile.renameTo(new File(targetDirectory, draggedFile.getName()));
+                        }
+                    }
+                    refreshCurrentDirectory();
+                    success = true;
+                }
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
         return fileBox;
     }
 

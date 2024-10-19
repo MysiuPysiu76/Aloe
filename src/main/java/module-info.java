@@ -15,6 +15,7 @@ module com.example.aloe {
     requires annotations;
     requires com.fasterxml.jackson.databind;
     requires org.apache.tika.core;
+    requires javafx.swing;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;
