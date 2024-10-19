@@ -160,7 +160,7 @@ public class Main extends Application {
         button.setFocusTraversable(false);
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-next")));
         button.setAlignment(Pos.CENTER);
-        button.setGraphic(ArrowLoader.getRightArrow());
+        button.setGraphic(ArrowLoader.getArrow(ArrowLoader.ArrowDirection.RIGHT));
         button.setPadding(new Insets(7, 13, 10, 10));
         button.getStyleClass().addAll("next-directory", "navigate-button");
 
@@ -339,7 +339,7 @@ public class Main extends Application {
         button.setFocusTraversable(false);
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-prev")));
         button.setAlignment(Pos.CENTER);
-        button.setGraphic(ArrowLoader.getLeftArrow());
+        button.setGraphic(ArrowLoader.getArrow(ArrowLoader.ArrowDirection.LEFT));
         button.setPadding(new Insets(7, 13, 10, 10));
         button.getStyleClass().addAll("prev-directory", "navigate-button");
 
@@ -357,7 +357,7 @@ public class Main extends Application {
         button.setFocusTraversable(false);
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-parent")));
         button.setAlignment(Pos.CENTER);
-        button.setGraphic(ArrowLoader.getTopArrow());
+        button.setGraphic(ArrowLoader.getArrow(ArrowLoader.ArrowDirection.TOP));
         button.setPadding(new Insets(9, 11, 9, 8));
         button.getStyleClass().addAll("parent-directory", "navigate-button");
 
