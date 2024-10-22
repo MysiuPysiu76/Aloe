@@ -17,7 +17,7 @@ public class ArrowLoader {
         }
 
         public double[] getPoints() {
-            return points;
+            return this.points;
         }
     }
 

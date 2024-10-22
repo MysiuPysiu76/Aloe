@@ -41,5 +41,6 @@
   "window.properties.folder": "Folder",
   "window.properties.free-space": "Free space: ",
   "window.properties.items": " items",
-  "units.bytes": " bytes"
+  "units.bytes": " bytes",
+  "context-menu.move-to" : "Move to"
 }

@@ -3,6 +3,7 @@ package com.example.aloe;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,6 +15,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -21,10 +23,13 @@ import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SegmentedButton;
 
+import javax.swing.text.DefaultEditorKit;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
@@ -61,6 +66,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         root.getStyleClass().add("root");
         this.stage = stage;
         scene = new Scene(root, 935, 500);
@@ -642,6 +648,12 @@ public class Main extends Application {
             refreshCurrentDirectory();
         });
 
+        MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
+        moveTo.setOnAction(event -> {
+            moveFileTo(new File(FilesOperations.getCurrentDirectory(), fileName));
+            refreshCurrentDirectory();
+        });
+
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName));
@@ -657,7 +669,7 @@ public class Main extends Application {
             }
         });
 
-        fileMenu.getItems().addAll(open, copy, rename, delete, properties);
+        fileMenu.getItems().addAll(open, copy, rename, moveTo, delete, properties);
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
@@ -670,6 +682,27 @@ public class Main extends Application {
             }
             event.consume();
         });
+    }
+
+    private void moveFileTo(File fileToMove) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle(Translator.translate("context-menu.move-to"));
+        directoryChooser.setInitialDirectory(FilesOperations.getCurrentDirectory());
+        File selectedDirectory = directoryChooser.showDialog(filesPane.getScene().getWindow());
+        Path newPath = null;
+        try {
+            newPath = selectedDirectory.toPath().resolve(fileToMove.getName());
+        } catch (NullPointerException e) {
+            System.out.println("Canceled choose directory to move");
+            throw new RuntimeException(e);
+        }
+        if(selectedDirectory != null) {
+            try {
+                Files.move(fileToMove.toPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private ArrayList<String> getFilePropertiesNames() {
@@ -895,7 +928,7 @@ public class Main extends Application {
             }
         });
 
-        renameButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+        renameButton.addEventFilter(ActionEvent.ACTION, event -> {
             String newName = name.getText().trim();
             File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
 
@@ -943,7 +976,7 @@ public class Main extends Application {
             }
         });
 
-        newDirectoryButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+        newDirectoryButton.addEventFilter(ActionEvent.ACTION, event -> {
             String newName = name.getText().trim();
             File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
             if (!newFile.exists()) {
@@ -982,7 +1015,7 @@ public class Main extends Application {
             }
         });
 
-        newFileButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+        newFileButton.addEventFilter(ActionEvent.ACTION, event -> {
             String newName = name.getText().trim();
             File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
             if (!newFile.exists()) {
@@ -1094,7 +1127,7 @@ public class Main extends Application {
         dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
         Button addButton = (Button) dialog.getDialogPane().lookupButton(addButtonType);
 
-        addButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+        addButton.addEventFilter(ActionEvent.ACTION, event -> {
             addDirectoryListInMenu(path.getText(), name.getText());
         });
 
