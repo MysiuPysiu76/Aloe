@@ -126,4 +126,12 @@ public class FilesOperations {
             }
         }
     }
+
+    public static void moveFileToParent(File file) {
+        try {
+            Files.move(file.toPath(), file.getParentFile().getParentFile().toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

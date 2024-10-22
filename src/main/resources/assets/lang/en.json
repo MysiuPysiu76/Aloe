@@ -42,5 +42,6 @@
   "window.properties.free-space": "Free space: ",
   "window.properties.items": " items",
   "units.bytes": " bytes",
-  "context-menu.move-to" : "Move to"
+  "context-menu.move-to" : "Move to",
+  "context-menu.move-to-parent": "Move to Parent"
 }

@@ -654,6 +654,13 @@ public class Main extends Application {
             refreshCurrentDirectory();
         });
 
+        MenuItem moveToParent = new MenuItem(Translator.translate("context-menu.move-to-parent"));
+        moveToParent.setOnAction(event -> {
+            System.out.println("d");
+            FilesOperations.moveFileToParent(new File(FilesOperations.getCurrentDirectory(), fileName));
+            refreshCurrentDirectory();
+        });
+
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName));
@@ -669,7 +676,7 @@ public class Main extends Application {
             }
         });
 
-        fileMenu.getItems().addAll(open, copy, rename, moveTo, delete, properties);
+        fileMenu.getItems().addAll(open, copy, rename, moveTo, moveToParent, delete, properties);
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
@@ -723,7 +730,8 @@ public class Main extends Application {
         values.add(file.getName());
         values.add(file.getPath());
         if(file.isDirectory()) {
-            values.add(convertBytesByUnit(calculateDirectorySize(file)) + " (" + file.length() + Translator.translate("units.bytes") + ")");
+            long directorySize = calculateDirectorySize(file);
+            values.add(convertBytesByUnit(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")");
         } else {
             values.add(convertBytesByUnit(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")");
         }
