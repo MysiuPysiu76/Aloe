@@ -952,7 +952,13 @@ public class Main extends Application {
 
     private String validateFileName(String name) {
         if(name.isEmpty()) {
-            return "Name cannot be empty";
+            return Translator.translate("validator.empty-name");
+        }
+        if(new File(FilesOperations.getCurrentDirectory(), name).exists()) {
+            return Translator.translate("validator.used-name");
+        }
+        if(name.contains("/")) {
+            return Translator.translate("validator.contains-slash");
         }
         return null;
     }
