@@ -46,5 +46,6 @@
   "context-menu.move-to-parent": "Move to Parent",
   "validator.used-name" : "This name is used",
   "validator.empty-name": "Name cannot be empty",
-  "validator.contains-slash" : "Name cannot contain slashes"
+  "validator.contains-slash" : "Name cannot contain slashes",
+  "context-menu.extract" : "Extract"
 }

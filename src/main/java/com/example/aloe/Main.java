@@ -656,10 +656,18 @@ public class Main extends Application {
 
         MenuItem moveToParent = new MenuItem(Translator.translate("context-menu.move-to-parent"));
         moveToParent.setOnAction(event -> {
-            System.out.println("d");
             FilesOperations.moveFileToParent(new File(FilesOperations.getCurrentDirectory(), fileName));
             refreshCurrentDirectory();
         });
+
+        MenuItem archive = new MenuItem();
+        if(fileName.endsWith(".zip")) {
+            archive = new MenuItem(Translator.translate("context-menu.extract"));
+            archive.setOnAction(event -> {
+                ArchiveManager.extract(new File(FilesOperations.getCurrentDirectory(), fileName));
+                refreshCurrentDirectory();
+            });
+        }
 
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
@@ -676,7 +684,7 @@ public class Main extends Application {
             }
         });
 
-        fileMenu.getItems().addAll(open, copy, rename, moveTo, moveToParent, delete, properties);
+        fileMenu.getItems().addAll(open, copy, rename, moveTo, moveToParent, archive, delete, properties);
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
