@@ -47,5 +47,10 @@
   "validator.used-name" : "This name is used",
   "validator.empty-name": "Name cannot be empty",
   "validator.contains-slash" : "Name cannot contain slashes",
-  "context-menu.extract" : "Extract"
+  "context-menu.extract" : "Extract",
+  "context-menu.compress": "Compress",
+  "button.cancel": "Cancel",
+  "archive.title": "Create Archive",
+  "archive.file-name": "File name:",
+  "button.create": "Create"
 }

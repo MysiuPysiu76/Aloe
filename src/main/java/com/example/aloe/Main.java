@@ -15,18 +15,13 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SegmentedButton;
 
-import javax.swing.text.DefaultEditorKit;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -660,11 +655,17 @@ public class Main extends Application {
             refreshCurrentDirectory();
         });
 
-        MenuItem archive = new MenuItem();
+        MenuItem archive;
         if(fileName.endsWith(".zip")) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
                 ArchiveManager.extract(new File(FilesOperations.getCurrentDirectory(), fileName));
+                refreshCurrentDirectory();
+            });
+        } else {
+            archive = new MenuItem(Translator.translate("context-menu.compress"));
+            archive.setOnAction(event -> {
+                openCreateArchiveWindow(new File(FilesOperations.getCurrentDirectory(), fileName));
                 refreshCurrentDirectory();
             });
         }
@@ -697,6 +698,73 @@ public class Main extends Application {
             }
             event.consume();
         });
+    }
+
+    private void openCreateArchiveWindow(File file) {
+        Stage window = new Stage();
+        VBox root = new VBox();
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setMinWidth(430);
+        window.setMinHeight(177);
+        window.setMinWidth(430);
+        window.initModality(Modality.WINDOW_MODAL);
+        window.initStyle(StageStyle.TRANSPARENT);
+
+        Label title = new Label(Translator.translate("archive.title"));
+        title.setPadding(new Insets(15, 10, 10, 10));
+        title.setStyle("-fx-font-size: 20px");
+        Label name = new Label(Translator.translate("archive.file-name"));
+        name.setPadding(new Insets(1, 287, 7, 0));
+        name.setStyle("-fx-font-size: 14px");
+        TextField fileName = new TextField();
+        fileName.setStyle("-fx-font-size: 16px");
+        fileName.setMinWidth(330);
+        fileName.setPadding(new Insets(7, 10, 7, 10));
+        Label fileType = new Label(" .zip");
+        Label error = new Label();
+        error.setMinWidth(210);
+        error.setStyle("-fx-font-size: 14px; -fx-text-alignment: start");
+        error.setStyle("-fx-text-fill: red");
+        error.setPadding(new Insets(-2, 0, 0, 0));
+        Button cancel = new Button(Translator.translate("button.cancel"));
+        cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
+        Button create = new Button(Translator.translate("button.create"));
+        create.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
+
+        HBox nameHBox = new HBox(fileName, fileType);
+        nameHBox.setSpacing(10);
+        nameHBox.setAlignment(Pos.CENTER);
+        HBox bottomHBox = new HBox(error, cancel, create);
+        bottomHBox.setAlignment(Pos.CENTER_RIGHT);
+        bottomHBox.setSpacing(10);
+        bottomHBox.setPadding(new Insets(22, 15, 5, 10));
+        root.getChildren().addAll(title, name, nameHBox, bottomHBox);
+
+        fileName.textProperty().addListener((observable, oldValue, newValue) -> {
+            String validationError = validateFileName(newValue + ".zip");
+            if(validationError != null) {
+                error.setText(validationError);
+                create.setDisable(true);
+            } else {
+                error.setText("");
+                create.setDisable(false);
+            }
+        });
+
+        cancel.setOnAction(event -> {
+            window.close();
+        });
+
+        create.setOnAction(event -> {
+            ArchiveManager.compress(file, fileName.getText() + ".zip");
+            window.close();
+            refreshCurrentDirectory();
+        });
+
+        Scene scene = new Scene(root, 330, 140);
+        window.setScene(scene);
+        window.initOwner(stage);
+        window.showAndWait();
     }
 
     private void moveFileTo(File fileToMove) {
