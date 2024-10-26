@@ -4,6 +4,7 @@ import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
 
 import java.io.File;
 
@@ -17,12 +18,17 @@ class ArchiveManager {
         }
     }
 
-    public static void compress(File file, String fileName, boolean compress) {
+    public static void compress(File file, String fileName, boolean useCompress, boolean usePassword, String password) {
         try {
             ZipFile zipFile = new ZipFile(new File(FilesOperations.getCurrentDirectory(), fileName));
             ZipParameters parameters = new ZipParameters();
-            if (!compress) {
+            if (!useCompress) {
                 parameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
+            }
+            if(usePassword) {
+                parameters.setEncryptFiles(true);
+                parameters.setEncryptionMethod(EncryptionMethod.ZIP_STANDARD);
+                zipFile = new ZipFile(new File(FilesOperations.getCurrentDirectory(), fileName), password.toCharArray());
             }
             if (file.isDirectory()) {
                 zipFile.addFolder(file, parameters);

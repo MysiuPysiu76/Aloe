@@ -52,5 +52,7 @@
   "button.cancel": "Cancel",
   "archive.title": "Create Archive",
   "archive.file-name": "File name:",
-  "button.create": "Create"
+  "button.create": "Create",
+  "archive.compress": "Use Compress",
+  "archive.password": "Use password"
 }

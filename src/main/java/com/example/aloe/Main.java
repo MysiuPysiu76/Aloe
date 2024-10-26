@@ -705,7 +705,7 @@ public class Main extends Application {
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
         root.setMinWidth(430);
-        window.setMinHeight(177);
+        window.setMinHeight(206);
         window.setMinWidth(430);
         window.initModality(Modality.WINDOW_MODAL);
         window.initStyle(StageStyle.TRANSPARENT);
@@ -713,20 +713,29 @@ public class Main extends Application {
         Label title = new Label(Translator.translate("archive.title"));
         title.setPadding(new Insets(15, 10, 10, 10));
         title.setStyle("-fx-font-size: 20px");
+
         Label name = new Label(Translator.translate("archive.file-name"));
         name.setPadding(new Insets(1, 287, 7, 0));
         name.setStyle("-fx-font-size: 14px");
+
         TextField fileName = new TextField();
-        fileName.setStyle("-fx-font-size: 16px");
+        fileName.setStyle("-fx-font-size: 15px");
         fileName.setMinWidth(330);
         fileName.setPadding(new Insets(7, 10, 7, 10));
+
         Label fileType = new Label(" .zip");
         Label error = new Label();
         error.setMinWidth(210);
         error.setStyle("-fx-font-size: 14px; -fx-text-alignment: start");
         error.setStyle("-fx-text-fill: red");
         error.setPadding(new Insets(-2, 0, 0, 0));
-        CheckBox compress = new CheckBox(Translator.translate("context-menu.compress"));
+
+        CheckBox compress = new CheckBox(Translator.translate("archive.compress"));
+        CheckBox password = new CheckBox(Translator.translate("archive.password"));
+        TextField passwordText = new TextField();
+        passwordText.setPadding(new Insets(5, 7, 5 , 7));
+        passwordText.setMaxWidth(250);
+
         compress.setSelected(true);
         Button cancel = new Button(Translator.translate("button.cancel"));
         cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
@@ -736,11 +745,15 @@ public class Main extends Application {
         HBox nameHBox = new HBox(fileName, fileType);
         nameHBox.setSpacing(10);
         nameHBox.setAlignment(Pos.CENTER);
+        HBox optionsHBox = new HBox(password, compress);
+        optionsHBox.setPadding(new Insets(10));
+        optionsHBox.setSpacing(10);
+        optionsHBox.setAlignment(Pos.CENTER);
         HBox bottomHBox = new HBox(error, cancel, create);
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
         bottomHBox.setSpacing(10);
-        bottomHBox.setPadding(new Insets(22, 15, 5, 10));
-        root.getChildren().addAll(title, name, nameHBox, compress, bottomHBox);
+        bottomHBox.setPadding(new Insets(12, 15, 5, 10));
+        root.getChildren().addAll(title, name, nameHBox, optionsHBox, bottomHBox);
 
         fileName.textProperty().addListener((observable, oldValue, newValue) -> {
             String validationError = validateFileName(newValue + ".zip");
@@ -752,21 +765,31 @@ public class Main extends Application {
                 create.setDisable(false);
             }
         });
+        password.setOnAction(event -> {
+            if (password.isSelected()) {
+                root.getChildren().add(4, passwordText);
+                window.setMaxHeight(230);
+                window.setMinHeight(230);
 
+            } else {
+                root.getChildren().remove(4);
+                window.setMaxHeight(206);
+                window.setMinHeight(206);
+            }
+        });
         cancel.setOnAction(event -> {
             window.close();
         });
-
         create.setOnAction(event -> {
             window.close();
-            ArchiveManager.compress(file, fileName.getText() + ".zip", compress.isSelected());
+            ArchiveManager.compress(file, fileName.getText() + ".zip", compress.isSelected(), password.isSelected(), passwordText.getText());
             refreshCurrentDirectory();
         });
 
         Scene scene = new Scene(root, 330, 140);
         window.setScene(scene);
         window.initOwner(stage);
-        window.showAndWait();
+        window.show();
     }
 
     private void moveFileTo(File fileToMove) {
