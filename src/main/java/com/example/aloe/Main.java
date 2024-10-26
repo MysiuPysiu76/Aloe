@@ -726,6 +726,8 @@ public class Main extends Application {
         error.setStyle("-fx-font-size: 14px; -fx-text-alignment: start");
         error.setStyle("-fx-text-fill: red");
         error.setPadding(new Insets(-2, 0, 0, 0));
+        CheckBox compress = new CheckBox(Translator.translate("context-menu.compress"));
+        compress.setSelected(true);
         Button cancel = new Button(Translator.translate("button.cancel"));
         cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
         Button create = new Button(Translator.translate("button.create"));
@@ -738,7 +740,7 @@ public class Main extends Application {
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
         bottomHBox.setSpacing(10);
         bottomHBox.setPadding(new Insets(22, 15, 5, 10));
-        root.getChildren().addAll(title, name, nameHBox, bottomHBox);
+        root.getChildren().addAll(title, name, nameHBox, compress, bottomHBox);
 
         fileName.textProperty().addListener((observable, oldValue, newValue) -> {
             String validationError = validateFileName(newValue + ".zip");
@@ -756,8 +758,8 @@ public class Main extends Application {
         });
 
         create.setOnAction(event -> {
-            ArchiveManager.compress(file, fileName.getText() + ".zip");
             window.close();
+            ArchiveManager.compress(file, fileName.getText() + ".zip", compress.isSelected());
             refreshCurrentDirectory();
         });
 
