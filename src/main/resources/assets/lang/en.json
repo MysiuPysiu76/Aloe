@@ -54,5 +54,10 @@
   "archive.file-name": "File name:",
   "button.create": "Create",
   "archive.compress": "Use Compress",
-  "archive.password": "Use password"
+  "archive.password": "Use password",
+  "archive.extract.title": "Extract Archive",
+  "archive.extract.enter-password": "Enter password:",
+  "archive.extract.wrong-password": "Wrong password!",
+  "button.extract": "Extract",
+  "button.close": "Close"
 }

@@ -52,7 +52,7 @@ public class Main extends Application {
     private boolean isHiddenFilesShow = false;
     private boolean isMenuHidden = false;
     private VBox root = new VBox();
-    Stage stage;
+    public static Stage stage;
     private FlowPane grid;
 
     public static void main(String[] args) {

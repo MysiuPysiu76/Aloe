@@ -8,12 +8,35 @@ import net.lingala.zip4j.model.enums.EncryptionMethod;
 
 import java.io.File;
 
-class ArchiveManager {
+public class ArchiveManager {
+    private static String password = "";
+
+    private static String getPassword() {
+        return password;
+    }
+
+    public static void setPassword(String pass) {
+        password = pass;
+    }
+
+    private static void clearPassword() {
+        password = null;
+    }
+
     public static void extract(File file) {
+        ZipFile zipFile = new ZipFile(file);
         try {
-            ZipFile zipFile = new ZipFile(file);
+            if (zipFile.isEncrypted()) {
+                WindowService.openPasswordPromptWindow();
+                zipFile.setPassword(ArchiveManager.getPassword().toCharArray());
+                ArchiveManager.clearPassword();
+            }
             zipFile.extractAll(FilesOperations.getCurrentDirectory().toPath().toString() + "/" + zipFile.getFile().getName().replace(".zip", ""));
         } catch (ZipException e) {
+            if (e.getMessage().equals("Wrong password!")) {
+                WindowService.openWrongPasswordWindow();
+            }
+            FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory().toPath().toString() + "/" + zipFile.getFile().getName().replace(".zip", "")));
             e.printStackTrace();
         }
     }
