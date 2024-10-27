@@ -34,11 +34,13 @@ public class ArchiveManager {
             zipFile.extractAll(FilesOperations.getCurrentDirectory().toPath().toString() + "/" + zipFile.getFile().getName().replace(".zip", ""));
         } catch (ZipException e) {
             if (e.getMessage().equals("Wrong password!")) {
-                WindowService.openWrongPasswordWindow();
+                WindowService.openArchiveInfoWindow("archive.extract.wrong-password");
             }
             FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory().toPath().toString() + "/" + zipFile.getFile().getName().replace(".zip", "")));
             e.printStackTrace();
+            return;
         }
+        WindowService.openArchiveInfoWindow("archive.extract.success");
     }
 
     public static void compress(File file, String fileName, boolean useCompress, boolean usePassword, String password) {
@@ -59,7 +61,10 @@ public class ArchiveManager {
                 zipFile.addFile(file, parameters);
             }
         } catch (Exception e) {
+            WindowService.openArchiveInfoWindow("archive.compress.error");
             e.printStackTrace();
+            return;
         }
+        WindowService.openArchiveInfoWindow("archive.compress.success");
     }
 }

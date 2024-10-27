@@ -58,6 +58,9 @@
   "archive.extract.title": "Extract Archive",
   "archive.extract.enter-password": "Enter password:",
   "archive.extract.wrong-password": "Wrong password!",
+  "archive.extract.success": "Extraction successfully!",
   "button.extract": "Extract",
-  "button.close": "Close"
+  "button.close": "Close",
+  "archive.compress.success": "Compression successfully!",
+  "archive.compress.error": "Error while compress!"
 }

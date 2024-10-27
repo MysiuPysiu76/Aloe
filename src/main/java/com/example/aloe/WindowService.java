@@ -60,17 +60,17 @@ public class WindowService {
         window.showAndWait();
     }
 
-    public static void openWrongPasswordWindow() {
+    public static void openArchiveInfoWindow(String key) {
         Stage window = new Stage();
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
-        root.setMinWidth(200);
+        root.setMinWidth(300);
         window.setMinHeight(95);
-        window.setMinWidth(200);
+        window.setMinWidth(300);
         window.initModality(Modality.WINDOW_MODAL);
         window.initStyle(StageStyle.TRANSPARENT);
 
-        Label title = new Label(Translator.translate("archive.extract.wrong-password"));
+        Label title = new Label(Translator.translate(key));
         title.setPadding(new Insets(15, 10, 10, 10));
         title.setStyle("-fx-font-size: 20px");
         Button close = new Button(Translator.translate("button.close"));
@@ -80,7 +80,7 @@ public class WindowService {
 
         close.setOnAction(event -> window.close());
 
-        Scene scene = new Scene(root, 230, 95);
+        Scene scene = new Scene(root, 300, 95);
         window.setScene(scene);
         window.initOwner(Main.stage);
         window.showAndWait();
