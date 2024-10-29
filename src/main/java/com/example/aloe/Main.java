@@ -3,6 +3,7 @@ package com.example.aloe;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -525,6 +526,7 @@ public class Main extends Application {
         }
         icon.setFitHeight(60);
         icon.setFitWidth(60);
+        VBox.setMargin(icon, new Insets(5, 2, 5, 2));
 
         Label fileName = new Label(name);
         fileName.setWrapText(true);
@@ -704,9 +706,9 @@ public class Main extends Application {
         Stage window = new Stage();
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
-        root.setMinWidth(430);
+        root.setMinWidth(450);
         window.setMinHeight(206);
-        window.setMinWidth(430);
+        window.setMinWidth(460);
         window.initModality(Modality.WINDOW_MODAL);
         window.initStyle(StageStyle.TRANSPARENT);
 
@@ -723,7 +725,9 @@ public class Main extends Application {
         fileName.setMinWidth(330);
         fileName.setPadding(new Insets(7, 10, 7, 10));
 
-        Label fileType = new Label(" .zip");
+        ComboBox<ArchiveType> archiveType = new ComboBox<>();
+        archiveType.setValue(ArchiveType.ZIP);
+        archiveType.setItems(FXCollections.observableArrayList(ArchiveType.values()));
         Label error = new Label();
         error.setMinWidth(210);
         error.setStyle("-fx-font-size: 14px; -fx-text-alignment: start");
@@ -742,7 +746,7 @@ public class Main extends Application {
         Button create = new Button(Translator.translate("button.create"));
         create.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
 
-        HBox nameHBox = new HBox(fileName, fileType);
+        HBox nameHBox = new HBox(fileName, archiveType);
         nameHBox.setSpacing(10);
         nameHBox.setAlignment(Pos.CENTER);
         HBox optionsHBox = new HBox(password, compress);
@@ -756,7 +760,7 @@ public class Main extends Application {
         root.getChildren().addAll(title, name, nameHBox, optionsHBox, bottomHBox);
 
         fileName.textProperty().addListener((observable, oldValue, newValue) -> {
-            String validationError = validateFileName(newValue + ".zip");
+            String validationError = validateFileName(newValue + archiveType.getValue().toString());
             if(validationError != null) {
                 error.setText(validationError);
                 create.setDisable(true);
@@ -765,12 +769,24 @@ public class Main extends Application {
                 create.setDisable(false);
             }
         });
+        archiveType.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == ArchiveType.ZIP) {
+                if (!root.getChildren().contains(optionsHBox)) {
+                    root.getChildren().add(3, optionsHBox);
+                    window.setMaxHeight(206);
+                    window.setMinHeight(206);
+                }
+            } else {
+                root.getChildren().remove(optionsHBox);
+                window.setMaxHeight(166);
+                window.setMinHeight(166);
+            }
+        });
         password.setOnAction(event -> {
             if (password.isSelected()) {
                 root.getChildren().add(4, passwordText);
                 window.setMaxHeight(230);
                 window.setMinHeight(230);
-
             } else {
                 root.getChildren().remove(4);
                 window.setMaxHeight(206);
@@ -782,11 +798,11 @@ public class Main extends Application {
         });
         create.setOnAction(event -> {
             window.close();
-            ArchiveManager.compress(file, fileName.getText() + ".zip", compress.isSelected(), password.isSelected(), passwordText.getText());
+            ArchiveManager.compress(file, fileName.getText(), compress.isSelected(), password.isSelected(), passwordText.getText(), archiveType.getValue());
             refreshCurrentDirectory();
         });
 
-        Scene scene = new Scene(root, 330, 140);
+        Scene scene = new Scene(root, 350, 140);
         window.setScene(scene);
         window.initOwner(stage);
         window.show();

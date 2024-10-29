@@ -17,6 +17,7 @@ module com.example.aloe {
     requires org.apache.tika.core;
     requires javafx.swing;
     requires zip4j;
+    requires org.apache.commons.compress;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;
