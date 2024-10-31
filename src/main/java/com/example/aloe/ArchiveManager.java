@@ -10,6 +10,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import java.io.*;
+import java.util.zip.GZIPOutputStream;
 
 public class ArchiveManager {
     private static String password = "";
@@ -33,7 +34,7 @@ public class ArchiveManager {
         }
     }
 
-    public static void extractZip(File file) {
+    private static void extractZip(File file) {
         ZipFile zipFile = new ZipFile(file);
         try {
             if (zipFile.isEncrypted()) {
@@ -53,13 +54,11 @@ public class ArchiveManager {
         WindowService.openArchiveInfoWindow("archive.extract.success");
     }
 
-    public static void extractTar(File file) {
+    private static void extractTar(File file) {
             File dest = new File(FilesOperations.getCurrentDirectory(), file.getName().replace(".tar", ""));
             if (!dest.exists()) dest.mkdirs();
-
             try (FileInputStream fis = new FileInputStream(file);
                  TarArchiveInputStream tis = new TarArchiveInputStream(fis)) {
-
                 TarArchiveEntry entry;
                 while ((entry = tis.getNextTarEntry()) != null) {
                     File outFile = new File(dest, entry.getName().replace(".tar", ""));
@@ -85,6 +84,7 @@ public class ArchiveManager {
         switch (archiveType) {
             case ZIP -> ArchiveManager.compressToZip(file, fileName, useCompress, usePassword, password);
             case TAR -> ArchiveManager.compressToTar(file, fileName);
+            case TARGZ -> ArchiveManager.compressToTarGz(file, fileName);
         }
     }
 
@@ -113,14 +113,14 @@ public class ArchiveManager {
         WindowService.openArchiveInfoWindow("archive.compress.success");
     }
 
-    private static void compressToTar(File sourceFile, String fileName) {
-        if (!sourceFile.exists()) {
+    private static void compressToTar(File file, String fileName) {
+        if (!file.exists()) {
             throw new IllegalArgumentException("Source file or directory does not exist: " + fileName);
         }
 
         try (FileOutputStream fos = new FileOutputStream(new File(FilesOperations.getCurrentDirectory(), fileName + ".tar"));
              TarArchiveOutputStream tarOut = new TarArchiveOutputStream(fos)) {
-            addFileToTar(tarOut, sourceFile, "");
+            addFileToTar(tarOut, file, "");
         } catch (IOException e) {
             WindowService.openArchiveInfoWindow("archive.compress.error");
             e.printStackTrace();
@@ -150,5 +150,21 @@ public class ArchiveManager {
             }
             tarOut.closeArchiveEntry();
         }
+    }
+
+    private static void compressToTarGz(File file, String fileName) {
+        try (FileOutputStream fos = new FileOutputStream(new File(FilesOperations.getCurrentDirectory(), fileName + ".tar.gz"));
+             BufferedOutputStream bos = new BufferedOutputStream(fos);
+             GZIPOutputStream gzos = new GZIPOutputStream(bos);
+             TarArchiveOutputStream tarOut = new TarArchiveOutputStream(gzos)) {
+
+            tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
+            addFileToTar(tarOut, file, "");
+        } catch (IOException e) {
+            WindowService.openArchiveInfoWindow("archive.compress.error");
+            e.printStackTrace();
+            return;
+        }
+        WindowService.openArchiveInfoWindow("archive.compress.success");
     }
 }

@@ -3,7 +3,8 @@ package com.example.aloe;
 public enum ArchiveType {
 
     ZIP(".zip"),
-    TAR(".tar");
+    TAR(".tar"),
+    TARGZ(".tar.gz");
 
     private String extension;
 

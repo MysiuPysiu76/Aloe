@@ -759,7 +759,7 @@ public class Main extends Application {
         root.getChildren().addAll(title, name, nameHBox, optionsHBox, bottomHBox);
 
         fileName.textProperty().addListener((observable, oldValue, newValue) -> {
-            String validationError = validateFileName(newValue + archiveType.getValue().toString());
+            String validationError = validateFileName(fileName.getText() + archiveType.getValue().toString());
             if(validationError != null) {
                 error.setText(validationError);
                 create.setDisable(true);
@@ -776,9 +776,21 @@ public class Main extends Application {
                     window.setMinHeight(206);
                 }
             } else {
+                if (password.isSelected()) {
+                    root.getChildren().remove(passwordText);
+                    password.setSelected(false);
+                }
                 root.getChildren().remove(optionsHBox);
                 window.setMaxHeight(166);
                 window.setMinHeight(166);
+            }
+            String validationError = validateFileName(fileName.getText() +  archiveType.getValue().toString());
+            if(validationError != null) {
+                error.setText(validationError);
+                create.setDisable(true);
+            } else {
+                error.setText("");
+                create.setDisable(false);
             }
         });
         password.setOnAction(event -> {
