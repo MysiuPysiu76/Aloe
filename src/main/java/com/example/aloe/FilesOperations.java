@@ -134,4 +134,16 @@ public class FilesOperations {
             e.printStackTrace();
         }
     }
+
+    public static String getExtension(File file) {
+        return FilesOperations.getExtension(file.getName());
+    }
+
+    public static String getExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf(".");
+        if (lastDotIndex == -1 || lastDotIndex == fileName.length() - 1) {
+            return "";
+        }
+        return fileName.substring(lastDotIndex + 1);
+    }
 }

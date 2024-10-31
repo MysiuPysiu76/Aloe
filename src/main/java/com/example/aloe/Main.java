@@ -636,7 +636,6 @@ public class Main extends Application {
         MenuItem copy = new MenuItem(Translator.translate("context-menu.copy"));
         copy.setOnAction(event -> {
             FilesOperations.copyFile(new File(FilesOperations.getCurrentDirectory(), fileName));
-            refreshCurrentDirectory();
         });
 
         MenuItem rename = new MenuItem(Translator.translate("context-menu.rename"));
@@ -658,7 +657,7 @@ public class Main extends Application {
         });
 
         MenuItem archive;
-        if(fileName.endsWith(".zip")) {
+        if(fileName.endsWith(".zip") || fileName.endsWith(".tar")) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
                 ArchiveManager.extract(new File(FilesOperations.getCurrentDirectory(), fileName));

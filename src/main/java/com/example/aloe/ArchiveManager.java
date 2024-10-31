@@ -6,12 +6,10 @@ import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
 import net.lingala.zip4j.model.enums.EncryptionMethod;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class ArchiveManager {
     private static String password = "";
@@ -29,6 +27,13 @@ public class ArchiveManager {
     }
 
     public static void extract(File file) {
+        switch (FilesOperations.getExtension(file)) {
+            case "zip" -> ArchiveManager.extractZip(file);
+            case "tar" -> ArchiveManager.extractTar(file);
+        }
+    }
+
+    public static void extractZip(File file) {
         ZipFile zipFile = new ZipFile(file);
         try {
             if (zipFile.isEncrypted()) {
@@ -36,7 +41,7 @@ public class ArchiveManager {
                 zipFile.setPassword(ArchiveManager.getPassword().toCharArray());
                 ArchiveManager.clearPassword();
             }
-            zipFile.extractAll(FilesOperations.getCurrentDirectory().toPath().toString() + "/" + zipFile.getFile().getName().replace(".zip", ""));
+            zipFile.extractAll(FilesOperations.getCurrentDirectory().toPath() + "/" + zipFile.getFile().getName().replace(".zip", ""));
         } catch (ZipException e) {
             if (e.getMessage().equals("Wrong password!")) {
                 WindowService.openArchiveInfoWindow("archive.extract.wrong-password");
@@ -46,6 +51,34 @@ public class ArchiveManager {
             return;
         }
         WindowService.openArchiveInfoWindow("archive.extract.success");
+    }
+
+    public static void extractTar(File file) {
+            File dest = new File(FilesOperations.getCurrentDirectory(), file.getName().replace(".tar", ""));
+            if (!dest.exists()) dest.mkdirs();
+
+            try (FileInputStream fis = new FileInputStream(file);
+                 TarArchiveInputStream tis = new TarArchiveInputStream(fis)) {
+
+                TarArchiveEntry entry;
+                while ((entry = tis.getNextTarEntry()) != null) {
+                    File outFile = new File(dest, entry.getName().replace(".tar", ""));
+                    if (entry.isDirectory()) {
+                        outFile.mkdirs();
+                    } else {
+                        try (FileOutputStream fos = new FileOutputStream(outFile);
+                             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                            byte[] buffer = new byte[4096];
+                            int len;
+                            while ((len = tis.read(buffer)) != -1) {
+                                bos.write(buffer, 0, len);
+                            }
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
     }
 
     public static void compress(File file, String fileName, boolean useCompress, boolean usePassword, String password, ArchiveType archiveType) {
