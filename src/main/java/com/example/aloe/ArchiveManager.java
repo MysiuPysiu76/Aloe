@@ -10,6 +10,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import java.io.*;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class ArchiveManager {
@@ -31,6 +32,7 @@ public class ArchiveManager {
         switch (FilesOperations.getExtension(file)) {
             case "zip" -> ArchiveManager.extractZip(file);
             case "tar" -> ArchiveManager.extractTar(file);
+            case "tar.gz" -> ArchiveManager.extractTarGz(file);
         }
     }
 
@@ -55,29 +57,66 @@ public class ArchiveManager {
     }
 
     private static void extractTar(File file) {
-            File dest = new File(FilesOperations.getCurrentDirectory(), file.getName().replace(".tar", ""));
-            if (!dest.exists()) dest.mkdirs();
-            try (FileInputStream fis = new FileInputStream(file);
-                 TarArchiveInputStream tis = new TarArchiveInputStream(fis)) {
-                TarArchiveEntry entry;
-                while ((entry = tis.getNextTarEntry()) != null) {
-                    File outFile = new File(dest, entry.getName().replace(".tar", ""));
-                    if (entry.isDirectory()) {
-                        outFile.mkdirs();
-                    } else {
-                        try (FileOutputStream fos = new FileOutputStream(outFile);
-                             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-                            byte[] buffer = new byte[4096];
-                            int len;
-                            while ((len = tis.read(buffer)) != -1) {
-                                bos.write(buffer, 0, len);
-                            }
+        File dest = new File(FilesOperations.getCurrentDirectory(), file.getName().replace(".tar", ""));
+        if (!dest.exists()) dest.mkdirs();
+        try (FileInputStream fis = new FileInputStream(file);
+             TarArchiveInputStream tis = new TarArchiveInputStream(fis)) {
+            TarArchiveEntry entry;
+            while ((entry = tis.getNextTarEntry()) != null) {
+                File outFile = new File(dest, entry.getName().replace(".tar", ""));
+                if (entry.isDirectory()) {
+                    outFile.mkdirs();
+                } else {
+                    try (FileOutputStream fos = new FileOutputStream(outFile);
+                         BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                        byte[] buffer = new byte[4096];
+                        int len;
+                        while ((len = tis.read(buffer)) != -1) {
+                            bos.write(buffer, 0, len);
                         }
                     }
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void extractTarGz(File file) {
+        File dest = new File(FilesOperations.getCurrentDirectory(), file.getName().replace(".tar.gz", ""));
+        if (!dest.exists()) {
+            dest.mkdirs();
+        }
+
+        try (FileInputStream fis = new FileInputStream(file);
+             BufferedInputStream bis = new BufferedInputStream(fis);
+             GZIPInputStream gzis = new GZIPInputStream(bis);
+             TarArchiveInputStream tarIn = new TarArchiveInputStream(gzis)) {
+
+            TarArchiveEntry entry;
+            while ((entry = tarIn.getNextTarEntry()) != null) {
+                File outputFile = new File(dest, entry.getName());
+
+                if (entry.isDirectory()) {
+                    outputFile.mkdirs();
+                } else {
+                    File parent = outputFile.getParentFile();
+                    if (!parent.exists()) {
+                        parent.mkdirs();
+                    }
+                    try (OutputStream out = new FileOutputStream(outputFile)) {
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = tarIn.read(buffer)) != -1) {
+                            out.write(buffer, 0, len);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error decompressing tar.gz file: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public static void compress(File file, String fileName, boolean useCompress, boolean usePassword, String password, ArchiveType archiveType) {

@@ -657,7 +657,7 @@ public class Main extends Application {
         });
 
         MenuItem archive;
-        if(fileName.endsWith(".zip") || fileName.endsWith(".tar")) {
+        if(fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz")) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
                 ArchiveManager.extract(new File(FilesOperations.getCurrentDirectory(), fileName));

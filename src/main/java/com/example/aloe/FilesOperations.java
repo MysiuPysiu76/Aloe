@@ -144,6 +144,7 @@ public class FilesOperations {
         if (lastDotIndex == -1 || lastDotIndex == fileName.length() - 1) {
             return "";
         }
+        if (fileName.endsWith(".tar.gz")) return "tar.gz";
         return fileName.substring(lastDotIndex + 1);
     }
 }
