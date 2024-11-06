@@ -20,6 +20,8 @@ import javafx.stage.*;
 import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SegmentedButton;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,23 +40,24 @@ import java.util.*;
 public class Main extends Application {
 
     private List<File> directoryHistory = new ArrayList<>();
-    private ListView<String> filesList;
+    private static ListView<String> filesList;
+    public static List<FontIcon> menuIcons;
 
     private HBox navigationPanel = new HBox();
     private VBox filesBox = new VBox();
     private SplitPane filesPanel = new SplitPane();
-    private ScrollPane filesMenu = new ScrollPane();
-    private ScrollPane filesPane = new ScrollPane();
+    private static ScrollPane filesMenu = new ScrollPane();
+    private static ScrollPane filesPane = new ScrollPane();
     private Scene scene;
     private Button parrentDir = getNavigateParentButton();
 
     private int directoryHistoryPosition = -1;
-    private boolean isGridView = true;
+    private static boolean isGridView = true;
     private boolean isHiddenFilesShow = false;
     private boolean isMenuHidden = false;
     private VBox root = new VBox();
     public static Stage stage;
-    private FlowPane grid;
+    private static FlowPane grid;
 
     public static void main(String[] args) {
         launch(args);
@@ -62,7 +65,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
+
         root.getStyleClass().add("root");
         this.stage = stage;
         scene = new Scene(root, 935, 500);
@@ -165,7 +168,6 @@ public class Main extends Application {
         button.setGraphic(ArrowLoader.getArrow(ArrowLoader.ArrowDirection.RIGHT));
         button.setPadding(new Insets(7, 13, 10, 10));
         button.getStyleClass().addAll("next-directory", "navigate-button");
-
         button.setOnMouseClicked(event -> {
             if (directoryHistoryPosition < directoryHistory.size() - 1) {
                 directoryHistoryPosition++;
@@ -390,7 +392,7 @@ public class Main extends Application {
         grid.getStyleClass().add("files-grid");
         filesPane.setPadding(new Insets(5, 10, 10, 10));
         FlowPane.setMargin(grid, new Insets(5, 10, 10, 10));
-
+        ListView<String> filesList = new ListView<>();
         filesList.getItems().clear();
 
         if (addToHistory) {
@@ -402,7 +404,6 @@ public class Main extends Application {
         }
 
         File[] files = FilesOperations.getCurrentDirectory().listFiles();
-
         if (files != null) {
             List<String> directories = new ArrayList<>();
             List<String> normalFiles = new ArrayList<>();
@@ -419,11 +420,10 @@ public class Main extends Application {
                     normalFiles.add(file.getName());
                 }
             }
-
             Collections.sort(directories);
             Collections.sort(normalFiles);
 
-            if (isGridView) {
+            if (Main.isGridView) {
                 for (String dirName : directories) {
                     VBox box = createFileBox(dirName, true);
                     box.setOnMouseClicked(event -> {
@@ -453,7 +453,6 @@ public class Main extends Application {
                 filesPane.setFitToWidth(true);
                 filesPane.setContent(grid);
                 filesPane.getStyleClass().add("files-pane");
-
                 heightListener = new ChangeListener<Number>() {
                     @Override
                     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -462,7 +461,6 @@ public class Main extends Application {
                         grid.heightProperty().removeListener(heightListener);
                     }
                 };
-
                 grid.heightProperty().addListener(heightListener);
             } else {
                 filesList.getItems().addAll(directories);
@@ -716,7 +714,7 @@ public class Main extends Application {
         title.setStyle("-fx-font-size: 20px");
 
         Label name = new Label(Translator.translate("archive.file-name"));
-        name.setPadding(new Insets(1, 287, 7, 0));
+        name.setPadding(new Insets(1, 345, 7, 0));
         name.setStyle("-fx-font-size: 14px");
 
         TextField fileName = new TextField();
@@ -1173,7 +1171,7 @@ public class Main extends Application {
         dialog.showAndWait();
     }
 
-    private Map<String, String> directoryListInMenu = new LinkedHashMap<>();
+    private static Map<String, String> directoryListInMenu = new LinkedHashMap<>();
 
     private void initDirectoryListInMenu() {
         directoryListInMenu.put(System.getProperty("user.home"), "Home");
@@ -1183,29 +1181,43 @@ public class Main extends Application {
         directoryListInMenu.put(System.getProperty("user.home") + "/Music", "Music");
         directoryListInMenu.put(System.getProperty("user.home") + "/Pictures", "Pictures");
         directoryListInMenu.put(System.getProperty("user.home") + "/Videos", "Videos");
+        menuIcons = new ArrayList<>();
+        menuIcons.add(FontIcon.of(FontAwesome.HOME));
+        menuIcons.add(FontIcon.of(FontAwesome.DESKTOP));
+        menuIcons.add(FontIcon.of(FontAwesome.FILE_TEXT));
+        menuIcons.add(FontIcon.of(FontAwesome.ARROW_DOWN));
+        menuIcons.add(FontIcon.of(FontAwesome.MUSIC));
+        menuIcons.add(FontIcon.of(FontAwesome.PICTURE_O));
+        menuIcons.add(FontIcon.of(FontAwesome.VIDEO_CAMERA));
+        filesMenu.getStyleClass().add("menu");
         loadDirectoryListInMenu();
     }
 
-    private void loadDirectoryListInMenu() {
-        VBox containers = new VBox();
-        filesMenu.getStyleClass().add("menu");
+    public void loadDirectoryListInMenu() {
+        filesMenu.setContent(null);
+        byte i = 0;
+        VBox container = new VBox();
         for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
-            Button button = new Button(entry.getValue());
+            FontIcon icon = menuIcons.get(i);
+            icon.setIconSize(16);
+            Button button = new Button(entry.getValue(), icon);
+            button.setGraphicTextGap(10);
             button.getStyleClass().add("menu-option");
             button.setAlignment(Pos.CENTER_LEFT);
-            button.setPrefWidth(filesMenu.getHeight());
+            button.setPrefWidth(filesMenu.getWidth());
             getMenuItemsOptions(button, entry.getKey(), entry.getValue());
             button.setOnMouseClicked(event -> {
                 if(event.getButton() == MouseButton.PRIMARY) {
-                    loadDirectoryContents(new File(entry.getKey()), true);
+                    loadDirectoryContents(new File(entry.getKey().toString()), true);
                 }
             });
             filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {
                 button.setMinWidth(newValue.doubleValue());
             });
-            containers.getChildren().add(button);
+            container.getChildren().add(button);
+            i++;
         }
-        filesMenu.setContent(containers);
+        filesMenu.setContent(container);
     }
 
     private void getMenuItemsOptions(Node item, String key, String value) {
@@ -1232,14 +1244,13 @@ public class Main extends Application {
         });
     }
 
-    ContextMenu menuOptions = new ContextMenu();
+    private ContextMenu menuOptions = new ContextMenu();
 
     private void getMenuOptions() {
         menuOptions.getItems().clear();
         MenuItem add = new MenuItem(Translator.translate("context-menu.add"));
         add.setOnAction(event -> {
-            addDirectoryInMenu();
-            loadDirectoryListInMenu();
+            WindowService.openAddItemToMenuWindow();
         });
         menuOptions.getItems().add(add);
         filesMenu.setOnContextMenuRequested(event -> {
@@ -1252,32 +1263,9 @@ public class Main extends Application {
         });
     }
 
-    private void addDirectoryInMenu() {
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Add Directory");
-
-        VBox dialogContent = new VBox();
-        dialogContent.setPadding(new Insets(5));
-        TextField name = new TextField("Name");
-        TextField path = new TextField("/path/to/directory");
-        Label error = new Label();
-        error.setStyle("-fx-text-fill: red;");
-        dialogContent.getChildren().addAll(name, path, error);
-        dialog.getDialogPane().setContent(dialogContent);
-
-        ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
-        Button addButton = (Button) dialog.getDialogPane().lookupButton(addButtonType);
-
-        addButton.addEventFilter(ActionEvent.ACTION, event -> {
-            addDirectoryListInMenu(path.getText(), name.getText());
-        });
-
-        dialog.showAndWait();
-    }
-
-    private void addDirectoryListInMenu(String key, String value) {
+    public void addDirectoryListInMenu(String key, String value, FontIcon icon) {
         directoryListInMenu.put(key, value);
+        menuIcons.add(icon);
         loadDirectoryListInMenu();
     }
 

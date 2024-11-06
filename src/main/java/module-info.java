@@ -1,6 +1,5 @@
 module com.example.aloe {
     requires javafx.controls;
-    requires javafx.fxml;
     requires javafx.web;
     requires java.sql;
 
@@ -18,6 +17,8 @@ module com.example.aloe {
     requires javafx.swing;
     requires zip4j;
     requires org.apache.commons.compress;
+    requires org.kordamp.ikonli.core;
+    requires org.kordamp.ikonli.fontawesome;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;

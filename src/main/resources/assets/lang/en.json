@@ -62,5 +62,9 @@
   "button.extract": "Extract",
   "button.close": "Close",
   "archive.compress.success": "Compression successfully!",
-  "archive.compress.error": "Error while compress!"
+  "archive.compress.error": "Error while compress!",
+  "files-menu.title.add": "Add Directory to Menu",
+  "utils.title": "Title",
+  "button.add": "Add",
+  "files-menu.example-path": "/path/to/directory"
 }

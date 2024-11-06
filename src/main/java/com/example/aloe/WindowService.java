@@ -1,16 +1,20 @@
 package com.example.aloe;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class WindowService {
     public static void openPasswordPromptWindow() {
@@ -84,5 +88,102 @@ public class WindowService {
         window.setScene(scene);
         window.initOwner(Main.stage);
         window.showAndWait();
+    }
+
+    public static void openAddItemToMenuWindow() {
+        Stage window = new Stage();
+        VBox root = new VBox();
+        root.setAlignment(Pos.TOP_CENTER);
+        window.setMinHeight(230);
+        window.setMinWidth(320);
+        window.initModality(Modality.WINDOW_MODAL);
+        window.initStyle(StageStyle.TRANSPARENT);
+
+        Label title = new Label(Translator.translate("files-menu.title.add"));
+        title.setPadding(new Insets(15, 10, 10, 10));
+        title.setStyle("-fx-font-size: 17px");
+
+        TextField directoryName = new TextField();
+        directoryName.setStyle("-fx-font-size: 14px");
+        directoryName.setMinWidth(290);
+        directoryName.setMaxWidth(290);
+        directoryName.setPadding(new Insets(7, 10, 7, 10));
+        directoryName.setPromptText(Translator.translate("utils.title"));
+        VBox.setMargin(directoryName, new Insets(10, 10, 7, 10));
+
+        TextField directoryPath = new TextField();
+        directoryPath.setStyle("-fx-font-size: 14px");
+        directoryPath.setMinWidth(290);
+        directoryPath.setMaxWidth(290);
+        directoryPath.setPadding(new Insets(7, 10, 7, 10));
+        directoryPath.setPromptText(Translator.translate("files-menu.example-path"));
+
+        ObservableList<FontAwesome> icons = FXCollections.observableArrayList(FontAwesome.values());
+        ComboBox<FontAwesome> iconComboBox = new ComboBox<>(icons);
+        iconComboBox.setValue(FontAwesome.FOLDER_OPEN_O);
+        iconComboBox.setVisibleRowCount(12);
+        iconComboBox.setMaxWidth(300);
+        VBox.setMargin(iconComboBox, new Insets(10, 10, 7, 10));
+
+        Button cancel = new Button(Translator.translate("button.cancel"));
+        cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
+        Button add = new Button(Translator.translate("button.add"));
+        add.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
+
+        HBox bottomHBox = new HBox(cancel, add);
+        bottomHBox.setAlignment(Pos.CENTER_RIGHT);
+        bottomHBox.setSpacing(10);
+        bottomHBox.setPadding(new Insets(12, 15, 5, 10));
+        root.getChildren().addAll(title, directoryName, directoryPath, iconComboBox, bottomHBox);
+
+        cancel.setOnAction(event -> window.close());
+        add.setOnAction(event -> {
+            Main main = new Main();
+            main.addDirectoryListInMenu(directoryPath.getText(), directoryName.getText(), FontIcon.of(iconComboBox.getValue()));
+            window.close();
+        });
+
+        iconComboBox.setCellFactory(new Callback<>() {
+            @Override
+            public ListCell<FontAwesome> call(ListView<FontAwesome> param) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(FontAwesome item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            FontIcon iconView = new FontIcon(item);
+                            iconView.setIconSize(20);
+                            iconView.setIconColor(Color.BLACK);
+                            setText(item.name());
+                            setGraphic(iconView);
+                        }
+                    }
+                };
+            }
+        });
+        iconComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(FontAwesome item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    FontIcon iconView = new FontIcon(item);
+                    iconView.setIconSize(20);
+                    iconView.setIconColor(Color.BLACK);
+                    setText(item.name());
+                    setGraphic(iconView);
+                }
+            }
+        });
+
+        Scene scene = new Scene(root, 380, 150);
+        window.setScene(scene);
+        window.initOwner(Main.stage);
+        window.show();
     }
 }
