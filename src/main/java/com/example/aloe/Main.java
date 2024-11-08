@@ -41,7 +41,7 @@ public class Main extends Application {
 
     private List<File> directoryHistory = new ArrayList<>();
     private static ListView<String> filesList;
-    public static List<FontIcon> menuIcons;
+    public static List<FontAwesome> menuIcons;
 
     private HBox navigationPanel = new HBox();
     private VBox filesBox = new VBox();
@@ -1182,13 +1182,13 @@ public class Main extends Application {
         directoryListInMenu.put(System.getProperty("user.home") + "/Pictures", "Pictures");
         directoryListInMenu.put(System.getProperty("user.home") + "/Videos", "Videos");
         menuIcons = new ArrayList<>();
-        menuIcons.add(FontIcon.of(FontAwesome.HOME));
-        menuIcons.add(FontIcon.of(FontAwesome.DESKTOP));
-        menuIcons.add(FontIcon.of(FontAwesome.FILE_TEXT));
-        menuIcons.add(FontIcon.of(FontAwesome.ARROW_DOWN));
-        menuIcons.add(FontIcon.of(FontAwesome.MUSIC));
-        menuIcons.add(FontIcon.of(FontAwesome.PICTURE_O));
-        menuIcons.add(FontIcon.of(FontAwesome.VIDEO_CAMERA));
+        menuIcons.add(FontAwesome.HOME);
+        menuIcons.add(FontAwesome.DESKTOP);
+        menuIcons.add(FontAwesome.FILE_TEXT);
+        menuIcons.add(FontAwesome.ARROW_DOWN);
+        menuIcons.add(FontAwesome.MUSIC);
+        menuIcons.add(FontAwesome.PICTURE_O);
+        menuIcons.add(FontAwesome.VIDEO_CAMERA);
         filesMenu.getStyleClass().add("menu");
         loadDirectoryListInMenu();
     }
@@ -1198,7 +1198,8 @@ public class Main extends Application {
         byte i = 0;
         VBox container = new VBox();
         for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
-            FontIcon icon = menuIcons.get(i);
+//            FontAwesome icon1 = menuIcons.get(i);
+            FontIcon icon = FontIcon.of(menuIcons.get(i));
             icon.setIconSize(16);
             Button button = new Button(entry.getValue(), icon);
             button.setGraphicTextGap(10);
@@ -1220,6 +1221,17 @@ public class Main extends Application {
         filesMenu.setContent(container);
     }
 
+    private <K, V> int findKeyIndexInMenu(String key) {
+        int index = 0;
+        for(String keyInMap: directoryListInMenu.keySet()) {
+            if (keyInMap.equals(key)) {
+                return index;
+            }
+            index++;
+        }
+        return 0;
+    }
+
     private void getMenuItemsOptions(Node item, String key, String value) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem open = new MenuItem(Translator.translate("context-menu.open"));
@@ -1228,7 +1240,7 @@ public class Main extends Application {
         });
         MenuItem edit = new MenuItem(Translator.translate("context-menu.edit"));
         edit.setOnAction(event -> {
-            editDirectoryInMenu(key, value);
+            WindowService.openEditItemInMenuWindow(key, value, menuIcons.get(findKeyIndexInMenu(key)));
             loadDirectoryListInMenu();
         });
         MenuItem remove = new MenuItem(Translator.translate("context-menu.remove"));
@@ -1263,41 +1275,18 @@ public class Main extends Application {
         });
     }
 
-    public void addDirectoryListInMenu(String key, String value, FontIcon icon) {
+    public void addDirectoryListInMenu(String key, String value, FontAwesome icon) {
         directoryListInMenu.put(key, value);
         menuIcons.add(icon);
         loadDirectoryListInMenu();
     }
 
-    private void editDirectoryInMenu(String key, String value) {
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Edit Directory");
-
-        VBox dialogContent = new VBox();
-        dialogContent.setPadding(new Insets(5));
-        TextField name = new TextField(value);
-        TextField path = new TextField(key);
-        Label error = new Label();
-        error.setStyle("-fx-text-fill: red;");
-        dialogContent.getChildren().addAll(name, path, error);
-        dialog.getDialogPane().setContent(dialogContent);
-
-        ButtonType editButtonType = new ButtonType("Edit", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(editButtonType, ButtonType.CANCEL);
-        Button editButton = (Button) dialog.getDialogPane().lookupButton(editButtonType);
-
-        editButton.setOnAction(event -> {
-            replaceItemInDirectoryList(key, path.getText().trim(), name.getText().trim());
-        });
-
-        dialog.showAndWait();
-    }
-
     private void removeDirectoryFromMenu(String key) {
         directoryListInMenu.remove(key);
+        menuIcons.remove(findKeyIndexInMenu(key));
     }
 
-    private void replaceItemInDirectoryList(String oldKey, String newKey, String newValue) {
+    public void replaceItemInDirectoryList(String oldKey, String newKey, String newValue, FontAwesome icon) {
         LinkedHashMap<String, String> tempMap = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
             if(entry.getKey().equals(oldKey)) {
@@ -1308,6 +1297,8 @@ public class Main extends Application {
         }
         directoryListInMenu.clear();
         directoryListInMenu.putAll(tempMap);
+        menuIcons.set(findKeyIndexInMenu(newKey), icon);
+        loadDirectoryListInMenu();
     }
 
     private void getParentDirectory() {

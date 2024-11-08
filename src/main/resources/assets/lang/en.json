@@ -66,5 +66,7 @@
   "files-menu.title.add": "Add Directory to Menu",
   "utils.title": "Title",
   "button.add": "Add",
-  "files-menu.example-path": "/path/to/directory"
+  "files-menu.example-path": "/path/to/directory",
+  "files-menu.title.edit": "Edit Directory in Menu",
+  "button.save": "Save"
 }
