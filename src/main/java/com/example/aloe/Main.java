@@ -611,7 +611,15 @@ public class Main extends Application {
             FilesOperations.pasteFilesFromClipboard();
             refreshCurrentDirectory();
         });
-        directoryMenu.getItems().addAll(newDirectory, newFile, paste);
+        MenuItem properies = new MenuItem(Translator.translate("context-menu.properties"));
+        properies.setOnAction(event -> {
+            try {
+                openPropertiesWindow(new VBox(), FilesOperations.getCurrentDirectory());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        directoryMenu.getItems().addAll(newDirectory, newFile, paste, properies);
         filesPane.setOnContextMenuRequested(event -> {
             removeSelectionFromFiles();
             paste.setDisable(FilesOperations.isClipboardEmpty());
@@ -678,7 +686,7 @@ public class Main extends Application {
         MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
         properties.setOnAction(event -> {
             try {
-                openPropertiesWindow(item, fileName);
+                openPropertiesWindow(item, new File(FilesOperations.getCurrentDirectory(), fileName));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -929,7 +937,7 @@ public class Main extends Application {
         }
     }
 
-    private void openPropertiesWindow(VBox box, String fileName) throws IOException {
+    private void openPropertiesWindow(VBox box, File file) throws IOException {
         Stage window = new Stage();
         VBox root = new VBox();
         window.setMinHeight(380);
@@ -945,7 +953,7 @@ public class Main extends Application {
         iconWrapper.getChildren().add(icon);
         VBox.setMargin(icon, new Insets(30, 10, 10, 2));
 
-        File file = new File(FilesOperations.getCurrentDirectory(), fileName);
+//        File file = new File(FilesOperations.getCurrentDirectory(), fileName);
         List<String> names = getFilePropertiesNames();
         List<String> values = getFilePropertiesValues(file);
 
@@ -1248,7 +1256,15 @@ public class Main extends Application {
             removeDirectoryFromMenu(key);
             loadDirectoryListInMenu();
         });
-        contextMenu.getItems().addAll(open, edit, remove);
+        MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
+        properties.setOnAction(event -> {
+            try {
+                openPropertiesWindow(new VBox(), new File(key));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        contextMenu.getItems().addAll(open, edit, remove, properties);
         item.setOnContextMenuRequested(event -> {
             contextMenu.show(item, event.getScreenX(), event.getScreenY());
             menuOptions.hide();
