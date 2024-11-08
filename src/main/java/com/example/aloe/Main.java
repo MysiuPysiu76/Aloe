@@ -36,6 +36,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main extends Application {
 
@@ -611,21 +612,34 @@ public class Main extends Application {
             FilesOperations.pasteFilesFromClipboard();
             refreshCurrentDirectory();
         });
-        MenuItem properies = new MenuItem(Translator.translate("context-menu.properties"));
-        properies.setOnAction(event -> {
+        MenuItem selectAll = new MenuItem(Translator.translate("context-menu.select-all"));
+        selectAll.setOnAction(event -> {
+            selectAllFiles();
+        });
+        MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
+        properties.setOnAction(event -> {
             try {
                 openPropertiesWindow(new VBox(), FilesOperations.getCurrentDirectory());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
-        directoryMenu.getItems().addAll(newDirectory, newFile, paste, properies);
+        directoryMenu.getItems().addAll(newDirectory, newFile, paste, selectAll, properties);
         filesPane.setOnContextMenuRequested(event -> {
             removeSelectionFromFiles();
             paste.setDisable(FilesOperations.isClipboardEmpty());
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
             event.consume();
         });
+    }
+
+    private void selectAllFiles() {
+        selectedFiles.clear();
+        selectedFiles = grid.getChildren().stream()
+                .filter(node -> node instanceof VBox)
+                .map(node -> (VBox) node)
+                .collect(Collectors.toList());
+        selectedFiles.forEach(fileBox -> fileBox.getStyleClass().add("selected-file"));
     }
 
     private boolean isSelected(VBox fileBox) {

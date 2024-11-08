@@ -68,5 +68,6 @@
   "button.add": "Add",
   "files-menu.example-path": "/path/to/directory",
   "files-menu.title.edit": "Edit Directory in Menu",
-  "button.save": "Save"
+  "button.save": "Save",
+  "context-menu.select-all": "Select All"
 }
