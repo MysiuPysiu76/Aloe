@@ -49,7 +49,7 @@ public class Main extends Application {
     private SplitPane filesPanel = new SplitPane();
     private static ScrollPane filesMenu = new ScrollPane();
     private static ScrollPane filesPane = new ScrollPane();
-    private Scene scene;
+    public static Scene scene;
     private Button parrentDir = getNavigateParentButton();
 
     private int directoryHistoryPosition = -1;
@@ -380,7 +380,7 @@ public class Main extends Application {
         }
     }
 
-    private List<VBox> selectedFiles = new ArrayList<>();
+    private static List<VBox> selectedFiles = new ArrayList<>();
 
     private void loadDirectoryContents(File directory, boolean addToHistory) {
         removeSelectionFromFiles();
@@ -666,7 +666,7 @@ public class Main extends Application {
 
         MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
         moveTo.setOnAction(event -> {
-            moveFileTo(new File(FilesOperations.getCurrentDirectory(), fileName));
+            FilesOperations.moveFileTo(new File(FilesOperations.getCurrentDirectory(), fileName));
             refreshCurrentDirectory();
         });
 
@@ -839,26 +839,7 @@ public class Main extends Application {
         window.show();
     }
 
-    private void moveFileTo(File fileToMove) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle(Translator.translate("context-menu.move-to"));
-        directoryChooser.setInitialDirectory(FilesOperations.getCurrentDirectory());
-        File selectedDirectory = directoryChooser.showDialog(filesPane.getScene().getWindow());
-        Path newPath = null;
-        try {
-            newPath = selectedDirectory.toPath().resolve(fileToMove.getName());
-        } catch (NullPointerException e) {
-            System.out.println("Canceled choose directory to move");
-            throw new RuntimeException(e);
-        }
-        if(selectedDirectory != null) {
-            try {
-                Files.move(fileToMove.toPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+
 
     private ArrayList<String> getFilePropertiesNames() {
         ArrayList<String> names = new ArrayList<>();
@@ -967,7 +948,6 @@ public class Main extends Application {
         iconWrapper.getChildren().add(icon);
         VBox.setMargin(icon, new Insets(30, 10, 10, 2));
 
-//        File file = new File(FilesOperations.getCurrentDirectory(), fileName);
         List<String> names = getFilePropertiesNames();
         List<String> values = getFilePropertiesValues(file);
 
@@ -1011,12 +991,22 @@ public class Main extends Application {
         copy.setOnAction(event -> {
             copySelectedFiles();
         });
+        MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
+        moveTo.setOnAction(event -> {
+           FilesOperations.moveFileTo(getSelectedFiles());
+           refreshCurrentDirectory();
+        });
+        MenuItem moveToParent = new MenuItem(Translator.translate("context-menu.move-to-parent"));
+        moveToParent.setOnAction(event -> {
+            FilesOperations.moveFileToParent(getSelectedFiles());
+            refreshCurrentDirectory();
+        });
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             deleteSelectedFiles();
             refreshCurrentDirectory();
         });
-        multiSelectionFilesContextMenu.getItems().addAll(copy, delete);
+        multiSelectionFilesContextMenu.getItems().addAll(copy, moveTo, moveToParent, delete);
     }
 
     public void deleteSelectedFiles() {
@@ -1220,7 +1210,6 @@ public class Main extends Application {
         byte i = 0;
         VBox container = new VBox();
         for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
-//            FontAwesome icon1 = menuIcons.get(i);
             FontIcon icon = FontIcon.of(menuIcons.get(i));
             icon.setIconSize(16);
             Button button = new Button(entry.getValue(), icon);
@@ -1335,5 +1324,13 @@ public class Main extends Application {
         if(FilesOperations.getCurrentDirectory().getPath() != "/") {
             loadDirectoryContents(new File(FilesOperations.getCurrentDirectory().getParent()), true);
         }
+    }
+
+    public static List<File> getSelectedFiles() {
+        List<File> files = new ArrayList<>();
+        for (VBox selectedFile : selectedFiles) {
+            files.add(new File(FilesOperations.getCurrentDirectory().getPath(), ((Label) selectedFile.getChildren().get(1)).getText()));
+        }
+        return files;
     }
 }

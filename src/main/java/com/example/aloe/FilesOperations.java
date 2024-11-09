@@ -3,11 +3,14 @@ package com.example.aloe;
 import javafx.concurrent.Task;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
@@ -100,7 +103,6 @@ public class FilesOperations {
         if (files == null || files.isEmpty()) {
             return;
         }
-
         Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent content = new ClipboardContent();
         content.putFiles(files);
@@ -135,6 +137,16 @@ public class FilesOperations {
         }
     }
 
+    public static void moveFileToParent(List<File> files) {
+        try {
+            for (File file : files) {
+                Files.move(file.toPath(), file.getParentFile().getParentFile().toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String getExtension(File file) {
         return FilesOperations.getExtension(file.getName());
     }
@@ -146,5 +158,41 @@ public class FilesOperations {
         }
         if (fileName.endsWith(".tar.gz")) return "tar.gz";
         return fileName.substring(lastDotIndex + 1);
+    }
+
+    public static void moveFileTo(File fileToMove) {
+        File selectedDirectory = chooseDirectory();
+        try {
+            if(selectedDirectory != null) {
+                Files.move(fileToMove.toPath(), selectedDirectory.toPath().resolve(fileToMove.getName()), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static File chooseDirectory() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle(Translator.translate("context-menu.move-to"));
+        directoryChooser.setInitialDirectory(FilesOperations.getCurrentDirectory());
+        File selectedDirectory = directoryChooser.showDialog(Main.scene.getWindow());
+        return selectedDirectory;
+    }
+
+    public static void moveFileTo(List<File> files) {
+        File selectedDirectory = chooseDirectory();
+        try {
+            if(selectedDirectory != null) {
+                for (File file : files) {
+                    Files.move(file.toPath(), selectedDirectory.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
