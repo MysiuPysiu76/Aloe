@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
@@ -691,6 +690,12 @@ public class Main extends Application {
             });
         }
 
+        MenuItem moveToTrash = new MenuItem(Translator.translate("context-menu.move-to-trash"));
+        moveToTrash.setOnAction(event -> {
+            FilesOperations.moveFileToTrash(new File(FilesOperations.getCurrentDirectory(), fileName));
+           refreshCurrentDirectory();
+        });
+
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName));
@@ -706,7 +711,7 @@ public class Main extends Application {
             }
         });
 
-        fileMenu.getItems().addAll(open, copy, rename, moveTo, moveToParent, archive, delete, properties);
+        fileMenu.getItems().addAll(open, copy, rename, moveTo, moveToParent, archive,moveToTrash, delete, properties);
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
@@ -838,8 +843,6 @@ public class Main extends Application {
         window.initOwner(stage);
         window.show();
     }
-
-
 
     private ArrayList<String> getFilePropertiesNames() {
         ArrayList<String> names = new ArrayList<>();
@@ -1001,12 +1004,17 @@ public class Main extends Application {
             FilesOperations.moveFileToParent(getSelectedFiles());
             refreshCurrentDirectory();
         });
+        MenuItem moveToTrash = new MenuItem(Translator.translate("context-menu.move-to-trash"));
+        moveToTrash.setOnAction(event -> {
+            FilesOperations.moveFileToTrash(getSelectedFiles());
+            refreshCurrentDirectory();
+        });
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             deleteSelectedFiles();
             refreshCurrentDirectory();
         });
-        multiSelectionFilesContextMenu.getItems().addAll(copy, moveTo, moveToParent, delete);
+        multiSelectionFilesContextMenu.getItems().addAll(copy, moveTo, moveToParent, moveToTrash, delete);
     }
 
     public void deleteSelectedFiles() {
@@ -1133,7 +1141,6 @@ public class Main extends Application {
             File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
             if (!newFile.exists()) {
                 if(!newFile.mkdir()) {
-
                 }
             }
         });

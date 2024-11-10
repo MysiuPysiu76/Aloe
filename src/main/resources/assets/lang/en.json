@@ -69,5 +69,6 @@
   "files-menu.example-path": "/path/to/directory",
   "files-menu.title.edit": "Edit Directory in Menu",
   "button.save": "Save",
-  "context-menu.select-all": "Select All"
+  "context-menu.select-all": "Select All",
+  "context-menu.move-to-trash": "Move to Trash"
 }

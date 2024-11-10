@@ -3,7 +3,6 @@ package com.example.aloe;
 import javafx.concurrent.Task;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
 import java.awt.*;
@@ -160,17 +159,8 @@ public class FilesOperations {
         return fileName.substring(lastDotIndex + 1);
     }
 
-    public static void moveFileTo(File fileToMove) {
-        File selectedDirectory = chooseDirectory();
-        try {
-            if(selectedDirectory != null) {
-                Files.move(fileToMove.toPath(), selectedDirectory.toPath().resolve(fileToMove.getName()), StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void moveFileTo(File file) {
+        moveFileTo(file, chooseDirectory());
     }
 
     public static File chooseDirectory() {
@@ -182,11 +172,26 @@ public class FilesOperations {
     }
 
     public static void moveFileTo(List<File> files) {
-        File selectedDirectory = chooseDirectory();
+        moveFileTo(files, chooseDirectory());
+    }
+
+    public static void moveFileTo(File file, File destination) {
         try {
-            if(selectedDirectory != null) {
+            if(destination != null) {
+                Files.move(file.toPath(), destination.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void moveFileTo(List<File> files, File destination) {
+        try {
+            if(destination != null) {
                 for (File file : files) {
-                    Files.move(file.toPath(), selectedDirectory.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+                    Files.move(file.toPath(), destination.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
         } catch (NullPointerException e) {
@@ -194,5 +199,59 @@ public class FilesOperations {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void moveFileToTrash(File file) {
+        File trash = new File(System.getProperty("user.home"), ".trash");
+        if (!trash.exists() || trash.isFile()) {
+            trash.mkdir();
+        }
+        Path newPath = trash.toPath().resolve(file.getName());
+        int i = 0;
+        while (Files.exists(newPath)) {
+            String fileName = getUniqueName(file.getName(), i);
+            newPath = trash.toPath().resolve(fileName);
+            i++;
+        }
+        try {
+            Files.move(file.toPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void moveFileToTrash(List<File> files) {
+        File trash = new File(System.getProperty("user.home"), ".trash");
+        if (!trash.exists() || trash.isFile()) {
+            trash.mkdir();
+        }
+
+        for (File file : files) {
+            Path newPath = trash.toPath().resolve(file.getName());
+            int i = 0;
+            while (Files.exists(newPath)) {
+                String fileName = getUniqueName(file.getName(), i);
+                newPath = trash.toPath().resolve(fileName);
+                i++;
+            }
+            try {
+                Files.move(file.toPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static String getUniqueName(String name, int suffix) {
+        String fileName;
+        String extension = "";
+        int dotIndex = name.lastIndexOf(".");
+        if (dotIndex > 0) {
+            fileName = name.substring(0, dotIndex);
+            extension = name.substring(dotIndex);
+        } else {
+            fileName = name;
+        }
+        return fileName + "_" + suffix + extension;
     }
 }
