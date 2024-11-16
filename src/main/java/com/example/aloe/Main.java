@@ -685,7 +685,7 @@ public class Main extends Application {
         } else {
             archive = new MenuItem(Translator.translate("context-menu.compress"));
             archive.setOnAction(event -> {
-                openCreateArchiveWindow(new File(FilesOperations.getCurrentDirectory(), fileName));
+                openCreateArchiveWindow(new ArrayList<>(Arrays.asList(new File(FilesOperations.getCurrentDirectory(), fileName))));
                 refreshCurrentDirectory();
             });
         }
@@ -726,7 +726,7 @@ public class Main extends Application {
         });
     }
 
-    private void openCreateArchiveWindow(File file) {
+    private void openCreateArchiveWindow(List<File> files) {
         Stage window = new Stage();
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
@@ -834,7 +834,7 @@ public class Main extends Application {
         });
         create.setOnAction(event -> {
             window.close();
-            ArchiveManager.compress(file, fileName.getText(), compress.isSelected(), password.isSelected(), passwordText.getText(), archiveType.getValue());
+            ArchiveManager.compress(files, fileName.getText(), compress.isSelected(), password.isSelected(), passwordText.getText(), archiveType.getValue());
             refreshCurrentDirectory();
         });
 
@@ -1009,12 +1009,17 @@ public class Main extends Application {
             FilesOperations.moveFileToTrash(getSelectedFiles());
             refreshCurrentDirectory();
         });
+        MenuItem compress = new MenuItem(Translator.translate("context-menu.compress"));
+        compress.setOnAction(event -> {
+            openCreateArchiveWindow(getSelectedFiles());
+           refreshCurrentDirectory();
+        });
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
             deleteSelectedFiles();
             refreshCurrentDirectory();
         });
-        multiSelectionFilesContextMenu.getItems().addAll(copy, moveTo, moveToParent, moveToTrash, delete);
+        multiSelectionFilesContextMenu.getItems().addAll(copy, moveTo, moveToParent, moveToTrash, compress, delete);
     }
 
     public void deleteSelectedFiles() {
