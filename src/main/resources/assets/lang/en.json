@@ -70,5 +70,16 @@
   "files-menu.title.edit": "Edit Directory in Menu",
   "button.save": "Save",
   "context-menu.select-all": "Select All",
-  "context-menu.move-to-trash": "Move to Trash"
+  "context-menu.move-to-trash": "Move to Trash",
+  "window.decision.title": "Replace or Skip",
+  "window.decision.skip.file": "Skip this file",
+  "window.decision.skip.directory": "Skip this folder",
+  "window.decision.replace.file": "Replace file",
+  "window.decision.replace.directory": "Replace folder",
+  "window.decision.copy-next-to": "Copy next to",
+  "window.decision.combine-directory": "Combine folders",
+  "window.decision.destination-has-file": "The destination already has a file named: ",
+  "window.decision.destination-has-directory": "The destination already has a directory named: ",
+  "button.exit": "Exit",
+  "confirm.skip.copy": "Confirm skipping pending operations"
 }

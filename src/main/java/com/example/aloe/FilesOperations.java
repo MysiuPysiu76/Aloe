@@ -44,21 +44,47 @@ public class FilesOperations {
         return filesFromClipboard == null || filesFromClipboard.isEmpty();
     }
 
-    private static void copyFileToDestination(File source, File destination) throws IOException {
-        Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    static void copyFileToDestination(File source, File destination, boolean replaceExisting) throws IOException {
+        if (destination.exists() && !replaceExisting) {
+            FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination);
+            if (FileOperation.addOperationToQueue(operation)) {
+                WindowService.addFileDecisionAskToExistFileWindow(operation);
+            }
+        } else {
+            Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
-    private static void copyDirectoryToDestination(File source, File destination) throws IOException {
-        if(!destination.exists()) {
+    static void copyDirectoryToDestination(File source, File destination, boolean replaceExisting, boolean combine) throws IOException {
+        if(destination.exists()) {
+            if (replaceExisting) {
+                FilesOperations.deleteFile(destination);
+                destination.mkdir();
+                pasteFiles(source, destination);
+            } else {
+                if (combine) {
+                    pasteFiles(source, destination);
+                } else {
+                    FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination);
+                    if (FileOperation.addOperationToQueue(operation)) {
+                        WindowService.addDirectoryDecisionAskToExistFileWindow(operation);
+                    }
+                }
+            }
+        } else {
             destination.mkdir();
+            pasteFiles(source, destination);
         }
+    }
+
+    private static void pasteFiles(File source, File destination) throws IOException {
         for (String file : Objects.requireNonNull(source.list())) {
             File sourceFile = new File(source, file);
             File destinationFile = new File(destination, file);
             if (sourceFile.isDirectory()) {
-                copyDirectoryToDestination(sourceFile, destinationFile);
+                copyDirectoryToDestination(sourceFile, destinationFile, true, false);
             } else {
-                copyFileToDestination(sourceFile, destinationFile);
+                copyFileToDestination(sourceFile, destinationFile, true);
             }
         }
     }
@@ -117,9 +143,9 @@ public class FilesOperations {
                 File destinationFile = new File(getCurrentDirectory(), fileFromClipboard.getName());
                 try {
                     if (fileFromClipboard.isDirectory()) {
-                        copyDirectoryToDestination(fileFromClipboard, destinationFile);
+                        copyDirectoryToDestination(fileFromClipboard, destinationFile, false, false);
                     } else {
-                        copyFileToDestination(fileFromClipboard, destinationFile);
+                        copyFileToDestination(fileFromClipboard, destinationFile, false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -159,32 +185,15 @@ public class FilesOperations {
         return fileName.substring(lastDotIndex + 1);
     }
 
-    public static void moveFileTo(File file) {
-        moveFileTo(file, chooseDirectory());
-    }
-
     public static File chooseDirectory() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(Translator.translate("context-menu.move-to"));
         directoryChooser.setInitialDirectory(FilesOperations.getCurrentDirectory());
-        File selectedDirectory = directoryChooser.showDialog(Main.scene.getWindow());
-        return selectedDirectory;
+        return directoryChooser.showDialog(Main.scene.getWindow());
     }
 
     public static void moveFileTo(List<File> files) {
         moveFileTo(files, chooseDirectory());
-    }
-
-    public static void moveFileTo(File file, File destination) {
-        try {
-            if(destination != null) {
-                Files.move(file.toPath(), destination.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void moveFileTo(List<File> files, File destination) {
@@ -228,7 +237,7 @@ public class FilesOperations {
 
         for (File file : files) {
             Path newPath = trash.toPath().resolve(file.getName());
-            int i = 0;
+            short i = 1;
             while (Files.exists(newPath)) {
                 String fileName = getUniqueName(file.getName(), i);
                 newPath = trash.toPath().resolve(fileName);
@@ -242,7 +251,7 @@ public class FilesOperations {
         }
     }
 
-    private static String getUniqueName(String name, int suffix) {
+    public static String getUniqueName(String name, int suffix) {
         String fileName;
         String extension = "";
         int dotIndex = name.lastIndexOf(".");
@@ -253,5 +262,9 @@ public class FilesOperations {
             fileName = name;
         }
         return fileName + "_" + suffix + extension;
+    }
+
+    public static String getUniqueDirectoryName(String name, int suffix) {
+        return name + "_" + suffix;
     }
 }

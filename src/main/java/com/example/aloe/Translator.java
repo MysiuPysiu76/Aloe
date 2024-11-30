@@ -34,7 +34,8 @@ public class Translator {
         }
     }
 
-    public static String translate(String text) {
-        return Translator.getJsonContent().get(text).asText();
+    public static String translate(String key) {
+        JsonNode node = Translator.getJsonContent().get(key);
+        return (node != null) ? node.asText() : key;
     }
 }

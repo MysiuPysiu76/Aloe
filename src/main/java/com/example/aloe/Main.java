@@ -665,7 +665,7 @@ public class Main extends Application {
 
         MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
         moveTo.setOnAction(event -> {
-            FilesOperations.moveFileTo(new File(FilesOperations.getCurrentDirectory(), fileName));
+            FilesOperations.moveFileTo(new ArrayList<>(Arrays.asList(new File(FilesOperations.getCurrentDirectory(), fileName))));
             refreshCurrentDirectory();
         });
 
