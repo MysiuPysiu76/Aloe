@@ -22,4 +22,6 @@ module com.example.aloe {
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;
+    exports com.example.aloe.archive;
+    opens com.example.aloe.archive to javafx.fxml;
 }

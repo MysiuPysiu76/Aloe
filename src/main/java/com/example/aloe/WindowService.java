@@ -1,5 +1,6 @@
 package com.example.aloe;
 
+//import com.example.aloe.archive.ArchiveManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -23,7 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 public class WindowService {
-    public static void openPasswordPromptWindow() {
+    public static String openPasswordPromptWindow() {
         Stage window = new Stage();
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
@@ -32,6 +33,7 @@ public class WindowService {
         window.setMinWidth(430);
         window.initModality(Modality.WINDOW_MODAL);
         window.initStyle(StageStyle.TRANSPARENT);
+        final String[] password = {""};
 
         Label title = new Label(Translator.translate("archive.extract.title"));
         title.setPadding(new Insets(15, 10, 10, 10));
@@ -41,10 +43,10 @@ public class WindowService {
         name.setPadding(new Insets(1, 212, 7, 0));
         name.setStyle("-fx-font-size: 14px");
 
-        TextField password = new TextField();
-        password.setStyle("-fx-font-size: 15px");
-        password.setMaxWidth(330);
-        password.setPadding(new Insets(7, 10, 7, 10));
+        TextField passwordField = new TextField();
+        passwordField.setStyle("-fx-font-size: 15px");
+        passwordField.setMaxWidth(330);
+        passwordField.setPadding(new Insets(7, 10, 7, 10));
 
         Button cancel = new Button(Translator.translate("button.cancel"));
         cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
@@ -55,12 +57,15 @@ public class WindowService {
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
         bottomHBox.setSpacing(10);
         bottomHBox.setPadding(new Insets(12, 15, 5, 10));
-        root.getChildren().addAll(title, name, password, bottomHBox);
+        root.getChildren().addAll(title, name, passwordField, bottomHBox);
 
-        cancel.setOnAction(event -> window.close());
+        cancel.setOnAction(event -> {
+            password[0] = null;
+            window.close();
+        });
 
         extract.setOnAction(e -> {
-            ArchiveManager.setPassword(password.getText());
+            password[0] = passwordField.getText();
             window.close();
         });
 
@@ -68,6 +73,7 @@ public class WindowService {
         window.setScene(scene);
         window.initOwner(Main.stage);
         window.showAndWait();
+        return password[0];
     }
 
     public static void openArchiveInfoWindow(String key) {

@@ -1,4 +1,4 @@
-package com.example.aloe;
+package com.example.aloe.archive;
 
 public enum ArchiveType {
 

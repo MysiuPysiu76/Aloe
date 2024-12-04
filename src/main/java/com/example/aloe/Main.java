@@ -1,5 +1,7 @@
 package com.example.aloe;
 
+import com.example.aloe.archive.ArchiveHandler;
+import com.example.aloe.archive.ArchiveType;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -665,7 +667,7 @@ public class Main extends Application {
 
         MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
         moveTo.setOnAction(event -> {
-            FilesOperations.moveFileTo(new ArrayList<>(Arrays.asList(new File(FilesOperations.getCurrentDirectory(), fileName))));
+            FilesOperations.moveFileTo(new ArrayList<>(List.of(new File(FilesOperations.getCurrentDirectory(), fileName))));
             refreshCurrentDirectory();
         });
 
@@ -679,13 +681,13 @@ public class Main extends Application {
         if(fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz")) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
-                ArchiveManager.extract(new File(FilesOperations.getCurrentDirectory(), fileName));
+                ArchiveHandler.extract(new File(FilesOperations.getCurrentDirectory(), fileName));
                 refreshCurrentDirectory();
             });
         } else {
             archive = new MenuItem(Translator.translate("context-menu.compress"));
             archive.setOnAction(event -> {
-                openCreateArchiveWindow(new ArrayList<>(Arrays.asList(new File(FilesOperations.getCurrentDirectory(), fileName))));
+                openCreateArchiveWindow(new ArrayList<>(List.of(new File(FilesOperations.getCurrentDirectory(), fileName))));
                 refreshCurrentDirectory();
             });
         }
@@ -834,7 +836,7 @@ public class Main extends Application {
         });
         create.setOnAction(event -> {
             window.close();
-            ArchiveManager.compress(files, fileName.getText(), compress.isSelected(), password.isSelected(), passwordText.getText(), archiveType.getValue());
+            ArchiveHandler.compress(files, fileName.getText(), compress.isSelected(), password.isSelected(), passwordText.getText(), archiveType.getValue());
             refreshCurrentDirectory();
         });
 
