@@ -22,11 +22,11 @@ class TarGzArchiveHandler extends TarArchiveHandler {
                 addFileToTar(tarOut, file, "");
             }
         } catch (IOException e) {
-            WindowService.openArchiveInfoWindow("archive.compress.error");
+            WindowService.openArchiveInfoWindow("window.archive.compress.error");
             e.printStackTrace();
             return;
         }
-        WindowService.openArchiveInfoWindow("archive.compress.success");
+        WindowService.openArchiveInfoWindow("window.archive.compress.success");
     }
 
     static void extract(File file) {
@@ -34,16 +34,13 @@ class TarGzArchiveHandler extends TarArchiveHandler {
         if (!dest.exists()) {
             dest.mkdirs();
         }
-
         try (FileInputStream fis = new FileInputStream(file);
              BufferedInputStream bis = new BufferedInputStream(fis);
              GZIPInputStream gzis = new GZIPInputStream(bis);
              TarArchiveInputStream tarIn = new TarArchiveInputStream(gzis)) {
-
             TarArchiveEntry entry;
             while ((entry = tarIn.getNextTarEntry()) != null) {
                 File outputFile = new File(dest, entry.getName());
-
                 if (entry.isDirectory()) {
                     outputFile.mkdirs();
                 } else {
@@ -61,8 +58,9 @@ class TarGzArchiveHandler extends TarArchiveHandler {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error decompressing tar.gz file: " + e.getMessage());
+            WindowService.openArchiveInfoWindow("window.archive.extract.error");
             e.printStackTrace();
         }
+        WindowService.openArchiveInfoWindow("window.archive.extract.success");
     }
 }

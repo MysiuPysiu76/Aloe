@@ -24,7 +24,6 @@ class ZipArchiveHandler {
                 parameters.setEncryptionMethod(EncryptionMethod.ZIP_STANDARD);
                 zipFile = new ZipFile(new File(FilesOperations.getCurrentDirectory(), fileName + ".zip"), password.toCharArray());
             }
-
             for (File file : files) {
                 if (file.isDirectory()) {
                     zipFile.addFolder(file, parameters);
@@ -33,11 +32,11 @@ class ZipArchiveHandler {
                 }
             }
         } catch (ZipException e) {
-            WindowService.openArchiveInfoWindow("archive.compress.error");
+            WindowService.openArchiveInfoWindow("window.archive.compress.error");
             e.printStackTrace();
             return;
         }
-        WindowService.openArchiveInfoWindow("archive.compress.success");
+        WindowService.openArchiveInfoWindow("window.archive.compress.success");
     }
 
     static void extract(File file) {
@@ -54,12 +53,13 @@ class ZipArchiveHandler {
             zipFile.extractAll(FilesOperations.getCurrentDirectory().toPath() + "/" + zipFile.getFile().getName().replace(".zip", ""));
         } catch (ZipException e) {
             if (e.getMessage().equals("Wrong password!")) {
-                WindowService.openArchiveInfoWindow("archive.extract.wrong-password");
+                WindowService.openArchiveInfoWindow("window.archive.extract.wrong-password");
             }
             FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory().toPath().toString() + "/" + zipFile.getFile().getName().replace(".zip", "")));
+            WindowService.openArchiveInfoWindow("window.archive.extract.error");
             e.printStackTrace();
             return;
         }
-        WindowService.openArchiveInfoWindow("archive.extract.success");
+        WindowService.openArchiveInfoWindow("window.archive.extract.success");
     }
 }

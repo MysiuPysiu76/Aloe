@@ -17,11 +17,11 @@ class TarArchiveHandler {
                 addFileToTar(tarOut, file, "");
             }
         } catch (IOException e) {
-            WindowService.openArchiveInfoWindow("archive.compress.error");
+            WindowService.openArchiveInfoWindow("window.archive.compress.error");
             e.printStackTrace();
             return;
         }
-        WindowService.openArchiveInfoWindow("archive.compress.success");
+        WindowService.openArchiveInfoWindow("window.archive.compress.success");
     }
 
     protected static void addFileToTar(TarArchiveOutputStream tarOut, File file, String parent) throws IOException {
@@ -69,7 +69,9 @@ class TarArchiveHandler {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            WindowService.openArchiveInfoWindow("window.archive.extract.error");
+            e.printStackTrace();
         }
+        WindowService.openArchiveInfoWindow("window.archive.extract.success");
     }
 }

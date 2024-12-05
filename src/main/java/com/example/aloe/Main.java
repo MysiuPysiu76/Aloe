@@ -738,11 +738,11 @@ public class Main extends Application {
         window.initModality(Modality.WINDOW_MODAL);
         window.initStyle(StageStyle.TRANSPARENT);
 
-        Label title = new Label(Translator.translate("archive.title"));
+        Label title = new Label(Translator.translate("window.archive.title"));
         title.setPadding(new Insets(15, 10, 10, 10));
         title.setStyle("-fx-font-size: 20px");
 
-        Label name = new Label(Translator.translate("archive.file-name"));
+        Label name = new Label(Translator.translate("window.archive.file-name"));
         name.setPadding(new Insets(1, 345, 7, 0));
         name.setStyle("-fx-font-size: 14px");
 
@@ -760,8 +760,8 @@ public class Main extends Application {
         error.setStyle("-fx-text-fill: red");
         error.setPadding(new Insets(-2, 0, 0, 0));
 
-        CheckBox compress = new CheckBox(Translator.translate("archive.compress"));
-        CheckBox password = new CheckBox(Translator.translate("archive.password"));
+        CheckBox compress = new CheckBox(Translator.translate("window.archive.compress"));
+        CheckBox password = new CheckBox(Translator.translate("window.archive.password"));
         TextField passwordText = new TextField();
         passwordText.setPadding(new Insets(5, 7, 5 , 7));
         passwordText.setMaxWidth(250);

@@ -35,11 +35,11 @@ public class WindowService {
         window.initStyle(StageStyle.TRANSPARENT);
         final String[] password = {""};
 
-        Label title = new Label(Translator.translate("archive.extract.title"));
+        Label title = new Label(Translator.translate("window.archive.extract.title"));
         title.setPadding(new Insets(15, 10, 10, 10));
         title.setStyle("-fx-font-size: 20px");
 
-        Label name = new Label(Translator.translate("archive.extract.enter-password"));
+        Label name = new Label(Translator.translate("window.archive.extract.enter-password"));
         name.setPadding(new Insets(1, 212, 7, 0));
         name.setStyle("-fx-font-size: 14px");
 
