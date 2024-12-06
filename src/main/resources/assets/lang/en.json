@@ -11,6 +11,7 @@
   "context-menu.compress": "Compress",
   "context-menu.copy": "Copy",
   "context-menu.delete": "Delete",
+  "context-menu.duplicate": "Duplicate",
   "context-menu.edit": "Edit",
   "context-menu.extract": "Extract",
   "context-menu.move-to": "Move to",

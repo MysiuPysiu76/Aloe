@@ -264,7 +264,78 @@ public class FilesOperations {
         return fileName + "_" + suffix + extension;
     }
 
-    public static String getUniqueDirectoryName(String name, int suffix) {
-        return name + "_" + suffix;
+    public static void duplicateFiles(List<File> files) {
+        for (File file : files) {
+            try {
+                if (file.isDirectory()) {
+                    duplicateDirectory(file);
+                } else {
+                    duplicateSingleFile(file);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private static void duplicateSingleFile(File file) throws IOException {
+        String name = file.getName();
+        String extension = "";
+        int dotIndex = name.lastIndexOf('.');
+
+        if (dotIndex != -1) {
+            extension = name.substring(dotIndex);
+            name = name.substring(0, dotIndex);
+        }
+
+        Path target = file.toPath().getParent().resolve(name + "_duplicate" + extension);
+        int counter = 1;
+
+        while (Files.exists(target)) {
+            target = file.toPath().getParent().resolve(name + "_duplicate_" + counter + extension);
+            counter++;
+        }
+        Files.copy(file.toPath(), target);
+    }
+
+
+    private static void duplicateDirectory(File directory) throws IOException {
+        Path sourcePath = directory.toPath();
+        Path parentPath = sourcePath.getParent();
+        String dirName = directory.getName();
+        Path targetPath = parentPath.resolve(dirName + "_duplicate");
+        int counter = 1;
+
+        while (Files.exists(targetPath)) {
+            targetPath = parentPath.resolve(dirName + "_duplicate_" + counter);
+            counter++;
+        }
+
+        Files.createDirectories(targetPath);
+        File[] contents = directory.listFiles();
+        if (contents != null) {
+            for (File content : contents) {
+                Path targetContentPath = targetPath.resolve(content.getName());
+                if (content.isDirectory()) {
+                    duplicateDirectory(content, targetContentPath);
+                } else {
+                    Files.copy(content.toPath(), targetContentPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        }
+    }
+
+    private static void duplicateDirectory(File directory, Path targetPath) throws IOException {
+        Files.createDirectories(targetPath);
+        File[] contents = directory.listFiles();
+        if (contents != null) {
+            for (File content : contents) {
+                Path targetContentPath = targetPath.resolve(content.getName());
+                if (content.isDirectory()) {
+                    duplicateDirectory(content, targetContentPath);
+                } else {
+                    Files.copy(content.toPath(), targetContentPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        }
     }
 }

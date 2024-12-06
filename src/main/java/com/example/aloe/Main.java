@@ -649,71 +649,68 @@ public class Main extends Application {
 
     private void getFileOptions(VBox item, String fileName) {
         ContextMenu fileMenu = new ContextMenu();
+        File thisFile = new File(FilesOperations.getCurrentDirectory(), fileName);
         MenuItem open = new MenuItem(Translator.translate("context-menu.open"));
         open.setOnAction(event -> {
             openFileInOptions(new File(FilesOperations.getCurrentDirectory(), fileName));
         });
-
         MenuItem copy = new MenuItem(Translator.translate("context-menu.copy"));
         copy.setOnAction(event -> {
-            FilesOperations.copyFile(new File(FilesOperations.getCurrentDirectory(), fileName));
+            FilesOperations.copyFile(thisFile);
         });
-
         MenuItem rename = new MenuItem(Translator.translate("context-menu.rename"));
         rename.setOnAction(event -> {
-            renameFile(new File(FilesOperations.getCurrentDirectory(), fileName));
+            renameFile(thisFile);
             refreshCurrentDirectory();
         });
-
+        MenuItem duplicate = new MenuItem(Translator.translate("context-menu.duplicate"));
+        duplicate.setOnAction(event -> {
+            FilesOperations.duplicateFiles(new ArrayList<>(List.of(thisFile)));
+            refreshCurrentDirectory();
+        });
         MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
         moveTo.setOnAction(event -> {
-            FilesOperations.moveFileTo(new ArrayList<>(List.of(new File(FilesOperations.getCurrentDirectory(), fileName))));
+            FilesOperations.moveFileTo(new ArrayList<>(List.of(thisFile)));
             refreshCurrentDirectory();
         });
-
         MenuItem moveToParent = new MenuItem(Translator.translate("context-menu.move-to-parent"));
         moveToParent.setOnAction(event -> {
-            FilesOperations.moveFileToParent(new File(FilesOperations.getCurrentDirectory(), fileName));
+            FilesOperations.moveFileToParent(thisFile);
             refreshCurrentDirectory();
         });
-
         MenuItem archive;
-        if(fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz")) {
+        if(thisFile.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz"))) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
-                ArchiveHandler.extract(new File(FilesOperations.getCurrentDirectory(), fileName));
+                ArchiveHandler.extract(thisFile);
                 refreshCurrentDirectory();
             });
         } else {
             archive = new MenuItem(Translator.translate("context-menu.compress"));
             archive.setOnAction(event -> {
-                openCreateArchiveWindow(new ArrayList<>(List.of(new File(FilesOperations.getCurrentDirectory(), fileName))));
+                openCreateArchiveWindow(new ArrayList<>(List.of(thisFile)));
                 refreshCurrentDirectory();
             });
         }
-
         MenuItem moveToTrash = new MenuItem(Translator.translate("context-menu.move-to-trash"));
         moveToTrash.setOnAction(event -> {
-            FilesOperations.moveFileToTrash(new File(FilesOperations.getCurrentDirectory(), fileName));
+            FilesOperations.moveFileToTrash(thisFile);
            refreshCurrentDirectory();
         });
-
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
-            FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName));
+            FilesOperations.deleteFile(thisFile);
             refreshCurrentDirectory();
         });
-
         MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
         properties.setOnAction(event -> {
             try {
-                openPropertiesWindow(item, new File(FilesOperations.getCurrentDirectory(), fileName));
+                openPropertiesWindow(item, thisFile);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
-
-        fileMenu.getItems().addAll(open, copy, rename, moveTo, moveToParent, archive,moveToTrash, delete, properties);
+        fileMenu.getItems().addAll(open, copy, rename, duplicate, moveTo, moveToParent, archive,moveToTrash, delete, properties);
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
@@ -996,6 +993,11 @@ public class Main extends Application {
         copy.setOnAction(event -> {
             copySelectedFiles();
         });
+        MenuItem duplicate = new MenuItem(Translator.translate("context-menu.duplicate"));
+        duplicate.setOnAction(event -> {
+            FilesOperations.duplicateFiles(getSelectedFiles());
+            refreshCurrentDirectory();
+        });
         MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
         moveTo.setOnAction(event -> {
            FilesOperations.moveFileTo(getSelectedFiles());
@@ -1021,7 +1023,7 @@ public class Main extends Application {
             deleteSelectedFiles();
             refreshCurrentDirectory();
         });
-        multiSelectionFilesContextMenu.getItems().addAll(copy, moveTo, moveToParent, moveToTrash, compress, delete);
+        multiSelectionFilesContextMenu.getItems().addAll(copy, duplicate, moveTo, moveToParent, moveToTrash, compress, delete);
     }
 
     public void deleteSelectedFiles() {
