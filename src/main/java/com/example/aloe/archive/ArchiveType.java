@@ -4,7 +4,7 @@ public enum ArchiveType {
 
     ZIP(".zip"),
     TAR(".tar"),
-    TARGZ(".tar.gz");
+    TAR_GZ(".tar.gz");
 
     private String extension;
 
