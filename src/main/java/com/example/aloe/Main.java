@@ -711,6 +711,14 @@ public class Main extends Application {
             }
         });
         fileMenu.getItems().addAll(open, copy, rename, duplicate, moveTo, moveToParent, archive,moveToTrash, delete, properties);
+        if (thisFile.isDirectory()) {
+            MenuItem addToMenu = new MenuItem(Translator.translate("context-menu.add-to-menu"));
+            addToMenu.setOnAction(event -> {
+                addDirectoryListInMenu(thisFile.toString(), fileName, FontAwesome.FOLDER_OPEN_O);
+                System.out.println(thisFile.toString());
+            });
+            fileMenu.getItems().add(9, addToMenu);
+        }
         item.setOnContextMenuRequested(event -> {
             if(isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());

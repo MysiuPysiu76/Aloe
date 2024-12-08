@@ -8,6 +8,7 @@
   "button.save": "Save",
   "confirm.skip.copy": "Confirm skipping pending operations",
   "context-menu.add": "Add",
+  "context-menu.add-to-menu": "Add to menu",
   "context-menu.compress": "Compress",
   "context-menu.copy": "Copy",
   "context-menu.delete": "Delete",
