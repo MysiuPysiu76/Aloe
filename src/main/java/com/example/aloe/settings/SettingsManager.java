@@ -2,6 +2,7 @@ package com.example.aloe.settings;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public final class SettingsManager {
 
     static {
         loadSettings();
+        objectMapper.configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
     }
 
     public static String getCategory() {

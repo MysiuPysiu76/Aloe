@@ -95,12 +95,11 @@ public class Main extends Application {
             initDirectoryListInMenu();
             if (SettingsManager.getValue("menu", "position").equals("right")) {
                 filesPanel.getItems().addLast(filesMenu);
-                filesPanel.setDividerPositions(0.8);
             } else {
                 filesPanel.getItems().addFirst(filesMenu);
-                filesPanel.setDividerPositions(0.2);
-
             }
+            filesPanel.setDividerPositions((double)SettingsManager.getValue("menu", "divider-position"));
+
         }
 
         navigationPanel.setPadding(new Insets(6));
@@ -159,6 +158,7 @@ public class Main extends Application {
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(event -> {SettingsManager.saveSettings("menu", "divider-position", filesPanel.getDividerPositions());});
     }
 
     private Button getNavigateNextButton() {
