@@ -34,11 +34,14 @@
   "navigate.hidden-files": "Hidden files",
   "navigate.light-mode": "Light Mode",
   "navigate.reload": "Refresh",
+  "navigate.settings": "Settings",
   "root.title": "Files",
   "tooltip.navigate-next": "Next Directory",
   "tooltip.navigate-parent": "Parent Directory",
   "tooltip.navigate-prev": "Previous Directory",
   "units.bytes": " bytes",
+  "utils.left": "Left",
+  "utils.right": "Right",
   "utils.title": "Title",
   "validator.contains-slash": "Name cannot contain slashes",
   "validator.empty-name": "Name cannot be empty",
@@ -84,5 +87,9 @@
   "window.properties.folder-contents": "Contents: ",
   "window.properties.folder-properties": "Folder Properties",
   "window.properties.free-space": "Free space: ",
-  "window.properties.items": " items"
+  "window.properties.items": " items",
+  "window.settings.menu.menu": "Menu",
+  "window.settings.menu.menu-position": "Menu position",
+  "window.settings.title": "Settings",
+  "window.settings.use-menu": "Use files menu"
 }

@@ -2,6 +2,8 @@ package com.example.aloe;
 
 import com.example.aloe.archive.ArchiveHandler;
 import com.example.aloe.archive.ArchiveType;
+import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.SettingsWindow;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -56,7 +58,6 @@ public class Main extends Application {
     private int directoryHistoryPosition = -1;
     private static boolean isGridView = true;
     private boolean isHiddenFilesShow = false;
-    private boolean isMenuHidden = false;
     private VBox root = new VBox();
     public static Stage stage;
     private static FlowPane grid;
@@ -81,7 +82,6 @@ public class Main extends Application {
 
         getDirectoryOptions();
         getMenuOptions();
-        initDirectoryListInMenu();
         filesPanel.setMinHeight(root.getHeight() - navigationPanel.getHeight());
 
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
@@ -90,7 +90,19 @@ public class Main extends Application {
             }
         });
 
-        filesPanel.getItems().addAll(filesMenu, filesPane);
+        filesPanel.getItems().add(filesPane);
+        if (SettingsManager.getValue("menu", "use-menu")) {
+            initDirectoryListInMenu();
+            if (SettingsManager.getValue("menu", "position").equals("right")) {
+                filesPanel.getItems().addLast(filesMenu);
+                filesPanel.setDividerPositions(0.8);
+            } else {
+                filesPanel.getItems().addFirst(filesMenu);
+                filesPanel.setDividerPositions(0.2);
+
+            }
+        }
+
         navigationPanel.setPadding(new Insets(6));
         SplitPane.setResizableWithParent(filesMenu, false);
 
@@ -110,18 +122,6 @@ public class Main extends Application {
             removeSelectionFromFiles();
         });
 
-        CheckBox showFilesMenu = new CheckBox("Show Menu");
-        showFilesMenu.setSelected(true);
-        showFilesMenu.setOnAction(event -> {
-            if(isMenuHidden) {
-                filesPanel.getItems().addFirst(filesMenu);
-                filesMenu.setMaxWidth(160);
-            } else {
-                filesPanel.getItems().remove(filesMenu);
-            }
-            isMenuHidden = !isMenuHidden;
-        });
-
         CheckBox darkMode = new CheckBox(Translator.translate("navigate.dark-mode"));
         darkMode.setOnAction(event -> {
             if(darkMode.isSelected()) {
@@ -133,7 +133,6 @@ public class Main extends Application {
             }
         });
 
-        filesPanel.setDividerPositions(0.2);
         filesMenu.setMinWidth(100);
         filesMenu.setMaxWidth(270);
         filesMenu.setPrefWidth(160);
@@ -210,7 +209,9 @@ public class Main extends Application {
         container.setAlignment(Pos.CENTER);
         Button aboutButton = new Button(Translator.translate("navigate.about-button"));
         aboutButton.setOnMouseClicked(e -> openWindowButton());
-        container.getChildren().addAll(getShowHiddenFilesButton(), aboutButton);
+        Button settingsButton = new Button(Translator.translate("navigate.settings"));
+        settingsButton.setOnMouseClicked(e -> new SettingsWindow().show());
+        container.getChildren().addAll(getShowHiddenFilesButton(), aboutButton, settingsButton);
         popOver.setContentNode(container);
         Button button = new Button("options");
         HBox.setMargin(button, new Insets(5, 10, 5, 10));
