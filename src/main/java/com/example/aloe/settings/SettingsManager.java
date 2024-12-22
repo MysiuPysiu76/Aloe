@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,9 +49,22 @@ public final class SettingsManager {
             Map<String, Object> defaultSettings = loadDefaultSettings();
             saveSettingsToFile(defaultSettings);
             cachedSettings = defaultSettings;
+            initializeItemsInMenu();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void initializeItemsInMenu() {
+        SettingsManager.saveSettings("menu", "items", Arrays.asList(
+                Map.of("path", System.getProperty("user.home"), "name", "Home", "icon", "HOME"),
+                Map.of("path", System.getProperty("user.home") + "/Desktop", "name", "Desktop", "icon", "DESKTOP"),
+                Map.of("path", System.getProperty("user.home") + "/Documents", "name", "Documents", "icon", "FILE_TEXT"),
+                Map.of("path", System.getProperty("user.home") + "/Downloads", "name", "Downloads", "icon", "ARROW_DOWN"),
+                Map.of("path", System.getProperty("user.home") + "/Music", "name", "Music", "icon", "MUSIC"),
+                Map.of("path", System.getProperty("user.home") + "/Pictures", "name", "Pictures", "icon", "PICTURE_O"),
+                Map.of("path", System.getProperty("user.home") + "/Videos", "name", "Videos", "icon", "VIDEO_CAMERA")
+        ));
     }
 
     private static Map<String, Object> loadDefaultSettings() throws IOException {

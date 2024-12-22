@@ -92,20 +92,18 @@ public class Main extends Application {
 
         filesPanel.getItems().add(filesPane);
         if (SettingsManager.getValue("menu", "use-menu")) {
-            initDirectoryListInMenu();
+            loadDirectoryListInMenu();
             if (SettingsManager.getValue("menu", "position").equals("right")) {
                 filesPanel.getItems().addLast(filesMenu);
             } else {
                 filesPanel.getItems().addFirst(filesMenu);
             }
             filesPanel.setDividerPositions((double)SettingsManager.getValue("menu", "divider-position"));
-
         }
 
         navigationPanel.setPadding(new Insets(6));
         SplitPane.setResizableWithParent(filesMenu, false);
 
-        // Change display to grid or list
         Button changeDisplay = new Button("List");
         changeDisplay.setOnMouseClicked(event -> {
             isGridView = !isGridView;
@@ -1210,42 +1208,23 @@ public class Main extends Application {
 
     private static Map<String, String> directoryListInMenu = new LinkedHashMap<>();
 
-    private void initDirectoryListInMenu() {
-        directoryListInMenu.put(System.getProperty("user.home"), "Home");
-        directoryListInMenu.put(System.getProperty("user.home") + "/Desktop", "Desktop");
-        directoryListInMenu.put(System.getProperty("user.home") + "/Documents", "Documents");
-        directoryListInMenu.put(System.getProperty("user.home") + "/Downloads", "Downloads");
-        directoryListInMenu.put(System.getProperty("user.home") + "/Music", "Music");
-        directoryListInMenu.put(System.getProperty("user.home") + "/Pictures", "Pictures");
-        directoryListInMenu.put(System.getProperty("user.home") + "/Videos", "Videos");
-        menuIcons = new ArrayList<>();
-        menuIcons.add(FontAwesome.HOME);
-        menuIcons.add(FontAwesome.DESKTOP);
-        menuIcons.add(FontAwesome.FILE_TEXT);
-        menuIcons.add(FontAwesome.ARROW_DOWN);
-        menuIcons.add(FontAwesome.MUSIC);
-        menuIcons.add(FontAwesome.PICTURE_O);
-        menuIcons.add(FontAwesome.VIDEO_CAMERA);
-        filesMenu.getStyleClass().add("menu");
-        loadDirectoryListInMenu();
-    }
-
     public void loadDirectoryListInMenu() {
+        List<Map<String, Object>> items = (List<Map<String, Object>>) SettingsManager.getValue("menu", "items");
         filesMenu.setContent(null);
         byte i = 0;
         VBox container = new VBox();
-        for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
-            FontIcon icon = FontIcon.of(menuIcons.get(i));
+        for (Map<String, Object> item : items) {
+            FontIcon icon = FontIcon.of(FontAwesome.valueOf(item.get("icon").toString()));
             icon.setIconSize(16);
-            Button button = new Button(entry.getValue(), icon);
+            Button button = new Button((String)item.get("name"), icon);
             button.setGraphicTextGap(10);
             button.getStyleClass().add("menu-option");
             button.setAlignment(Pos.CENTER_LEFT);
             button.setPrefWidth(filesMenu.getWidth());
-            getMenuItemsOptions(button, entry.getKey(), entry.getValue());
+            getMenuItemsOptions(button, (String)item.get("path"), (String)item.get("name"));
             button.setOnMouseClicked(event -> {
                 if(event.getButton() == MouseButton.PRIMARY) {
-                    loadDirectoryContents(new File(entry.getKey().toString()), true);
+                    loadDirectoryContents(new File(item.get("path").toString()), true);
                 }
             });
             filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {

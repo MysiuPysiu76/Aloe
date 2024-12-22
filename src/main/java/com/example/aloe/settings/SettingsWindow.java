@@ -1,5 +1,6 @@
 package com.example.aloe.settings;
 
+import com.example.aloe.Main;
 import com.example.aloe.Translator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.ToggleSwitch;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
@@ -31,6 +33,7 @@ public final class SettingsWindow extends Stage {
         this.setScene(scene);
         this.setMinWidth(700);
         this.setMinHeight(350);
+        this.initModality(Modality.APPLICATION_MODAL);
         this.setOnCloseRequest(event -> System.gc());
     }
 

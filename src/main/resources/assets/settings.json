@@ -2,6 +2,6 @@
   "menu": {
     "use-menu": true,
     "position": "left",
-    "divider": 0.2
+    "divider-position": 0.2
   }
 }

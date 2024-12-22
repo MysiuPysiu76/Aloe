@@ -1,6 +1,5 @@
 package com.example.aloe;
 
-//import com.example.aloe.archive.ArchiveManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
