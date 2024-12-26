@@ -2,6 +2,7 @@
   "menu": {
     "use-menu": true,
     "position": "left",
-    "divider-position": 0.2
+    "divider-position": 0.2,
+    "use-icon": true
   }
 }

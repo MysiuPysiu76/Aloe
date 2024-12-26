@@ -91,5 +91,6 @@
   "window.settings.menu.menu": "Menu",
   "window.settings.menu.menu-position": "Menu position",
   "window.settings.title": "Settings",
-  "window.settings.use-menu": "Use files menu"
+  "window.settings.menu.use-menu": "Use files menu",
+  "window.settings.menu.use-icon": "Use icon"
 }

@@ -69,7 +69,11 @@ public final class SettingsWindow extends Stage {
         }
         HBox.setMargin(menuPosition, new Insets(0, 20, 0, 20));
 
-        VBox settingsContent = new VBox(title, useMenuSection, menuPositionSection);
+        HBox useIconsSection = getSettingBox("window.settings.menu.use-icon");
+        ToggleSwitch useIcon = SettingsControls.getToggleSwitch("use-icon");
+        useIconsSection.getChildren().add(useIcon);
+
+        VBox settingsContent = new VBox(title, useMenuSection, menuPositionSection, useIconsSection);
         settingsContent.setSpacing(10);
         settingsContent.setPadding(new Insets(30));
         settingsContent.setFillWidth(true);

@@ -38,17 +38,20 @@ public class MenuManager {
         menu = new VBox();
         menu.setAlignment(Pos.TOP_CENTER);
         for (Map<String, Object> item : items) {
-            menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon")));
+            menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon"), SettingsManager.getSetting("menu", "use-icon")));
         }
         Main.loadMenu();
         MenuManager.setMenuOptions();
     }
 
-    private static Button getMenuButton(String path, String name, String icon) {
-        FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
-        fontIcon.setIconSize(16);
-        Button button = new Button(name, fontIcon);
-        button.setGraphicTextGap(10);
+    private static Button getMenuButton(String path, String name, String icon, boolean useIcon) {
+        Button button = new Button(name);
+        if (useIcon) {
+            FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
+            fontIcon.setIconSize(16);
+            button.setGraphicTextGap(10);
+            button.setGraphic(fontIcon);
+        }
         button.getStyleClass().add("menu-option");
         button.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(button, Priority.ALWAYS);
