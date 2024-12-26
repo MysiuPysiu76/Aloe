@@ -1,6 +1,5 @@
 package com.example.aloe.settings;
 
-import com.example.aloe.Main;
 import com.example.aloe.Translator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -51,14 +50,19 @@ public final class SettingsWindow extends Stage {
         title.setStyle("-fx-font-size: 25px;");
         VBox.setMargin(title, new Insets(30, 10, 20, 10));
 
-        HBox useMenuSection = getSettingBox("window.settings.use-menu");
+        HBox useMenuSection = getSettingBox("window.settings.menu.use-menu");
         ToggleSwitch useMenu = SettingsControls.getToggleSwitch("use-menu");
         useMenuSection.getChildren().add(useMenu);
 
         HBox menuPositionSection = getSettingBox("window.settings.menu.menu-position");
         ChoiceBox<String> menuPosition = SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"));
+        menuPosition.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.equalsIgnoreCase(oldValue)) {
+                SettingsManager.setSetting("menu", "divider-position", (1 - (double)SettingsManager.getSetting("menu", "divider-position")));
+            }
+        });
         menuPositionSection.getChildren().add(menuPosition);
-        if (SettingsManager.getValue(SettingsManager.getCategory(), "position").equals("right")) {
+        if (SettingsManager.getSetting(SettingsManager.getCategory(), "position").equals("right")) {
             menuPosition.getSelectionModel().select(1);
         } else {
             menuPosition.getSelectionModel().select(0);

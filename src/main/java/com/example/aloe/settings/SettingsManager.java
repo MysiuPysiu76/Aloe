@@ -56,7 +56,7 @@ public final class SettingsManager {
     }
 
     private static void initializeItemsInMenu() {
-        SettingsManager.saveSettings("menu", "items", Arrays.asList(
+        SettingsManager.setSetting("menu", "items", Arrays.asList(
                 Map.of("path", System.getProperty("user.home"), "name", "Home", "icon", "HOME"),
                 Map.of("path", System.getProperty("user.home") + "/Desktop", "name", "Desktop", "icon", "DESKTOP"),
                 Map.of("path", System.getProperty("user.home") + "/Documents", "name", "Documents", "icon", "FILE_TEXT"),
@@ -79,7 +79,7 @@ public final class SettingsManager {
         }
     }
 
-    public static <T> T getValue(String category, String key) {
+    public static <T> T getSetting(String category, String key) {
         try {
             Map<String, Object> categorySettings = (Map<String, Object>) cachedSettings.get(category);
             if (categorySettings != null && categorySettings.containsKey(key)) {
@@ -110,7 +110,7 @@ public final class SettingsManager {
         return null;
     }
 
-    public static void saveSettings(String category, String key, Object value) {
+    public static void setSetting(String category, String key, Object value) {
         try {
             Map<String, Object> categorySettings = (Map<String, Object>) cachedSettings.getOrDefault(category, new HashMap<>());
             categorySettings.put(key, value);

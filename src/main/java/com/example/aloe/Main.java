@@ -2,6 +2,7 @@ package com.example.aloe;
 
 import com.example.aloe.archive.ArchiveHandler;
 import com.example.aloe.archive.ArchiveType;
+import com.example.aloe.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
 import javafx.application.Application;
@@ -11,7 +12,6 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
@@ -50,7 +50,7 @@ public class Main extends Application {
     private HBox navigationPanel = new HBox();
     private VBox filesBox = new VBox();
     private SplitPane filesPanel = new SplitPane();
-    private static ScrollPane filesMenu = new ScrollPane();
+    public static ScrollPane filesMenu = new ScrollPane();
     private static ScrollPane filesPane = new ScrollPane();
     public static Scene scene;
     private Button parrentDir = getNavigateParentButton();
@@ -68,7 +68,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-
         root.getStyleClass().add("root");
         this.stage = stage;
         scene = new Scene(root, 935, 500);
@@ -81,7 +80,6 @@ public class Main extends Application {
         filesMenu.getStyleClass().add("files-menu");
 
         getDirectoryOptions();
-        getMenuOptions();
         filesPanel.setMinHeight(root.getHeight() - navigationPanel.getHeight());
 
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
@@ -91,14 +89,15 @@ public class Main extends Application {
         });
 
         filesPanel.getItems().add(filesPane);
-        if (SettingsManager.getValue("menu", "use-menu")) {
-            loadDirectoryListInMenu();
-            if (SettingsManager.getValue("menu", "position").equals("right")) {
+
+        if (SettingsManager.getSetting("menu", "use-menu")) {
+            loadMenu();
+            if (SettingsManager.getSetting("menu", "position").equals("right")) {
                 filesPanel.getItems().addLast(filesMenu);
             } else {
                 filesPanel.getItems().addFirst(filesMenu);
             }
-            filesPanel.setDividerPositions((double)SettingsManager.getValue("menu", "divider-position"));
+            filesPanel.setDividerPositions((double)SettingsManager.getSetting("menu", "divider-position"));
         }
 
         navigationPanel.setPadding(new Insets(6));
@@ -130,8 +129,7 @@ public class Main extends Application {
             }
         });
 
-        filesMenu.setMinWidth(100);
-        filesMenu.setMaxWidth(270);
+        filesMenu.setMinWidth(10);
         filesMenu.setPrefWidth(160);
 
         Region spacer = new Region();
@@ -156,7 +154,14 @@ public class Main extends Application {
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest(event -> {SettingsManager.saveSettings("menu", "divider-position", filesPanel.getDividerPositions());});
+        stage.setOnCloseRequest(event -> {SettingsManager.setSetting("menu", "divider-position", filesPanel.getDividerPositions());});
+    }
+
+    public static void loadMenu() {
+        VBox menu = MenuManager.getMenu();
+        menu.prefWidthProperty().bind(filesMenu.widthProperty());
+        menu.prefHeightProperty().bind(filesMenu.heightProperty());
+        filesMenu.setContent(menu);
     }
 
     private Button getNavigateNextButton() {
@@ -286,7 +291,7 @@ public class Main extends Application {
 
         Hyperlink link = new Hyperlink(Translator.translate("window.about.website"));
         link.setOnAction(event -> {
-            getHostServices().showDocument("https://github.com/Meiroth73/Aloe");
+            getHostServices().showDocument("https://github.com/MysiuPysiu76/Aloe");
         });
 
         Label warranty = new Label(Translator.translate("window.about.warranty"));
@@ -382,7 +387,7 @@ public class Main extends Application {
 
     private static List<VBox> selectedFiles = new ArrayList<>();
 
-    private void loadDirectoryContents(File directory, boolean addToHistory) {
+    public void loadDirectoryContents(File directory, boolean addToHistory) {
         removeSelectionFromFiles();
         FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);
@@ -713,8 +718,7 @@ public class Main extends Application {
         if (thisFile.isDirectory()) {
             MenuItem addToMenu = new MenuItem(Translator.translate("context-menu.add-to-menu"));
             addToMenu.setOnAction(event -> {
-                addDirectoryListInMenu(thisFile.toString(), fileName, FontAwesome.FOLDER_OPEN_O);
-                System.out.println(thisFile.toString());
+                MenuManager.addItemToMenu(thisFile.getPath(), thisFile.getName(), "FOLDER_OPEN_O");
             });
             fileMenu.getItems().add(9, addToMenu);
         }
@@ -941,7 +945,7 @@ public class Main extends Application {
         }
     }
 
-    private void openPropertiesWindow(VBox box, File file) throws IOException {
+    public void openPropertiesWindow(VBox box, File file) throws IOException {
         Stage window = new Stage();
         VBox root = new VBox();
         window.setMinHeight(380);
@@ -1204,124 +1208,6 @@ public class Main extends Application {
             }
         });
         dialog.showAndWait();
-    }
-
-    private static Map<String, String> directoryListInMenu = new LinkedHashMap<>();
-
-    public void loadDirectoryListInMenu() {
-        List<Map<String, Object>> items = (List<Map<String, Object>>) SettingsManager.getValue("menu", "items");
-        filesMenu.setContent(null);
-        byte i = 0;
-        VBox container = new VBox();
-        for (Map<String, Object> item : items) {
-            FontIcon icon = FontIcon.of(FontAwesome.valueOf(item.get("icon").toString()));
-            icon.setIconSize(16);
-            Button button = new Button((String)item.get("name"), icon);
-            button.setGraphicTextGap(10);
-            button.getStyleClass().add("menu-option");
-            button.setAlignment(Pos.CENTER_LEFT);
-            button.setPrefWidth(filesMenu.getWidth());
-            getMenuItemsOptions(button, (String)item.get("path"), (String)item.get("name"));
-            button.setOnMouseClicked(event -> {
-                if(event.getButton() == MouseButton.PRIMARY) {
-                    loadDirectoryContents(new File(item.get("path").toString()), true);
-                }
-            });
-            filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {
-                button.setMinWidth(newValue.doubleValue());
-            });
-            container.getChildren().add(button);
-            i++;
-        }
-        filesMenu.setContent(container);
-    }
-
-    private <K, V> int findKeyIndexInMenu(String key) {
-        int index = 0;
-        for(String keyInMap: directoryListInMenu.keySet()) {
-            if (keyInMap.equals(key)) {
-                return index;
-            }
-            index++;
-        }
-        return 0;
-    }
-
-    private void getMenuItemsOptions(Node item, String key, String value) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem open = new MenuItem(Translator.translate("context-menu.open"));
-        open.setOnAction(event -> {
-            loadDirectoryContents(new File(key), true);
-        });
-        MenuItem edit = new MenuItem(Translator.translate("context-menu.edit"));
-        edit.setOnAction(event -> {
-            WindowService.openEditItemInMenuWindow(key, value, menuIcons.get(findKeyIndexInMenu(key)));
-            loadDirectoryListInMenu();
-        });
-        MenuItem remove = new MenuItem(Translator.translate("context-menu.remove"));
-        remove.setOnAction(event -> {
-            removeDirectoryFromMenu(key);
-            loadDirectoryListInMenu();
-        });
-        MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
-        properties.setOnAction(event -> {
-            try {
-                openPropertiesWindow(new VBox(), new File(key));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        contextMenu.getItems().addAll(open, edit, remove, properties);
-        item.setOnContextMenuRequested(event -> {
-            contextMenu.show(item, event.getScreenX(), event.getScreenY());
-            menuOptions.hide();
-            event.consume();
-        });
-    }
-
-    private ContextMenu menuOptions = new ContextMenu();
-
-    private void getMenuOptions() {
-        menuOptions.getItems().clear();
-        MenuItem add = new MenuItem(Translator.translate("context-menu.add"));
-        add.setOnAction(event -> {
-            WindowService.openAddItemToMenuWindow();
-        });
-        menuOptions.getItems().add(add);
-        filesMenu.setOnContextMenuRequested(event -> {
-            menuOptions.show(filesMenu, event.getScreenX(), event.getScreenY());
-        });
-        filesMenu.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                menuOptions.hide();
-            }
-        });
-    }
-
-    public void addDirectoryListInMenu(String key, String value, FontAwesome icon) {
-        directoryListInMenu.put(key, value);
-        menuIcons.add(icon);
-        loadDirectoryListInMenu();
-    }
-
-    private void removeDirectoryFromMenu(String key) {
-        directoryListInMenu.remove(key);
-        menuIcons.remove(findKeyIndexInMenu(key));
-    }
-
-    public void replaceItemInDirectoryList(String oldKey, String newKey, String newValue, FontAwesome icon) {
-        LinkedHashMap<String, String> tempMap = new LinkedHashMap<>();
-        for (Map.Entry<String, String> entry : directoryListInMenu.entrySet()) {
-            if(entry.getKey().equals(oldKey)) {
-                tempMap.put(newKey, newValue);
-            } else {
-                tempMap.put(entry.getKey(), entry.getValue());
-            }
-        }
-        directoryListInMenu.clear();
-        directoryListInMenu.putAll(tempMap);
-        menuIcons.set(findKeyIndexInMenu(newKey), icon);
-        loadDirectoryListInMenu();
     }
 
     private void getParentDirectory() {

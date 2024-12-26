@@ -15,7 +15,6 @@ class RarArchiveHandler {
         if (!output.exists()) {
             output.mkdirs();
         }
-
         try (Archive archive = new Archive(file)) {
             FileHeader fileHeader;
             while ((fileHeader = archive.nextFileHeader()) != null) {

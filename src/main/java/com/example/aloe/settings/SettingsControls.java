@@ -29,9 +29,9 @@ class SettingsControls {
 
     static ToggleSwitch getToggleSwitch(String key) {
         ToggleSwitch toggleSwitch = new ToggleSwitch();
-        toggleSwitch.setSelected(SettingsManager.getValue(SettingsManager.getCategory(), key));
+        toggleSwitch.setSelected(SettingsManager.getSetting(SettingsManager.getCategory(), key));
         toggleSwitch.setOnMouseClicked(event -> {
-            SettingsManager.saveSettings(SettingsManager.getCategory(), key, toggleSwitch.isSelected());
+            SettingsManager.setSetting(SettingsManager.getCategory(), key, toggleSwitch.isSelected());
         });
         HBox.setMargin(toggleSwitch, new Insets(0, 20, 0, 20));
         return toggleSwitch;
@@ -46,14 +46,14 @@ class SettingsControls {
             }
         }
         choiceBox.getItems().addAll(items.values());
-        choiceBox.getSelectionModel().select(SettingsManager.getValue(SettingsManager.getCategory(), key));
+        choiceBox.getSelectionModel().select(SettingsManager.getSetting(SettingsManager.getCategory(), key));
 
         choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            SettingsManager.saveSettings(SettingsManager.getCategory(), key, items.entrySet().stream()
-                    .filter(entry -> entry.getValue().equals(newValue))
-                    .map(Map.Entry::getKey)
-                    .findFirst()
-                    .orElse(null));
+            SettingsManager.setSetting(SettingsManager.getCategory(), key, items.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(newValue))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null));
         });
         return choiceBox;
     }
