@@ -73,7 +73,11 @@ public final class SettingsWindow extends Stage {
         ToggleSwitch useIcon = SettingsControls.getToggleSwitch("use-icon");
         useIconsSection.getChildren().add(useIcon);
 
-        VBox settingsContent = new VBox(title, useMenuSection, menuPositionSection, useIconsSection);
+        HBox useTextSection = getSettingBox("window.settings.menu.use-text");
+        ToggleSwitch useText = SettingsControls.getToggleSwitch("use-text");
+        useTextSection.getChildren().add(useText);
+
+        VBox settingsContent = new VBox(title, useMenuSection, menuPositionSection, useIconsSection, useTextSection);
         settingsContent.setSpacing(10);
         settingsContent.setPadding(new Insets(30));
         settingsContent.setFillWidth(true);

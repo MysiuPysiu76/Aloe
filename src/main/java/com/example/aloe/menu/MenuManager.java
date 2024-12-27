@@ -37,20 +37,25 @@ public class MenuManager {
         List<Map<String, Object>> items = (List<Map<String, Object>>) SettingsManager.getSetting("menu", "items");
         menu = new VBox();
         menu.setAlignment(Pos.TOP_CENTER);
+        boolean useIcon = SettingsManager.getSetting("menu", "use-icon");
+        boolean useText = SettingsManager.getSetting("menu", "use-text");
         for (Map<String, Object> item : items) {
-            menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon"), SettingsManager.getSetting("menu", "use-icon")));
+            menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon"), useIcon, useText));
         }
         Main.loadMenu();
         MenuManager.setMenuOptions();
     }
 
-    private static Button getMenuButton(String path, String name, String icon, boolean useIcon) {
-        Button button = new Button(name);
+    private static Button getMenuButton(String path, String name, String icon, boolean useIcon, boolean useText) {
+        Button button = new Button();
         if (useIcon) {
             FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
             fontIcon.setIconSize(16);
             button.setGraphicTextGap(10);
             button.setGraphic(fontIcon);
+        }
+        if (useText) {
+            button.setText(name);
         }
         button.getStyleClass().add("menu-option");
         button.setAlignment(Pos.CENTER_LEFT);

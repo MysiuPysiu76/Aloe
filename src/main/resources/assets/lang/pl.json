@@ -91,6 +91,7 @@
   "window.settings.menu.menu": "Menu",
   "window.settings.menu.menu-position": "Pozycja menu",
   "window.settings.title": "Settings",
-  "window.settings.menu.use-menu": "Używaj menu plików",
-  "window.settings.menu.use-icon": "Używaj ikon"
+  "window.settings.menu.use-menu": "Wyświetlaj menu plików",
+  "window.settings.menu.use-icon": "Wyświetlaj ikony",
+  "window.settings.menu.use-text": "Wyświetlaj tekst"
 }

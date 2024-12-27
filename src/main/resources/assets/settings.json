@@ -3,6 +3,7 @@
     "use-menu": true,
     "position": "left",
     "divider-position": 0.2,
-    "use-icon": true
+    "use-icon": true,
+    "use-text": true
   }
 }
