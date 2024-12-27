@@ -5,5 +5,8 @@
     "divider-position": 0.2,
     "use-icon": true,
     "use-text": true
+  },
+  "files": {
+    "show-hidden": false
   }
 }

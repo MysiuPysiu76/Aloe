@@ -88,10 +88,12 @@
   "window.properties.folder-properties": "Właściwości folderu",
   "window.properties.free-space": "Wolne miejsce: ",
   "window.properties.items": " elementy",
-  "window.settings.menu.menu": "Menu",
+  "window.settings.menu": "Menu",
+  "window.settings.files": "Pliki",
   "window.settings.menu.menu-position": "Pozycja menu",
   "window.settings.title": "Settings",
   "window.settings.menu.use-menu": "Wyświetlaj menu plików",
   "window.settings.menu.use-icon": "Wyświetlaj ikony",
-  "window.settings.menu.use-text": "Wyświetlaj tekst"
+  "window.settings.menu.use-text": "Wyświetlaj tekst",
+  "window.settings.files.show-hidden-files": "Wyświetlaj ukryte pliki"
 }

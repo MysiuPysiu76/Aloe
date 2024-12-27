@@ -25,7 +25,6 @@ import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.SegmentedButton;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,14 +130,12 @@ public class Main extends Application {
 
         filesMenu.setMinWidth(10);
         filesMenu.setPrefWidth(160);
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
         root.getChildren().addAll(navigationPanel, filesPanel);
         filesList = new ListView<>();
-
         loadDirectoryContents(FilesOperations.getCurrentDirectory(), true);
 
         root.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -146,7 +143,6 @@ public class Main extends Application {
         });
 
         scene.getStylesheets().add(getClass().getResource("/assets/css/style.css").toExternalForm());
-
         createMultiSelectionFilesContextMenu();
 
         stage.setTitle(Translator.translate("root.title"));
@@ -192,17 +188,6 @@ public class Main extends Application {
         return reload;
     }
 
-    private CheckBox getShowHiddenFilesButton() {
-        CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
-        VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
-        showHiddenFiles.setSelected(false);
-        showHiddenFiles.setOnAction(event -> {
-            isHiddenFilesShow = !isHiddenFilesShow;
-            refreshCurrentDirectory();
-        });
-        return showHiddenFiles;
-    }
-
     private Button getNavigateOptionsButton() {
         PopOver popOver = new PopOver();
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
@@ -210,11 +195,18 @@ public class Main extends Application {
         popOver.setDetachable(true);
         VBox container = new VBox();
         container.setAlignment(Pos.CENTER);
+        CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
+        VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
+        showHiddenFiles.setSelected(SettingsManager.getSetting("files", "show-hidden"));
+        showHiddenFiles.setOnAction(event -> {
+            SettingsManager.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
+            refreshCurrentDirectory();
+        });
         Button aboutButton = new Button(Translator.translate("navigate.about-button"));
         aboutButton.setOnMouseClicked(e -> openWindowButton());
         Button settingsButton = new Button(Translator.translate("navigate.settings"));
         settingsButton.setOnMouseClicked(e -> new SettingsWindow().show());
-        container.getChildren().addAll(getShowHiddenFilesButton(), aboutButton, settingsButton);
+        container.getChildren().addAll(showHiddenFiles, aboutButton, settingsButton);
         popOver.setContentNode(container);
         Button button = new Button("options");
         HBox.setMargin(button, new Insets(5, 10, 5, 10));
@@ -415,7 +407,7 @@ public class Main extends Application {
             List<String> normalFiles = new ArrayList<>();
 
             for (File file : files) {
-                if (!isHiddenFilesShow) {
+                if (!(boolean)SettingsManager.getSetting("files", "show-hidden")) {
                     if (file.getName().startsWith(".")) {
                         continue;
                     }

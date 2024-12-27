@@ -3,6 +3,7 @@ package com.example.aloe.settings;
 import com.example.aloe.Translator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -24,9 +25,13 @@ public final class SettingsWindow extends Stage {
 
     public SettingsWindow() {
         loadMenu();
-        loadMenuSettings();
 
+        settings = new ScrollPane();
+        loadMenuSettings();
         HBox root = new HBox(menu, settings);
+        settings.setFitToWidth(true);
+        HBox.setHgrow(settings, Priority.ALWAYS);
+
         Scene scene = new Scene(root, 900, 550);
         this.setTitle(Translator.translate("window.settings.title"));
         this.setScene(scene);
@@ -37,18 +42,41 @@ public final class SettingsWindow extends Stage {
     }
 
     private void loadMenu() {
-        Button menuButton = SettingsControls.getMenuButton("window.settings.menu.menu", FontIcon.of(FontAwesome.BARS));
-        this.menu = new ScrollPane(new VBox(menuButton));
+        Button menuButton = SettingsControls.getMenuButton("window.settings.menu", FontIcon.of(FontAwesome.BARS));
+        menuButton.setOnAction(event -> loadMenuSettings());
+        Button filesButton = SettingsControls.getMenuButton("window.settings.files", FontIcon.of(FontAwesome.FILE_TEXT_O));
+        filesButton.setOnAction(event -> loadFilesSettings());
+        this.menu = new ScrollPane(new VBox(menuButton, filesButton));
         menu.setFitToWidth(true);
         menu.setMaxWidth(200);
         menu.setMinWidth(200);
     }
 
+    private HBox getSettingBox(String key) {
+        Label title = new Label(Translator.translate(key));
+        title.setStyle("-fx-font-size: 14px;");
+        title.setAlignment(Pos.CENTER);
+        title.setPadding(new Insets(5, 20, 5, 20));
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox box = new HBox(title, spacer);
+        box.setSpacing(10);
+        box.setMinHeight(50);
+        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
+        box.setMaxWidth(Double.MAX_VALUE);
+        return box;
+    }
+
+    private VBox getContentBox(Node...nodes) {
+        VBox content = new VBox(nodes);
+        content.setSpacing(10);
+        content.setPadding(new Insets(30));
+        content.setFillWidth(true);
+        return content;
+    }
+
     private void loadMenuSettings() {
         SettingsManager.setCategory("menu");
-        Label title = new Label(Translator.translate("window.settings.menu.menu"));
-        title.setStyle("-fx-font-size: 25px;");
-        VBox.setMargin(title, new Insets(30, 10, 20, 10));
 
         HBox useMenuSection = getSettingBox("window.settings.menu.use-menu");
         ToggleSwitch useMenu = SettingsControls.getToggleSwitch("use-menu");
@@ -77,27 +105,17 @@ public final class SettingsWindow extends Stage {
         ToggleSwitch useText = SettingsControls.getToggleSwitch("use-text");
         useTextSection.getChildren().add(useText);
 
-        VBox settingsContent = new VBox(title, useMenuSection, menuPositionSection, useIconsSection, useTextSection);
-        settingsContent.setSpacing(10);
-        settingsContent.setPadding(new Insets(30));
-        settingsContent.setFillWidth(true);
-        settings = new ScrollPane(settingsContent);
-        settings.setFitToWidth(true);
-        HBox.setHgrow(settings, Priority.ALWAYS);
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")), useMenuSection, menuPositionSection, useIconsSection, useTextSection));
     }
 
-    private HBox getSettingBox(String key) {
-        Label title = new Label(Translator.translate(key));
-        title.setStyle("-fx-font-size: 14px;");
-        title.setAlignment(Pos.CENTER);
-        title.setPadding(new Insets(5, 20, 5, 20));
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox box = new HBox(title, spacer);
-        box.setSpacing(10);
-        box.setMinHeight(50);
-        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
-        box.setMaxWidth(Double.MAX_VALUE);
-        return box;
+    private void loadFilesSettings() {
+        SettingsManager.setCategory("files");
+
+        HBox showHiddenFilesSection = getSettingBox("window.settings.files.show-hidden-files");
+        ToggleSwitch showHiddenFiles = SettingsControls.getToggleSwitch("show-hidden");
+        showHiddenFilesSection.getChildren().add(showHiddenFiles);
+
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection));
     }
+
 }

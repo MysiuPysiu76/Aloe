@@ -4,6 +4,7 @@ import com.example.aloe.Translator;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -16,13 +17,14 @@ import java.util.Map;
 class SettingsControls {
 
     static Button getMenuButton(String key, FontIcon icon) {
+        icon.setIconSize(20);
         Button button = new Button(Translator.translate(key), icon);
         VBox.setMargin(button, new Insets(0));
         VBox.setVgrow(button, Priority.ALWAYS);
         button.setMaxWidth(Double.MAX_VALUE);
         button.setPrefHeight(40);
         button.setPadding(new Insets(0, 0, 0, 15));
-        button.setGraphicTextGap(7);
+        button.setGraphicTextGap(10);
         button.setStyle("-fx-font-size: 15px; -fx-alignment: CENTER_LEFT;-fx-border-radius: 0px; -fx-background-radius: 0px;");
         return button;
     }
@@ -47,7 +49,6 @@ class SettingsControls {
         }
         choiceBox.getItems().addAll(items.values());
         choiceBox.getSelectionModel().select(SettingsManager.getSetting(SettingsManager.getCategory(), key));
-
         choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             SettingsManager.setSetting(SettingsManager.getCategory(), key, items.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(newValue))
@@ -56,5 +57,12 @@ class SettingsControls {
                 .orElse(null));
         });
         return choiceBox;
+    }
+
+    static Label getTitleLabel(String title) {
+        Label label = new Label(title);
+        label.setStyle("-fx-font-size: 25px;");
+        VBox.setMargin(label, new Insets(30, 10, 20, 10));
+        return label;
     }
 }
