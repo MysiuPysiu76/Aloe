@@ -95,5 +95,6 @@
   "window.settings.menu.use-menu": "Wyświetlaj menu plików",
   "window.settings.menu.use-icon": "Wyświetlaj ikony",
   "window.settings.menu.use-text": "Wyświetlaj tekst",
-  "window.settings.files.show-hidden-files": "Wyświetlaj ukryte pliki"
+  "window.settings.files.show-hidden-files": "Wyświetlaj ukryte pliki",
+  "window.settings.files.use-binary-units": "Używaj jednostek binarnych"
 }

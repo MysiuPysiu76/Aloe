@@ -56,7 +56,6 @@ public class Main extends Application {
 
     private int directoryHistoryPosition = -1;
     private static boolean isGridView = true;
-    private boolean isHiddenFilesShow = false;
     private VBox root = new VBox();
     public static Stage stage;
     private static FlowPane grid;
@@ -895,10 +894,8 @@ public class Main extends Application {
         return size;
     }
 
-    private boolean useBinaryUnits = true;
-
     private String convertBytesByUnit(long size) {
-        if (useBinaryUnits) {
+        if (SettingsManager.getSetting("files", "use-binary-units")) {
             return convertBytesToGiB(size);
         } else {
             return convertBytesToGB(size);

@@ -115,7 +115,11 @@ public final class SettingsWindow extends Stage {
         ToggleSwitch showHiddenFiles = SettingsControls.getToggleSwitch("show-hidden");
         showHiddenFilesSection.getChildren().add(showHiddenFiles);
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection));
+        HBox useBinaryUnitsSection = getSettingBox("window.settings.files.use-binary-units");
+        ToggleSwitch useBinaryUnits = SettingsControls.getToggleSwitch("use-binary-units");
+        useBinaryUnitsSection.getChildren().add(useBinaryUnits);
+
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection));
     }
 
 }

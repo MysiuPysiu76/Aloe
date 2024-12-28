@@ -95,5 +95,6 @@
   "window.settings.menu.use-menu": "Display files menu",
   "window.settings.menu.use-icon": "Display icon",
   "window.settings.menu.use-text": "Display text",
-  "window.settings.files.show-hidden-files": "Show hidden files"
+  "window.settings.files.show-hidden-files": "Show hidden files",
+  "window.settings.files.use-binary-units": "Use binary units"
 }
