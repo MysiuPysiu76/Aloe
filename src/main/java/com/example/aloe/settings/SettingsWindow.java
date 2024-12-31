@@ -146,7 +146,11 @@ public final class SettingsWindow extends Stage {
             }
         });
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection));
+        HBox deleteArchiveAfterExtractSection = getSettingBox("window.settings.files.delete-archive-after-extract");
+        ToggleSwitch deleteArchiveAfterExtract = SettingsControls.getToggleSwitch("delete-archive-after-extract");
+        deleteArchiveAfterExtractSection.getChildren().add(deleteArchiveAfterExtract);
+
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection, deleteArchiveAfterExtractSection));
     }
 
 }

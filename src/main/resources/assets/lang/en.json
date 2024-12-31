@@ -101,5 +101,6 @@
   "window.settings.files.start-folder-location": "Start directory location",
   "window.settings.files.start-folder.home": "Home",
   "window.settings.files.start-folder.last": "Last",
-  "window.settings.files.start-folder.custom": "Custom"
+  "window.settings.files.start-folder.custom": "Custom",
+  "window.settings.files.delete-archive-after-extract": "Delete archive after extract"
 }

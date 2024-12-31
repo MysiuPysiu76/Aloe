@@ -10,6 +10,7 @@
     "show-hidden": false,
     "use-binary-units": true,
     "start-folder": "home",
-    "start-folder-location": ""
+    "start-folder-location": "",
+    "delete-archive-after-extract": false
   }
 }
