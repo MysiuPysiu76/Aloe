@@ -23,7 +23,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.*;
 import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
-import org.controlsfx.control.SegmentedButton;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 
 import java.io.File;
@@ -212,7 +211,7 @@ public class Main extends Application {
             refreshCurrentDirectory();
         });
         Button aboutButton = new Button(Translator.translate("navigate.about-button"));
-        aboutButton.setOnMouseClicked(e -> openWindowButton());
+        aboutButton.setOnMouseClicked(e -> new AboutWindow(getHostServices()));
         Button settingsButton = new Button(Translator.translate("navigate.settings"));
         settingsButton.setOnMouseClicked(e -> new SettingsWindow().show());
         container.getChildren().addAll(showHiddenFiles, aboutButton, settingsButton);
@@ -234,115 +233,6 @@ public class Main extends Application {
             }
         });
         return button;
-    }
-
-    private void openWindowButton() {
-        Stage window = new Stage();
-        window.setResizable(false);
-        window.initStyle(StageStyle.UNIFIED);
-
-        VBox container = new VBox();
-        container.getChildren().addAll(getSegmentedButtons(container, getAboutContainer(), getCreatorContainer()), getAboutContainer());
-
-        Scene scene = new Scene(container, 300  , 390);
-        scene.getStylesheets().add(getClass().getResource("/assets/css/style_about.css").toExternalForm());
-        window.setScene(scene);
-        window.setTitle(Translator.translate("window.about.title"));
-        window.show();
-    }
-
-    private SegmentedButton getSegmentedButtons(VBox container, VBox aboutContainer, VBox creatorContainer) {
-        ToggleButton aboutButton = new ToggleButton(Translator.translate("window.about.about"));
-        aboutButton.setSelected(true);
-        aboutButton.setMinWidth(150);
-
-        ToggleButton creatorButton = new ToggleButton(Translator.translate("window.about.creator"));
-        creatorButton.setMinWidth(150);
-
-        SegmentedButton segmentedButton = new SegmentedButton(aboutButton, creatorButton);
-
-        aboutButton.setOnMouseClicked(event -> {
-            container.getChildren().clear();
-            container.getChildren().addAll(segmentedButton, aboutContainer);
-        });
-        creatorButton.setOnMouseClicked(event -> {
-            container.getChildren().clear();
-            container.getChildren().addAll(segmentedButton, creatorContainer);
-        });
-
-        return segmentedButton;
-    }
-
-    private VBox getAboutContainer() {
-        VBox aboutContainer = new VBox();
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
-        icon.setFitHeight(120);
-        icon.setFitWidth(120);
-        VBox.setMargin(icon, new Insets(25, 10, 25, 10));
-
-        Label name = new Label("Aloe");
-        name.getStyleClass().add("about-name");
-        name.setPadding(new Insets(25, 10, 5, 10));
-
-        Label version = new Label("0.3.5");
-        version.getStyleClass().add("about-version");
-
-        Label description = new Label(Translator.translate("window.about.description"));
-        description.getStyleClass().add("about-description");
-
-        Hyperlink link = new Hyperlink(Translator.translate("window.about.website"));
-        link.setOnAction(event -> {
-            getHostServices().showDocument("https://github.com/MysiuPysiu76/Aloe");
-        });
-
-        Label warranty = new Label(Translator.translate("window.about.warranty"));
-        warranty.setTextOverrun(OverrunStyle.CLIP);
-        warranty.setMaxWidth(250);
-        warranty.setAlignment(Pos.CENTER);
-        warranty.getStyleClass().addAll("about-warranty", "text-center");
-        warranty.setWrapText(true);
-
-        aboutContainer.getChildren().addAll(icon, name, version, description, link, warranty);
-        aboutContainer.setAlignment(Pos.TOP_CENTER);
-        return aboutContainer;
-    }
-
-    private VBox getCreatorContainer() {
-        VBox creatorContainer = new VBox();
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
-        icon.setFitHeight(100);
-        icon.setFitWidth(100);
-        VBox.setMargin(icon, new Insets(25, 10, 25, 10));
-
-        Label name = new Label("Aloe");
-        name.getStyleClass().add("about-name");
-        name.setPadding(new Insets(25, 10, 5, 10));
-
-        Label inspiration = new Label(Translator.translate("window.about.inspiration"));
-        inspiration.setPadding(new Insets(25, 10, 10, 10));
-        inspiration.setTextOverrun(OverrunStyle.CLIP);
-        inspiration.setMaxWidth(250);
-        inspiration.setAlignment(Pos.CENTER);
-        inspiration.getStyleClass().add("text-center");
-        inspiration.setWrapText(true);
-
-        Hyperlink linkCreator = new Hyperlink(Translator.translate("window.about.creator-website"));
-        linkCreator.getStyleClass().add("text-center");
-        linkCreator.setPadding(new Insets(5, 10, 10, 10));
-        linkCreator.setOnAction(event -> {
-            getHostServices().showDocument("https://github.com/Meiroth73");
-        });
-
-        Label usedIcons = new Label(Translator.translate("window.about.used-icons"));
-
-        Hyperlink linkIcons = new Hyperlink("Flaticon");
-        linkIcons.setOnAction(event -> {
-            getHostServices().showDocument("https://www.flaticon.com/");
-        });
-
-        creatorContainer.getChildren().addAll(icon, name, inspiration, linkCreator, usedIcons, linkIcons);
-        creatorContainer.setAlignment(Pos.TOP_CENTER);
-        return creatorContainer;
     }
 
     private Button getNavigatePrevButton() {
