@@ -96,5 +96,10 @@
   "window.settings.menu.use-icon": "Wyświetlaj ikony",
   "window.settings.menu.use-text": "Wyświetlaj tekst",
   "window.settings.files.show-hidden-files": "Wyświetlaj ukryte pliki",
-  "window.settings.files.use-binary-units": "Używaj jednostek binarnych"
+  "window.settings.files.use-binary-units": "Używaj jednostek binarnych",
+  "window.settings.files.start-folder": "Katalog startowy",
+  "window.settings.files.start-folder-location": "Lokalizacja katalogu startowego",
+  "window.settings.files.start-folder.home": "Domowy",
+  "window.settings.files.start-folder.last": "Ostatni",
+  "window.settings.files.start-folder.custom": "Własny"
 }

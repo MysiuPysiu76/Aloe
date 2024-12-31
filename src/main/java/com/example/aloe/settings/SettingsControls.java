@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -39,24 +40,41 @@ class SettingsControls {
         return toggleSwitch;
     }
 
-    static ChoiceBox<String> getChoiceBox(String key, String ...values) {
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        Map<String, String> items = new HashMap<>();
-        if (values.length % 2 == 0) {
-            for (int i = 0; i < values.length; i += 2) {
-                items.put(values[i], values[i + 1]);
+    static ChoiceBox<Map.Entry<String, String>> getChoiceBox(String key, String ...values) {
+        ChoiceBox<Map.Entry<String, String>> choiceBox = new ChoiceBox<>();
+        Map<String, String> items = getMapFromValues(values);
+        HBox.setMargin(choiceBox, new Insets(0, 20, 0, 20));
+        choiceBox.getItems().addAll(items.entrySet());
+        choiceBox.setConverter(new javafx.util.StringConverter<>() {
+            @Override
+            public String toString(Map.Entry<String, String> entry) {
+                return entry.getValue();
             }
-        }
-        choiceBox.getItems().addAll(items.values());
-        choiceBox.getSelectionModel().select(SettingsManager.getSetting(SettingsManager.getCategory(), key));
+            @Override
+            public Map.Entry<String, String> fromString(String string) {
+                return null;
+            }
+        });
+        choiceBox.getItems().stream()
+            .filter(entry -> entry.getKey().equals((String) SettingsManager.getSetting("files", "start-folder")))
+            .findFirst()
+            .ifPresentOrElse(entry -> choiceBox.getSelectionModel().select(entry), () -> choiceBox.getSelectionModel().selectFirst());
         choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            SettingsManager.setSetting(SettingsManager.getCategory(), key, items.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(newValue))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null));
+            if (newValue != null) {
+                SettingsManager.setSetting(SettingsManager.getCategory(), key, newValue.getKey());
+            }
         });
         return choiceBox;
+    }
+
+    private static Map<String, String> getMapFromValues(String ...values) {
+        Map<String, String> map = new HashMap<>();
+        if (values.length % 2 == 0) {
+            for (int i = 0; i < values.length; i += 2) {
+                map.put(values[i], values[i + 1]);
+            }
+        }
+        return map;
     }
 
     static Label getTitleLabel(String title) {
@@ -64,5 +82,16 @@ class SettingsControls {
         label.setStyle("-fx-font-size: 25px;");
         VBox.setMargin(label, new Insets(30, 10, 20, 10));
         return label;
+    }
+
+    static TextField getTextField(String key) {
+        TextField textField = new TextField(SettingsManager.getSetting(SettingsManager.getCategory(), key));
+        textField.setPadding(new Insets(5, 7, 5, 7));
+        textField.setOnKeyReleased(event -> {
+            System.out.println(textField.getText());
+            SettingsManager.setSetting(SettingsManager.getCategory(), key, textField.getText());});
+        textField.setPromptText(Translator.translate("files-menu.example-path"));
+        HBox.setMargin(textField, new Insets(0, 20, 0, 20));
+        return textField;
     }
 }

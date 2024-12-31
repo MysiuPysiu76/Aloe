@@ -135,7 +135,12 @@ public class Main extends Application {
         navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
         root.getChildren().addAll(navigationPanel, filesPanel);
         filesList = new ListView<>();
-        loadDirectoryContents(FilesOperations.getCurrentDirectory(), true);
+
+        if (!SettingsManager.getSetting("files", "start-folder").equals("home")) {
+            loadDirectoryContents(new File((String)SettingsManager.getSetting("files", "start-folder-location")), true);
+        } else {
+            loadDirectoryContents(new File(System.getProperty("user.home")), true);
+        }
 
         root.heightProperty().addListener((observable, oldValue, newValue) -> {
             filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
@@ -149,7 +154,12 @@ public class Main extends Application {
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest(event -> {SettingsManager.setSetting("menu", "divider-position", filesPanel.getDividerPositions());});
+        stage.setOnCloseRequest(event -> {
+            SettingsManager.setSetting("menu", "divider-position", filesPanel.getDividerPositions());
+            if (SettingsManager.getSetting("files", "start-folder").equals("last")) {
+                SettingsManager.setSetting("files", "start-folder-location", FilesOperations.getCurrentDirectory().getAbsolutePath());
+            }
+        });
     }
 
     public static void loadMenu() {

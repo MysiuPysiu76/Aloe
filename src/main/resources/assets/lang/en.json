@@ -96,5 +96,10 @@
   "window.settings.menu.use-icon": "Display icon",
   "window.settings.menu.use-text": "Display text",
   "window.settings.files.show-hidden-files": "Show hidden files",
-  "window.settings.files.use-binary-units": "Use binary units"
+  "window.settings.files.use-binary-units": "Use binary units",
+  "window.settings.files.start-folder": "Start directory",
+  "window.settings.files.start-folder-location": "Start directory location",
+  "window.settings.files.start-folder.home": "Home",
+  "window.settings.files.start-folder.last": "Last",
+  "window.settings.files.start-folder.custom": "Custom"
 }

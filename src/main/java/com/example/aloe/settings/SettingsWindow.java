@@ -5,19 +5,20 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.ToggleSwitch;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Map;
 
 public final class SettingsWindow extends Stage {
     ScrollPane menu;
@@ -53,18 +54,35 @@ public final class SettingsWindow extends Stage {
     }
 
     private HBox getSettingBox(String key) {
-        Label title = new Label(Translator.translate(key));
-        title.setStyle("-fx-font-size: 14px;");
-        title.setAlignment(Pos.CENTER);
-        title.setPadding(new Insets(5, 20, 5, 20));
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox box = new HBox(title, spacer);
+        Label title = getSettingLabel(key);
+        HBox box = new HBox(title, getSpacer());
         box.setSpacing(10);
         box.setMinHeight(50);
         box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
         box.setMaxWidth(Double.MAX_VALUE);
         return box;
+    }
+
+    private VBox getDoubleSettingBox(String key, String key1) {
+        VBox box = new VBox();
+        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
+        box.setMaxWidth(Double.MAX_VALUE);
+        box.setAlignment(Pos.CENTER);
+        Line line = new Line();
+        VBox.setVgrow(line, Priority.ALWAYS);
+        VBox.setMargin(line, new Insets(0, 0, 0, 18));
+        line.setStroke(Color.rgb(185, 185, 185));
+        line.endXProperty().bind(box.widthProperty().subtract(36));
+        box.getChildren().addAll(getSettingBox(key), line, getSettingBox(key1));
+        return box;
+    }
+
+    private Label getSettingLabel(String key) {
+        Label title = new Label(Translator.translate(key));
+        title.setPadding(new Insets(4, 20, 4, 20));
+        title.setStyle("-fx-font-size: 14px;");
+        title.setAlignment(Pos.CENTER);
+        return title;
     }
 
     private VBox getContentBox(Node...nodes) {
@@ -75,6 +93,12 @@ public final class SettingsWindow extends Stage {
         return content;
     }
 
+    private Region getSpacer() {
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        return spacer;
+    }
+
     private void loadMenuSettings() {
         SettingsManager.setCategory("menu");
 
@@ -83,19 +107,8 @@ public final class SettingsWindow extends Stage {
         useMenuSection.getChildren().add(useMenu);
 
         HBox menuPositionSection = getSettingBox("window.settings.menu.menu-position");
-        ChoiceBox<String> menuPosition = SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"));
-        menuPosition.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.equalsIgnoreCase(oldValue)) {
-                SettingsManager.setSetting("menu", "divider-position", (1 - (double)SettingsManager.getSetting("menu", "divider-position")));
-            }
-        });
+        ChoiceBox<Map.Entry<String, String>> menuPosition = SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"));
         menuPositionSection.getChildren().add(menuPosition);
-        if (SettingsManager.getSetting(SettingsManager.getCategory(), "position").equals("right")) {
-            menuPosition.getSelectionModel().select(1);
-        } else {
-            menuPosition.getSelectionModel().select(0);
-        }
-        HBox.setMargin(menuPosition, new Insets(0, 20, 0, 20));
 
         HBox useIconsSection = getSettingBox("window.settings.menu.use-icon");
         ToggleSwitch useIcon = SettingsControls.getToggleSwitch("use-icon");
@@ -119,7 +132,21 @@ public final class SettingsWindow extends Stage {
         ToggleSwitch useBinaryUnits = SettingsControls.getToggleSwitch("use-binary-units");
         useBinaryUnitsSection.getChildren().add(useBinaryUnits);
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection));
+        VBox startFolderSection = getDoubleSettingBox("window.settings.files.start-folder", "window.settings.files.start-folder-location");
+        ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", "home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
+        ((HBox)(startFolderSection.getChildren().get(0))).getChildren().add(startFolder);
+        TextField pathInput = SettingsControls.getTextField("start-folder-location");
+        pathInput.setEditable(startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom"));
+        ((HBox)(startFolderSection.getChildren().get(2))).getChildren().add(pathInput);
+        startFolder.setOnAction(event -> {
+            if(startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom")) {
+                pathInput.setEditable(true);
+            } else {
+                pathInput.setEditable(false);
+            }
+        });
+
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection));
     }
 
 }

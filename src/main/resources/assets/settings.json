@@ -8,6 +8,8 @@
   },
   "files": {
     "show-hidden": false,
-    "use-binary-units": true
+    "use-binary-units": true,
+    "start-folder": "home",
+    "start-folder-location": ""
   }
 }
