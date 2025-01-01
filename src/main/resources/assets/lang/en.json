@@ -102,5 +102,6 @@
   "window.settings.files.start-folder.home": "Home",
   "window.settings.files.start-folder.last": "Last",
   "window.settings.files.start-folder.custom": "Custom",
-  "window.settings.files.delete-archive-after-extract": "Delete archive after extract"
+  "window.settings.files.delete-archive-after-extract": "Delete archive after extract",
+  "window.settings.files.display-thumbnails": "Display image thumbnails"
 }

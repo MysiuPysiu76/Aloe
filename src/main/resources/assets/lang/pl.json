@@ -102,5 +102,6 @@
   "window.settings.files.start-folder.home": "Domowy",
   "window.settings.files.start-folder.last": "Ostatni",
   "window.settings.files.start-folder.custom": "Własny",
-  "window.settings.files.delete-archive-after-extract": "Usuń archiwum po wypakowaniu"
+  "window.settings.files.delete-archive-after-extract": "Usuń archiwum po wypakowaniu",
+  "window.settings.files.display-thumbnails": "Wyświetl miniatury obrazów"
 }

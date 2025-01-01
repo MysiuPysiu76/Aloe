@@ -11,6 +11,7 @@
     "use-binary-units": true,
     "start-folder": "home",
     "start-folder-location": "",
-    "delete-archive-after-extract": false
+    "delete-archive-after-extract": false,
+    "display-thumbnails": true
   }
 }

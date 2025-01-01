@@ -150,7 +150,11 @@ public final class SettingsWindow extends Stage {
         ToggleSwitch deleteArchiveAfterExtract = SettingsControls.getToggleSwitch("delete-archive-after-extract");
         deleteArchiveAfterExtractSection.getChildren().add(deleteArchiveAfterExtract);
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection, deleteArchiveAfterExtractSection));
+        HBox displayThumbnailsSection = getSettingBox("window.settings.files.display-thumbnails");
+        ToggleSwitch displayThumbnails = SettingsControls.getToggleSwitch("display-thumbnails");
+        displayThumbnailsSection.getChildren().add(displayThumbnails);
+
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection, deleteArchiveAfterExtractSection, displayThumbnailsSection));
     }
 
 }

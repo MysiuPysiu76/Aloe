@@ -23,7 +23,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.*;
 import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
-import org.kordamp.ikonli.fontawesome.FontAwesome;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,14 +67,12 @@ public class Main extends Application {
 
         navigationPanel.getStyleClass().add("navigation-panel");
         filesPanel.getStyleClass().add("navigation-panel");
-
         filesPane.getStyleClass().add("files-pane");
         filesPanel.getStyleClass().add("files-panel");
         filesMenu.getStyleClass().add("files-menu");
 
         getDirectoryOptions();
         filesPanel.setMinHeight(root.getHeight() - navigationPanel.getHeight());
-
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 directoryMenu.hide();
@@ -127,7 +124,6 @@ public class Main extends Application {
         filesMenu.setPrefWidth(160);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-
         navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
         root.getChildren().addAll(navigationPanel, filesPanel);
 
@@ -265,11 +261,7 @@ public class Main extends Application {
     }
 
     private void checkParentDirectory() {
-        if (FilesOperations.getCurrentDirectory().getPath().equals("/")) {
-            parrentDir.setDisable(true);
-        } else {
-            parrentDir.setDisable(false);
-        }
+        parrentDir.setDisable(FilesOperations.getCurrentDirectory().getPath().equals("/"));
     }
 
     private static List<VBox> selectedFiles = new ArrayList<>();
@@ -300,7 +292,6 @@ public class Main extends Application {
         if (files != null) {
             List<String> directories = new ArrayList<>();
             List<String> normalFiles = new ArrayList<>();
-
             for (File file : files) {
                 if (!(boolean)SettingsManager.getSetting("files", "show-hidden")) {
                     if (file.getName().startsWith(".")) {
@@ -415,7 +406,13 @@ public class Main extends Application {
             icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         } else {
             switch (FilesOperations.getExtension(name).toLowerCase()) {
-                case "jpg", "jpeg", "png", "gif" -> icon.setImage(new Image(new File(FilesOperations.getCurrentDirectory(), name).toURI().toString()));
+                case "jpg", "jpeg", "png", "gif" -> {
+                    if (SettingsManager.getSetting("files", "display-thumbnails")) {
+                        icon.setImage(new Image(new File(FilesOperations.getCurrentDirectory(), name).toURI().toString()));
+                    } else {
+                        icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
+                    }
+                }
                 case "mp4" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
             }
@@ -426,7 +423,6 @@ public class Main extends Application {
 
         Label fileName = new Label(name);
         fileName.setWrapText(true);
-        fileName.setTextOverrun(OverrunStyle.CLIP);
         fileName.setMaxWidth(90);
         fileName.setAlignment(Pos.CENTER);
         fileName.setTooltip(new Tooltip(name));
@@ -1054,8 +1050,7 @@ public class Main extends Application {
             String newName = name.getText().trim();
             File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
             if (!newFile.exists()) {
-                if(!newFile.mkdir()) {
-                }
+                newFile.mkdir();
             }
         });
         dialog.showAndWait();
@@ -1093,9 +1088,7 @@ public class Main extends Application {
             File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
             if (!newFile.exists()) {
                 try {
-                    if(!newFile.createNewFile()) {
-
-                    }
+                    newFile.createNewFile();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
