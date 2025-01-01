@@ -42,9 +42,6 @@ import java.util.stream.Collectors;
 public class Main extends Application {
 
     private List<File> directoryHistory = new ArrayList<>();
-    private static ListView<String> filesList;
-    public static List<FontAwesome> menuIcons;
-
     private HBox navigationPanel = new HBox();
     private VBox filesBox = new VBox();
     private SplitPane filesPanel = new SplitPane();
@@ -133,7 +130,6 @@ public class Main extends Application {
 
         navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
         root.getChildren().addAll(navigationPanel, filesPanel);
-        filesList = new ListView<>();
 
         if (!SettingsManager.getSetting("files", "start-folder").equals("home")) {
             loadDirectoryContents(new File((String)SettingsManager.getSetting("files", "start-folder-location")), true);
@@ -403,21 +399,26 @@ public class Main extends Application {
 
     private VBox createFileBox(String name, boolean isDirectory) {
         VBox fileBox = new VBox();
-
         fileBox.setMinWidth(100);
         fileBox.setPrefWidth(100);
         fileBox.setMaxWidth(100);
-        fileBox.setMaxHeight(200);
+        fileBox.setMinHeight(120);
+        fileBox.setMaxHeight(120);
         fileBox.setPadding(new Insets(125, 0, 0, 0));
         fileBox.setAlignment(Pos.TOP_CENTER);
         fileBox.setSpacing(5);
         fileBox.getStyleClass().add("file-box");
 
         ImageView icon = new ImageView();
+        icon.setPreserveRatio(true);
         if (isDirectory) {
             icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         } else {
-            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
+            switch (FilesOperations.getExtension(name).toLowerCase()) {
+                case "jpg", "jpeg", "png", "gif" -> icon.setImage(new Image(new File(FilesOperations.getCurrentDirectory(), name).toURI().toString()));
+                case "mp4" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
+                default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
+            }
         }
         icon.setFitHeight(60);
         icon.setFitWidth(60);
@@ -428,9 +429,14 @@ public class Main extends Application {
         fileName.setTextOverrun(OverrunStyle.CLIP);
         fileName.setMaxWidth(90);
         fileName.setAlignment(Pos.CENTER);
+        fileName.setTooltip(new Tooltip(name));
         fileName.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
 
-        fileBox.getChildren().addAll(icon, fileName);
+        VBox box = new VBox(icon);
+        box.setAlignment(Pos.BOTTOM_CENTER);
+        box.setMinHeight(70);
+
+        fileBox.getChildren().addAll(box, fileName);
         fileBox.setPadding(new Insets(0, 5, 15, 5));
         fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
         getFileOptions(fileBox, name);
@@ -481,7 +487,6 @@ public class Main extends Application {
             event.setDropCompleted(success);
             event.consume();
         });
-
         return fileBox;
     }
 
@@ -1100,7 +1105,7 @@ public class Main extends Application {
     }
 
     private void getParentDirectory() {
-        if(FilesOperations.getCurrentDirectory().getPath() != "/") {
+        if(!FilesOperations.getCurrentDirectory().getPath().equals("/")) {
             loadDirectoryContents(new File(FilesOperations.getCurrentDirectory().getParent()), true);
         }
     }
