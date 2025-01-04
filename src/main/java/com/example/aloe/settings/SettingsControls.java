@@ -2,18 +2,20 @@ package com.example.aloe.settings;
 
 import com.example.aloe.Translator;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.ToggleSwitch;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class SettingsControls {
 
@@ -88,10 +90,29 @@ class SettingsControls {
         TextField textField = new TextField(SettingsManager.getSetting(SettingsManager.getCategory(), key));
         textField.setPadding(new Insets(5, 7, 5, 7));
         textField.setOnKeyReleased(event -> {
-            System.out.println(textField.getText());
             SettingsManager.setSetting(SettingsManager.getCategory(), key, textField.getText());});
         textField.setPromptText(Translator.translate("files-menu.example-path"));
         HBox.setMargin(textField, new Insets(0, 20, 0, 20));
         return textField;
+    }
+
+    static HBox getSlider(String key, double min, double max, double tickUnit, double step, String leftTitle, String rightTitle, boolean pointedValues, List<Double> values) {
+        Slider slider = new Slider(min, max, SettingsManager.getSetting(SettingsManager.getCategory(), "file-box-size"));
+        slider.setMajorTickUnit(tickUnit);
+        slider.setBlockIncrement(step);
+        Label left = new Label(Translator.translate(leftTitle));
+        Label right = new Label(Translator.translate(rightTitle));
+        HBox box = new HBox(left, slider, right);
+        box.setAlignment(Pos.CENTER);
+        if (pointedValues) {
+            slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                double closest = values.stream().min((a, b) -> Double.compare(Math.abs(a - newValue.doubleValue()), Math.abs(b - newValue.doubleValue()))).orElse(newValue.doubleValue());
+                slider.setValue(closest);
+                SettingsManager.setSetting(SettingsManager.getCategory(), key, closest);
+            });
+        }
+        HBox.setMargin(slider, new Insets(0, 7, 0, 7));
+        HBox.setMargin(box, new Insets(0, 20, 0, 20));
+        return box;
     }
 }

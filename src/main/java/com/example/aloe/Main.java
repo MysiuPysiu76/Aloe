@@ -390,14 +390,15 @@ public class Main extends Application {
 
     private VBox createFileBox(String name, boolean isDirectory) {
         VBox fileBox = new VBox();
-        fileBox.setMinWidth(100);
-        fileBox.setPrefWidth(100);
-        fileBox.setMaxWidth(100);
-        fileBox.setMinHeight(120);
-        fileBox.setMaxHeight(120);
+        double scale = SettingsManager.getSetting("files", "file-box-size");
+        fileBox.setMinWidth(100 * scale);
+        fileBox.setPrefWidth(100 * scale);
+        fileBox.setMaxWidth(100 * scale);
+        fileBox.setMinHeight(120 * scale);
+        fileBox.setMaxHeight(120 * scale);
         fileBox.setPadding(new Insets(125, 0, 0, 0));
         fileBox.setAlignment(Pos.TOP_CENTER);
-        fileBox.setSpacing(5);
+        fileBox.setSpacing(5 * scale);
         fileBox.getStyleClass().add("file-box");
 
         ImageView icon = new ImageView();
@@ -417,20 +418,20 @@ public class Main extends Application {
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
             }
         }
-        icon.setFitHeight(60);
-        icon.setFitWidth(60);
+        icon.setFitHeight(60 * scale);
+        icon.setFitWidth(60 * scale);
         VBox.setMargin(icon, new Insets(5, 2, 5, 2));
 
         Label fileName = new Label(name);
         fileName.setWrapText(true);
-        fileName.setMaxWidth(90);
+        fileName.setMaxWidth(90 * scale);
         fileName.setAlignment(Pos.CENTER);
         fileName.setTooltip(new Tooltip(name));
         fileName.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
 
         VBox box = new VBox(icon);
         box.setAlignment(Pos.BOTTOM_CENTER);
-        box.setMinHeight(70);
+        box.setMinHeight(70 * scale);
 
         fileBox.getChildren().addAll(box, fileName);
         fileBox.setPadding(new Insets(0, 5, 15, 5));

@@ -19,6 +19,8 @@ import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public final class SettingsWindow extends Stage {
     ScrollPane menu;
@@ -33,11 +35,11 @@ public final class SettingsWindow extends Stage {
         settings.setFitToWidth(true);
         HBox.setHgrow(settings, Priority.ALWAYS);
 
-        Scene scene = new Scene(root, 900, 550);
+        Scene scene = new Scene(root, 900, 560);
         this.setTitle(Translator.translate("window.settings.title"));
         this.setScene(scene);
         this.setMinWidth(700);
-        this.setMinHeight(350);
+        this.setMinHeight(380);
         this.initModality(Modality.APPLICATION_MODAL);
         this.setOnCloseRequest(event -> System.gc());
     }
@@ -81,7 +83,7 @@ public final class SettingsWindow extends Stage {
         Label title = new Label(Translator.translate(key));
         title.setPadding(new Insets(4, 20, 4, 20));
         title.setStyle("-fx-font-size: 14px;");
-        title.setAlignment(Pos.CENTER);
+        title.setAlignment(Pos.CENTER_LEFT);
         return title;
     }
 
@@ -150,11 +152,15 @@ public final class SettingsWindow extends Stage {
         ToggleSwitch deleteArchiveAfterExtract = SettingsControls.getToggleSwitch("delete-archive-after-extract");
         deleteArchiveAfterExtractSection.getChildren().add(deleteArchiveAfterExtract);
 
+        HBox fileBoxSizeSection = getSettingBox("window.settings.files.file-box-size");
+        HBox fileBoxSize = SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()));
+        fileBoxSizeSection.getChildren().add(fileBoxSize);
+
         HBox displayThumbnailsSection = getSettingBox("window.settings.files.display-thumbnails");
         ToggleSwitch displayThumbnails = SettingsControls.getToggleSwitch("display-thumbnails");
         displayThumbnailsSection.getChildren().add(displayThumbnails);
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection, deleteArchiveAfterExtractSection, displayThumbnailsSection));
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection, deleteArchiveAfterExtractSection, fileBoxSizeSection, displayThumbnailsSection));
     }
 
 }
