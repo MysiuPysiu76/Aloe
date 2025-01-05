@@ -415,6 +415,7 @@ public class Main extends Application {
                     }
                 }
                 case "mp4" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
+                case "iso" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/cd.png")));
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
             }
         }
@@ -441,7 +442,6 @@ public class Main extends Application {
         fileBox.setOnDragDetected(event -> {
             Dragboard db = fileBox.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-
             List<String> fileNamesToDrag = new ArrayList<>();
             if (selectedFiles.contains(fileBox)) {
                 for (VBox selectedFile : selectedFiles) {
