@@ -415,6 +415,7 @@ public class Main extends Application {
                     }
                 }
                 case "mp4" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
+                case "mp3", "ogg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/music.png")));
                 case "iso" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/cd.png")));
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
             }
