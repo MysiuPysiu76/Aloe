@@ -1,5 +1,5 @@
 # Aloe
-Aloe is a simple file explorer written in Java using JavaFX, inspired by the Nautilus file manager in Pop!_OS 22.04.
+Aloe is a simple file explorer written in Java using JavaFX, inspired by the Nautilus file manager in Pop!_OS 22.04 and cosmic files.
 
 ## Usage
 **Requirements**:
