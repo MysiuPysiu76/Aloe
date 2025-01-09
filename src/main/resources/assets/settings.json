@@ -8,6 +8,7 @@
   },
   "files": {
     "show-hidden": false,
+    "view": "grid",
     "use-binary-units": true,
     "start-folder": "home",
     "start-folder-location": "",

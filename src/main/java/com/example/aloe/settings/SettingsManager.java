@@ -102,7 +102,6 @@ public final class SettingsManager {
             userCategorySettings.put(key, value);
             cachedSettings.put(category, userCategorySettings);
             saveSettingsToFile(cachedSettings);
-
             return value;
         } catch (IOException e) {
             e.printStackTrace();

@@ -94,17 +94,6 @@ public class Main extends Application {
         navigationPanel.setPadding(new Insets(6));
         SplitPane.setResizableWithParent(filesMenu, false);
 
-        Button changeDisplay = new Button("List");
-        changeDisplay.setOnMouseClicked(event -> {
-            isGridView = !isGridView;
-            refreshCurrentDirectory();
-            if(isGridView) {
-                changeDisplay.setText("List");
-            } else {
-                changeDisplay.setText("Grid");
-            }
-        });
-
         filesPane.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             removeSelectionFromFiles();
         });
@@ -307,7 +296,7 @@ public class Main extends Application {
             Collections.sort(directories);
             Collections.sort(normalFiles);
 
-            if (Main.isGridView) {
+            if (((String)SettingsManager.getSetting("files", "view")).equals("grid") ? true : false) {
                 for (String dirName : directories) {
                     VBox box = createFileBox(dirName, true);
                     box.setOnMouseClicked(event -> {

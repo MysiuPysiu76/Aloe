@@ -1,6 +1,7 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.Translator;
+import com.example.aloe.Utils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -57,10 +58,7 @@ class SettingsControls {
                 return null;
             }
         });
-        choiceBox.getItems().stream()
-            .filter(entry -> entry.getKey().equals((String) SettingsManager.getSetting("files", "start-folder")))
-            .findFirst()
-            .ifPresentOrElse(entry -> choiceBox.getSelectionModel().select(entry), () -> choiceBox.getSelectionModel().selectFirst());
+        choiceBox.getSelectionModel().select(Utils.getKeyIndex(items, SettingsManager.getSetting(SettingsManager.getCategory(), key)));
         choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 SettingsManager.setSetting(SettingsManager.getCategory(), key, newValue.getKey());
@@ -69,12 +67,15 @@ class SettingsControls {
         return choiceBox;
     }
 
+
     private static Map<String, String> getMapFromValues(String ...values) {
         Map<String, String> map = new HashMap<>();
         if (values.length % 2 == 0) {
             for (int i = 0; i < values.length; i += 2) {
                 map.put(values[i], values[i + 1]);
             }
+        } else {
+            throw new IllegalArgumentException("Values must contain an even number of elements.");
         }
         return map;
     }

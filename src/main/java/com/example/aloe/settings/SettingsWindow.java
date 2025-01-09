@@ -55,17 +55,7 @@ public final class SettingsWindow extends Stage {
         menu.setMinWidth(200);
     }
 
-    private HBox getSettingBox(String key) {
-        Label title = getSettingLabel(key);
-        HBox box = new HBox(title, getSpacer());
-        box.setSpacing(10);
-        box.setMinHeight(50);
-        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
-        box.setMaxWidth(Double.MAX_VALUE);
-        return box;
-    }
-
-    private VBox getDoubleSettingBox(String key, String key1) {
+    private VBox getSettingBox(String key, Node control, String key1, Node control1) {
         VBox box = new VBox();
         box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
         box.setMaxWidth(Double.MAX_VALUE);
@@ -75,7 +65,17 @@ public final class SettingsWindow extends Stage {
         VBox.setMargin(line, new Insets(0, 0, 0, 18));
         line.setStroke(Color.rgb(185, 185, 185));
         line.endXProperty().bind(box.widthProperty().subtract(36));
-        box.getChildren().addAll(getSettingBox(key), line, getSettingBox(key1));
+        box.getChildren().addAll(getSettingBox(key, control), line, getSettingBox(key1, control1));
+        return box;
+    }
+
+    private HBox getSettingBox(String key, Node control) {
+        Label title = getSettingLabel(key);
+        HBox box = new HBox(title, getSpacer(), control);
+        box.setSpacing(10);
+        box.setMinHeight(50);
+        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
+        box.setMaxWidth(Double.MAX_VALUE);
         return box;
     }
 
@@ -104,42 +104,19 @@ public final class SettingsWindow extends Stage {
     private void loadMenuSettings() {
         SettingsManager.setCategory("menu");
 
-        HBox useMenuSection = getSettingBox("window.settings.menu.use-menu");
-        ToggleSwitch useMenu = SettingsControls.getToggleSwitch("use-menu");
-        useMenuSection.getChildren().add(useMenu);
-
-        HBox menuPositionSection = getSettingBox("window.settings.menu.menu-position");
-        ChoiceBox<Map.Entry<String, String>> menuPosition = SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"));
-        menuPositionSection.getChildren().add(menuPosition);
-
-        HBox useIconsSection = getSettingBox("window.settings.menu.use-icon");
-        ToggleSwitch useIcon = SettingsControls.getToggleSwitch("use-icon");
-        useIconsSection.getChildren().add(useIcon);
-
-        HBox useTextSection = getSettingBox("window.settings.menu.use-text");
-        ToggleSwitch useText = SettingsControls.getToggleSwitch("use-text");
-        useTextSection.getChildren().add(useText);
-
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")), useMenuSection, menuPositionSection, useIconsSection, useTextSection));
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),
+            getSettingBox("window.settings.menu.use-menu", SettingsControls.getToggleSwitch("use-menu")),
+            getSettingBox("window.settings.menu.menu-position", SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
+            getSettingBox("window.settings.menu.use-icon", SettingsControls.getToggleSwitch("use-icon")),
+            getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text"))));
     }
 
     private void loadFilesSettings() {
         SettingsManager.setCategory("files");
 
-        HBox showHiddenFilesSection = getSettingBox("window.settings.files.show-hidden-files");
-        ToggleSwitch showHiddenFiles = SettingsControls.getToggleSwitch("show-hidden");
-        showHiddenFilesSection.getChildren().add(showHiddenFiles);
-
-        HBox useBinaryUnitsSection = getSettingBox("window.settings.files.use-binary-units");
-        ToggleSwitch useBinaryUnits = SettingsControls.getToggleSwitch("use-binary-units");
-        useBinaryUnitsSection.getChildren().add(useBinaryUnits);
-
-        VBox startFolderSection = getDoubleSettingBox("window.settings.files.start-folder", "window.settings.files.start-folder-location");
         ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", "home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
-        ((HBox)(startFolderSection.getChildren().get(0))).getChildren().add(startFolder);
         TextField pathInput = SettingsControls.getTextField("start-folder-location");
         pathInput.setEditable(startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom"));
-        ((HBox)(startFolderSection.getChildren().get(2))).getChildren().add(pathInput);
         startFolder.setOnAction(event -> {
             if(startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom")) {
                 pathInput.setEditable(true);
@@ -148,19 +125,14 @@ public final class SettingsWindow extends Stage {
             }
         });
 
-        HBox deleteArchiveAfterExtractSection = getSettingBox("window.settings.files.delete-archive-after-extract");
-        ToggleSwitch deleteArchiveAfterExtract = SettingsControls.getToggleSwitch("delete-archive-after-extract");
-        deleteArchiveAfterExtractSection.getChildren().add(deleteArchiveAfterExtract);
-
-        HBox fileBoxSizeSection = getSettingBox("window.settings.files.file-box-size");
-        HBox fileBoxSize = SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()));
-        fileBoxSizeSection.getChildren().add(fileBoxSize);
-
-        HBox displayThumbnailsSection = getSettingBox("window.settings.files.display-thumbnails");
-        ToggleSwitch displayThumbnails = SettingsControls.getToggleSwitch("display-thumbnails");
-        displayThumbnailsSection.getChildren().add(displayThumbnails);
-
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")), showHiddenFilesSection, useBinaryUnitsSection, startFolderSection, deleteArchiveAfterExtractSection, fileBoxSizeSection, displayThumbnailsSection));
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")),
+            getSettingBox("window.settings.files.show-hidden-files", SettingsControls.getToggleSwitch("show-hidden")),
+            getSettingBox("window.settings.files.view", SettingsControls.getChoiceBox("view", "grid", Translator.translate("window.settings.files.view.grid"), "list", Translator.translate("window.settings.files.view.list"))),
+            getSettingBox("window.settings.files.use-binary-units", SettingsControls.getToggleSwitch("use-binary-units")),
+            getSettingBox("window.settings.files.start-folder", startFolder, "window.settings.files.start-folder-location", pathInput),
+            getSettingBox("window.settings.files.delete-archive-after-extract", SettingsControls.getToggleSwitch("delete-archive-after-extract")),
+            getSettingBox("window.settings.files.file-box-size", SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()))),
+            getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails"))));
     }
 
 }

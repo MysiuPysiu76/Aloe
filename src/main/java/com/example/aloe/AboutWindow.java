@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.controlsfx.control.SegmentedButton;
 
-
 public class AboutWindow extends Stage {
     private final HostServices hostServices;
 
@@ -45,7 +44,6 @@ public class AboutWindow extends Stage {
 
         ToggleButton creatorButton = new ToggleButton(Translator.translate("window.about.creator"));
         creatorButton.setMinWidth(150);
-
         SegmentedButton segmentedButton = new SegmentedButton(aboutButton, creatorButton);
 
         aboutButton.setOnMouseClicked(event -> {
@@ -71,7 +69,7 @@ public class AboutWindow extends Stage {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.8.6");
+        Label version = new Label("0.8.7");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -122,7 +120,7 @@ public class AboutWindow extends Stage {
         return creatorContainer;
     }
 
-    public Hyperlink createLink(String text, String url) {
+    private Hyperlink createLink(String text, String url) {
         Hyperlink linkCreator = new Hyperlink(text);
         linkCreator.getStyleClass().add("text-center");
         linkCreator.setOnAction(event -> hostServices.showDocument(url));

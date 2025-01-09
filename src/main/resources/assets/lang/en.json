@@ -106,5 +106,8 @@
   "window.settings.files.display-thumbnails": "Display image thumbnails",
   "window.settings.files.file-box-size": "File box size",
   "window.settings.files.file-box-size.small": "Small",
-  "window.settings.files.file-box-size.large": "Large"
+  "window.settings.files.file-box-size.large": "Large",
+  "window.settings.files.view": "View",
+  "window.settings.files.view.grid": "Grid",
+  "window.settings.files.view.list": "List"
 }

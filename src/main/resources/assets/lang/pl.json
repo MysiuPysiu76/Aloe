@@ -106,5 +106,8 @@
   "window.settings.files.display-thumbnails": "Wyświetl miniatury obrazów",
   "window.settings.files.file-box-size": "Rozmiar pudełko z plikiem",
   "window.settings.files.file-box-size.small": "Mały",
-  "window.settings.files.file-box-size.large": "Wielki"
+  "window.settings.files.file-box-size.large": "Wielki",
+  "window.settings.files.view": "Widok",
+  "window.settings.files.view.grid": "Siatka",
+  "window.settings.files.view.list": "Lista"
 }
