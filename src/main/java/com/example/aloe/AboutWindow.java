@@ -69,7 +69,7 @@ public class AboutWindow extends Stage {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.8.7");
+        Label version = new Label("0.8.8");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
