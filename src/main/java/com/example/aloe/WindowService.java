@@ -49,7 +49,7 @@ public class WindowService {
         bottomHBox.setAlignment(Pos.CENTER_RIGHT);
         bottomHBox.setSpacing(10);
         bottomHBox.setPadding(new Insets(12, 15, 5, 10));
-        root.getChildren().addAll(WindowComponents.getTitle(Translator.translate("files-menu.title.add")), name, passwordField, bottomHBox);
+        root.getChildren().addAll(WindowComponents.getTitle(Translator.translate("window.archive.extract.password-required")), name, passwordField, bottomHBox);
 
         cancel.setOnAction(event -> {
             password[0] = null;

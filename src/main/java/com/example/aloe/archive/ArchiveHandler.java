@@ -35,17 +35,27 @@ public class ArchiveHandler {
      * @param usePassword  whether to use password protection
      * @param password     the password for the archive (if {@code usePassword} is true)
      * @param archiveType  the type of archive to create (e.g., ZIP, TAR, TAR.GZ)
-     * @throws IllegalArgumentException if {@code files} is empty or {@code fileName} is null
+     * @throws IllegalArgumentException if {@code fileName} is blank
+     * @throws IllegalArgumentException if {@code files} is blank
      * @see ZipArchiveHandler
      * @see TarArchiveHandler
      * @see TarGzArchiveHandler
      */
     public static void compress(List<File> files, String fileName, boolean useCompress, boolean usePassword, String password, ArchiveType archiveType) {
-        if (fileName.isEmpty()) {
+        if (files.isEmpty()) {
+            throw new IllegalArgumentException("Files list cannot be empty");
+        }
+        if (fileName.isEmpty() || fileName.isBlank()) {
             throw new IllegalArgumentException("File name cannot be blank");
         }
         switch (archiveType) {
-            case ZIP -> ZipArchiveHandler.compress(files, fileName, useCompress, usePassword, password);
+            case ZIP -> {
+                if (usePassword) {
+                    ZipArchiveHandler.compress(files, fileName, useCompress, password);
+                } else {
+                    ZipArchiveHandler.compress(files, fileName, useCompress);
+                }
+            }
             case TAR -> TarArchiveHandler.compress(files, fileName);
             case TAR_GZ -> TarGzArchiveHandler.compress(files, fileName);
         }
@@ -61,6 +71,7 @@ public class ArchiveHandler {
      *
      * @param file the archive file to extract
      * @throws IllegalArgumentException if {@code file} is not a supported archive format
+     * @throws IllegalArgumentException if {@code file} not exists
      * @see FilesOperations#getExtension(File)
      * @see ZipArchiveHandler
      * @see RarArchiveHandler
@@ -68,6 +79,9 @@ public class ArchiveHandler {
      * @see TarGzArchiveHandler
      */
    public static void extract(File file) {
+       if (!file.exists()) {
+           throw new IllegalArgumentException("File does not exist");
+       }
         switch (FilesOperations.getExtension(file)) {
             case "zip" -> ZipArchiveHandler.extract(file);
             case "rar" -> RarArchiveHandler.extract(file);

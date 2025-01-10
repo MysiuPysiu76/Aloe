@@ -109,5 +109,6 @@
   "window.settings.files.file-box-size.large": "Wielki",
   "window.settings.files.view": "Widok",
   "window.settings.files.view.grid": "Siatka",
-  "window.settings.files.view.list": "Lista"
+  "window.settings.files.view.list": "Lista",
+  "window.archive.extract.password-required": "Archiwum jest zabezpieczone haslem"
 }
