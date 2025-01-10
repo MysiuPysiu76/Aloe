@@ -13,23 +13,25 @@ import java.util.List;
 
 class ZipArchiveHandler {
 
-    private static ZipParameters createZipParameters(boolean useCompress, boolean encrypt) {
-        ZipParameters parameters = new ZipParameters();
-        if (!useCompress) {
-            parameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
-        }
-        if (encrypt) {
-            parameters.setEncryptFiles(true);
-            parameters.setEncryptionMethod(EncryptionMethod.ZIP_STANDARD);
-        }
-        return parameters;
-    }
-
-
+    /**
+     * Compresses a list of files or directories into a ZIP archive.
+     *
+     * @param files       the list of files or directories to compress.
+     * @param fileName    the name of the output ZIP file (without the ".zip" extension).
+     * @param useCompress whether to apply compression. If {@code false}, the ZIP file will use no compression.
+     */
     static void compress(List<File> files, String fileName, boolean useCompress) {
         compress(files, fileName, useCompress, null);
     }
 
+    /**
+     * Compresses a list of files or directories into a password-protected ZIP archive.
+     *
+     * @param files       the list of files or directories to compress.
+     * @param fileName    the name of the output ZIP file (without the ".zip" extension).
+     * @param useCompress whether to apply compression. If {@code false}, the ZIP file will use no compression.
+     * @param password    the password for the ZIP archive. If {@code null}, the archive will not be password-protected.
+     */
     static void compress(List<File> files, String fileName, boolean useCompress, String password) {
         try {
             ZipFile zipFile = (password == null)
@@ -52,6 +54,33 @@ class ZipArchiveHandler {
         }
     }
 
+    /**
+     * Creates and configures a {@link ZipParameters} object based on the provided settings.
+     *
+     * @param useCompress whether to apply compression.
+     * @param encrypt     whether to enable encryption.
+     * @return a configured {@link ZipParameters} object.
+     */
+    private static ZipParameters createZipParameters(boolean useCompress, boolean encrypt) {
+        ZipParameters parameters = new ZipParameters();
+        if (!useCompress) {
+            parameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
+        }
+        if (encrypt) {
+            parameters.setEncryptFiles(true);
+            parameters.setEncryptionMethod(EncryptionMethod.ZIP_STANDARD);
+        }
+        return parameters;
+    }
+
+    /**
+     * Extracts a ZIP archive to the current working directory.
+     * <p>
+     * If the archive is password-protected, the user is prompted to enter the password.
+     * </p>
+     *
+     * @param file the ZIP archive file to extract.
+     */
     static void extract(File file) {
         ZipFile zipFile = new ZipFile(file);
         try {
@@ -70,6 +99,15 @@ class ZipArchiveHandler {
         }
     }
 
+    /**
+     * Handles errors that occur during ZIP extraction.
+     * <p>
+     * Deletes partially extracted files and provides user feedback.
+     * </p>
+     *
+     * @param zipFile the {@link ZipFile} being extracted.
+     * @param e       the exception that occurred.
+     */
     private static void handleExtractionError(ZipFile zipFile, ZipException e) {
         if ("Wrong password!".equals(e.getMessage())) {
             WindowService.openArchiveInfoWindow("window.archive.extract.wrong-password");
