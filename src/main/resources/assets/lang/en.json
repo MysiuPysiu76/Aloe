@@ -110,5 +110,6 @@
   "window.settings.files.view": "View",
   "window.settings.files.view.grid": "Grid",
   "window.settings.files.view.list": "List",
-  "window.archive.extract.password-required": "The archive is password protected"
+  "window.archive.extract.password-required": "The archive is password protected",
+  "window.settings.language": "Language"
 }

@@ -17,7 +17,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +39,10 @@ public class MenuManager {
         menu.setAlignment(Pos.TOP_CENTER);
         boolean useIcon = SettingsManager.getSetting("menu", "use-icon");
         boolean useText = SettingsManager.getSetting("menu", "use-text");
-        for (Map<String, Object> item : items) {
-            menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon"), useIcon, useText));
+        if (!(items == null || items.size() == 0)) {
+            for (Map<String, Object> item : items) {
+                menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon"), useIcon, useText));
+            }
         }
         Main.loadMenu();
         MenuManager.setMenuOptions();

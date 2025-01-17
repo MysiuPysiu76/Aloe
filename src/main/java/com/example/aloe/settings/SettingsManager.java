@@ -1,14 +1,13 @@
 package com.example.aloe.settings;
 
+import com.example.aloe.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class SettingsManager {
 
@@ -32,7 +31,7 @@ public final class SettingsManager {
         SettingsManager.category = category;
     }
 
-    private static void loadSettings() {
+    public static void loadSettings() {
         File settingsFile = new File(USER_SETTINGS_PATH);
         if (!settingsFile.exists() || settingsFile.length() == 0L) {
             initializeSettings();
@@ -49,6 +48,7 @@ public final class SettingsManager {
             Map<String, Object> defaultSettings = loadDefaultSettings();
             saveSettingsToFile(defaultSettings);
             cachedSettings = defaultSettings;
+            trySetLanguage();
             initializeItemsInMenu();
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,6 +65,13 @@ public final class SettingsManager {
                 Map.of("path", System.getProperty("user.home") + "/Pictures", "name", "Pictures", "icon", "PICTURE_O"),
                 Map.of("path", System.getProperty("user.home") + "/Videos", "name", "Videos", "icon", "VIDEO_CAMERA")
         ));
+    }
+
+    private static void trySetLanguage() {
+        String lang = Locale.getDefault().getLanguage();
+        if (Utils.isFileExistsInResources("assets/lang/", lang + ".json")) {
+            SettingsManager.setSetting("language", "lang", lang);
+        }
     }
 
     private static Map<String, Object> loadDefaultSettings() throws IOException {

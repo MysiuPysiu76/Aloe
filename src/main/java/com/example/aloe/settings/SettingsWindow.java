@@ -39,7 +39,7 @@ public final class SettingsWindow extends Stage {
         this.setTitle(Translator.translate("window.settings.title"));
         this.setScene(scene);
         this.setMinWidth(700);
-        this.setMinHeight(380);
+        this.setMinHeight(500);
         this.initModality(Modality.APPLICATION_MODAL);
         this.setOnCloseRequest(event -> System.gc());
     }
@@ -49,7 +49,9 @@ public final class SettingsWindow extends Stage {
         menuButton.setOnAction(event -> loadMenuSettings());
         Button filesButton = SettingsControls.getMenuButton("window.settings.files", FontIcon.of(FontAwesome.FILE_TEXT_O));
         filesButton.setOnAction(event -> loadFilesSettings());
-        this.menu = new ScrollPane(new VBox(menuButton, filesButton));
+        Button languageButton = SettingsControls.getMenuButton("window.settings.language", FontIcon.of(FontAwesome.GLOBE));
+        languageButton.setOnAction(event -> loadLanguageSettings());
+        this.menu = new ScrollPane(new VBox(menuButton, filesButton, languageButton));
         menu.setFitToWidth(true);
         menu.setMaxWidth(200);
         menu.setMinWidth(200);
@@ -135,4 +137,10 @@ public final class SettingsWindow extends Stage {
             getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails"))));
     }
 
+    private void loadLanguageSettings() {
+        SettingsManager.setCategory("language");
+
+        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.language"))),
+                getSettingBox("window.settings.language", SettingsControls.getChoiceBox("lang", "en", "English", "pl", "Polski"))));
+    }
 }

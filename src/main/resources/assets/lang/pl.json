@@ -110,5 +110,6 @@
   "window.settings.files.view": "Widok",
   "window.settings.files.view.grid": "Siatka",
   "window.settings.files.view.list": "Lista",
-  "window.archive.extract.password-required": "Archiwum jest zabezpieczone haslem"
+  "window.archive.extract.password-required": "Archiwum jest zabezpieczone haslem",
+  "window.settings.language": "Język"
 }

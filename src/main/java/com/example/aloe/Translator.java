@@ -1,27 +1,24 @@
 package com.example.aloe;
 
+import com.example.aloe.settings.SettingsManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
-import java.util.Locale;
 
 public class Translator {
 
     private static JsonNode jsonNode;
 
-    public Translator() {
-        loadLanguageFile(Locale.getDefault().getLanguage());
+    static {
+        loadLanguageFile(SettingsManager.getSetting("language", "lang"));
     }
 
     private static JsonNode getJsonContent() {
-        if (jsonNode == null) {
-            new Translator();
-        }
         return jsonNode;
     }
 
-    private void loadLanguageFile(String lang) {
+    private static void loadLanguageFile(String lang) {
         try {
             InputStream inputStream = Translator.class.getResourceAsStream("/assets/lang/" + lang + ".json");
             if (inputStream == null) {

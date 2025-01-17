@@ -15,5 +15,8 @@
     "delete-archive-after-extract": false,
     "display-thumbnails": true,
     "file-box-size": 1.0
+  },
+  "language": {
+    "lang": "en"
   }
 }
