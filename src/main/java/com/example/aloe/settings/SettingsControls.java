@@ -5,32 +5,43 @@ import com.example.aloe.Utils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.controlsfx.control.ToggleSwitch;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 class SettingsControls {
 
-    static Button getMenuButton(String key, FontIcon icon) {
-        icon.setIconSize(20);
-        Button button = new Button(Translator.translate(key), icon);
-        VBox.setMargin(button, new Insets(0));
-        VBox.setVgrow(button, Priority.ALWAYS);
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setPrefHeight(40);
-        button.setPadding(new Insets(0, 0, 0, 15));
-        button.setGraphicTextGap(10);
-        button.setStyle("-fx-font-size: 15px; -fx-alignment: CENTER_LEFT;-fx-border-radius: 0px; -fx-background-radius: 0px;");
-        return button;
+    static HBox getMenuButton(FontIcon icon, String titleKey, String descriptionKey) {
+        icon.setIconSize(21);
+        VBox iconPane = new VBox(icon);
+        iconPane.setPadding(new Insets(25, 20, 25, 30));
+        Label title = new Label(Translator.translate(titleKey));
+        VBox.setMargin(title, new Insets(0, 0, -4, -1));
+        title.setStyle("-fx-font-size: 17px");
+        Label description = new Label(Translator.translate(descriptionKey));
+        description.setStyle("-fx-font-size: 12px");
+        VBox descriptionVBox = new VBox(title, description);
+        descriptionVBox.setAlignment(Pos.CENTER_LEFT);
+        HBox box = new HBox(iconPane, descriptionVBox, getSpacer(), getMenuArrow());
+        VBox.setMargin(box, new Insets(5));
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setMinWidth(500);
+        box.setPrefWidth(700);
+        box.setMaxWidth(750);
+        box.setStyle("-fx-background-color: #dfdbdb;-fx-background-radius: 10px");
+        return box;
+    }
+
+    private static FontIcon getMenuArrow() {
+        FontIcon icon = FontIcon.of(FontAwesome.ANGLE_RIGHT);
+        icon.setIconSize(27);
+        HBox.setMargin(icon, new Insets(0, 30, 0, 30));
+        return icon;
     }
 
     static ToggleSwitch getToggleSwitch(String key) {
@@ -83,7 +94,7 @@ class SettingsControls {
     static Label getTitleLabel(String title) {
         Label label = new Label(title);
         label.setStyle("-fx-font-size: 25px;");
-        VBox.setMargin(label, new Insets(30, 10, 20, 10));
+        VBox.setMargin(label, new Insets(0, 10, 20, 10));
         return label;
     }
 
@@ -115,5 +126,11 @@ class SettingsControls {
         HBox.setMargin(slider, new Insets(0, 7, 0, 7));
         HBox.setMargin(box, new Insets(0, 20, 0, 20));
         return box;
+    }
+
+    public static Region getSpacer() {
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        return spacer;
     }
 }

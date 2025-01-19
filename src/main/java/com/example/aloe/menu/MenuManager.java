@@ -70,8 +70,8 @@ public class MenuManager {
             }
         });
         Main.filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {
-                button.setMinWidth(newValue.doubleValue());
-            });
+            button.setMinWidth(newValue.doubleValue());
+        });
         return button;
     }
 

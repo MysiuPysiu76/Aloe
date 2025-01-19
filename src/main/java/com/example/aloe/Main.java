@@ -50,7 +50,6 @@ public class Main extends Application {
     private Button parrentDir = getNavigateParentButton();
 
     private int directoryHistoryPosition = -1;
-    private static boolean isGridView = true;
     private VBox root = new VBox();
     public static Stage stage;
     private static FlowPane grid;
@@ -88,7 +87,7 @@ public class Main extends Application {
             } else {
                 filesPanel.getItems().addFirst(filesMenu);
             }
-            filesPanel.setDividerPositions((double)SettingsManager.getSetting("menu", "divider-position"));
+            filesPanel.setDividerPositions((double) SettingsManager.getSetting("menu", "divider-position"));
         }
 
         navigationPanel.setPadding(new Insets(6));
@@ -100,7 +99,7 @@ public class Main extends Application {
 
         CheckBox darkMode = new CheckBox(Translator.translate("navigate.dark-mode"));
         darkMode.setOnAction(event -> {
-            if(darkMode.isSelected()) {
+            if (darkMode.isSelected()) {
                 darkMode.setText(Translator.translate("navigate.light-mode"));
                 scene.getStylesheets().add(getClass().getResource("/assets/css/style_dark.css").toExternalForm());
             } else {
@@ -117,7 +116,7 @@ public class Main extends Application {
         root.getChildren().addAll(navigationPanel, filesPanel);
 
         if (!SettingsManager.getSetting("files", "start-folder").equals("home")) {
-            loadDirectoryContents(new File((String)SettingsManager.getSetting("files", "start-folder-location")), true);
+            loadDirectoryContents(new File((String) SettingsManager.getSetting("files", "start-folder-location")), true);
         } else {
             loadDirectoryContents(new File(System.getProperty("user.home")), true);
         }
@@ -134,6 +133,7 @@ public class Main extends Application {
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
+//        new SettingsWindow().show();
         stage.setOnCloseRequest(event -> {
             SettingsManager.setSetting("menu", "divider-position", filesPanel.getDividerPositions());
             if (SettingsManager.getSetting("files", "start-folder").equals("last")) {
@@ -282,7 +282,7 @@ public class Main extends Application {
             List<String> directories = new ArrayList<>();
             List<String> normalFiles = new ArrayList<>();
             for (File file : files) {
-                if (!(boolean)SettingsManager.getSetting("files", "show-hidden")) {
+                if (!(boolean) SettingsManager.getSetting("files", "show-hidden")) {
                     if (file.getName().startsWith(".")) {
                         continue;
                     }
@@ -296,11 +296,11 @@ public class Main extends Application {
             Collections.sort(directories);
             Collections.sort(normalFiles);
 
-            if (((String)SettingsManager.getSetting("files", "view")).equals("grid") ? true : false) {
+            if (((String) SettingsManager.getSetting("files", "view")).equals("grid") ? true : false) {
                 for (String dirName : directories) {
                     VBox box = createFileBox(dirName, true);
                     box.setOnMouseClicked(event -> {
-                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                             loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), dirName), true);
                         } else {
                             selectFile(box, event);
@@ -313,7 +313,7 @@ public class Main extends Application {
                 for (String fileName : normalFiles) {
                     VBox box = createFileBox(fileName, false);
                     box.setOnMouseClicked(event -> {
-                        if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                             FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
                         } else {
                             selectFile(box, event);
@@ -360,7 +360,7 @@ public class Main extends Application {
     }
 
     private void selectFile(VBox fileBox, MouseEvent event) {
-        if(!event.isControlDown() && event.getButton() == MouseButton.PRIMARY) {
+        if (!event.isControlDown() && event.getButton() == MouseButton.PRIMARY) {
             removeSelectionFromFiles();
         }
 
@@ -404,7 +404,8 @@ public class Main extends Application {
                     }
                 }
                 case "mp4" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
-                case "mp3", "ogg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/music.png")));
+                case "mp3", "ogg" ->
+                        icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/music.png")));
                 case "iso" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/cd.png")));
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
             }
@@ -566,7 +567,7 @@ public class Main extends Application {
             refreshCurrentDirectory();
         });
         MenuItem archive;
-        if(thisFile.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar"))) {
+        if (thisFile.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar"))) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
                 ArchiveHandler.extract(thisFile);
@@ -582,7 +583,7 @@ public class Main extends Application {
         MenuItem moveToTrash = new MenuItem(Translator.translate("context-menu.move-to-trash"));
         moveToTrash.setOnAction(event -> {
             FilesOperations.moveFileToTrash(thisFile);
-           refreshCurrentDirectory();
+            refreshCurrentDirectory();
         });
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
@@ -597,7 +598,7 @@ public class Main extends Application {
                 throw new RuntimeException(e);
             }
         });
-        fileMenu.getItems().addAll(open, copy, rename, duplicate, moveTo, moveToParent, archive,moveToTrash, delete, properties);
+        fileMenu.getItems().addAll(open, copy, rename, duplicate, moveTo, moveToParent, archive, moveToTrash, delete, properties);
         if (thisFile.isDirectory()) {
             MenuItem addToMenu = new MenuItem(Translator.translate("context-menu.add-to-menu"));
             addToMenu.setOnAction(event -> {
@@ -606,7 +607,7 @@ public class Main extends Application {
             fileMenu.getItems().add(9, addToMenu);
         }
         item.setOnContextMenuRequested(event -> {
-            if(isSelected(item) && selectedFiles.size() == 1) {
+            if (isSelected(item) && selectedFiles.size() == 1) {
                 fileMenu.show(item, event.getScreenX(), event.getScreenY());
             } else if (isSelected(item)) {
                 multiSelectionFilesContextMenu.show(item, event.getScreenX(), event.getScreenY());
@@ -654,7 +655,7 @@ public class Main extends Application {
         CheckBox compress = new CheckBox(Translator.translate("window.archive.compress"));
         CheckBox password = new CheckBox(Translator.translate("window.archive.password"));
         TextField passwordText = new TextField();
-        passwordText.setPadding(new Insets(5, 7, 5 , 7));
+        passwordText.setPadding(new Insets(5, 7, 5, 7));
         passwordText.setMaxWidth(250);
 
         compress.setSelected(true);
@@ -678,7 +679,7 @@ public class Main extends Application {
 
         fileName.textProperty().addListener((observable, oldValue, newValue) -> {
             String validationError = validateFileName(fileName.getText() + archiveType.getValue().toString());
-            if(validationError != null) {
+            if (validationError != null) {
                 error.setText(validationError);
                 create.setDisable(true);
             } else {
@@ -702,8 +703,8 @@ public class Main extends Application {
                 window.setMaxHeight(166);
                 window.setMinHeight(166);
             }
-            String validationError = validateFileName(fileName.getText() +  archiveType.getValue().toString());
-            if(validationError != null) {
+            String validationError = validateFileName(fileName.getText() + archiveType.getValue().toString());
+            if (validationError != null) {
                 error.setText(validationError);
                 create.setDisable(true);
             } else {
@@ -754,7 +755,7 @@ public class Main extends Application {
         ArrayList<String> values = new ArrayList<>();
         values.add(file.getName());
         values.add(file.getPath());
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             long directorySize = calculateDirectorySize(file);
             values.add(convertBytesByUnit(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")");
         } else {
@@ -775,8 +776,8 @@ public class Main extends Application {
         long size = 0;
         File[] files = file.listFiles();
         if (files != null) {
-            for(File f : files) {
-                if(f.isFile()) {
+            for (File f : files) {
+                if (f.isFile()) {
                     size += f.length();
                 } else {
                     size += calculateDirectorySize(f);
@@ -795,15 +796,15 @@ public class Main extends Application {
     }
 
     private String convertBytesToGiB(long size) {
-        if(size < 1024) {
+        if (size < 1024) {
             return "";
-        } else if(size < 1024 * 1024) {
+        } else if (size < 1024 * 1024) {
             return String.format("%.1f KiB ", size / 1024.0);
-        } else if(size < 1024 * 1024 * 1024) {
+        } else if (size < 1024 * 1024 * 1024) {
             return String.format("%.1f MiB ", size / (1024.0 * 1024.0));
-        } else if(size < 1024L * 1024 * 1024 * 1024) {
+        } else if (size < 1024L * 1024 * 1024 * 1024) {
             return String.format("%.1f GiB ", size / (1024.0 * 1024.0 * 1024.0));
-        } else if(size < 1024L * 1024 * 1024 * 1024 * 1024) {
+        } else if (size < 1024L * 1024 * 1024 * 1024 * 1024) {
             return String.format("%.1f TiB ", size / (1024 * 1024.0 * 1024.0 * 1024));
         } else {
             return String.format("%.1f PiB ", size / (1024 * 1024.0 * 1024.0 * 1024 * 1024));
@@ -811,15 +812,15 @@ public class Main extends Application {
     }
 
     private String convertBytesToGB(long size) {
-        if(size < 1000) {
+        if (size < 1000) {
             return "";
-        } else if(size < 1000 * 1000) {
+        } else if (size < 1000 * 1000) {
             return String.format("%.1f KB ", size / 1000.0);
-        } else if(size < 1000 * 1000 * 1000) {
+        } else if (size < 1000 * 1000 * 1000) {
             return String.format("%.1f MB ", size / (1000.0 * 1000.0));
-        } else if(size < 1000L * 1000 * 1000 * 1000) {
+        } else if (size < 1000L * 1000 * 1000 * 1000) {
             return String.format("%.1f GB ", size / (1000.0 * 1000.0 * 1000.0));
-        } else if(size < 1000L * 1000 * 1000 * 1000 * 1000) {
+        } else if (size < 1000L * 1000 * 1000 * 1000 * 1000) {
             return String.format("%.1f TB ", size / (1000 * 1000.0 * 1000.0 * 1000));
         } else {
             return String.format("%.1f PB ", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000));
@@ -854,7 +855,7 @@ public class Main extends Application {
             icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
             values.add(2, Translator.translate("window.properties.folder"));
             names.add(5, Translator.translate("window.properties.folder-contents"));
-            values.add(5,  Files.list(Path.of(file.getPath())).count() + Translator.translate("window.properties.items"));
+            values.add(5, Files.list(Path.of(file.getPath())).count() + Translator.translate("window.properties.items"));
         }
         GridPane fileData = new GridPane();
         VBox.setMargin(fileData, new Insets(20, 0, 0, 0));
@@ -892,8 +893,8 @@ public class Main extends Application {
         });
         MenuItem moveTo = new MenuItem(Translator.translate("context-menu.move-to"));
         moveTo.setOnAction(event -> {
-           FilesOperations.moveFileTo(getSelectedFiles());
-           refreshCurrentDirectory();
+            FilesOperations.moveFileTo(getSelectedFiles());
+            refreshCurrentDirectory();
         });
         MenuItem moveToParent = new MenuItem(Translator.translate("context-menu.move-to-parent"));
         moveToParent.setOnAction(event -> {
@@ -908,7 +909,7 @@ public class Main extends Application {
         MenuItem compress = new MenuItem(Translator.translate("context-menu.compress"));
         compress.setOnAction(event -> {
             openCreateArchiveWindow(getSelectedFiles());
-           refreshCurrentDirectory();
+            refreshCurrentDirectory();
         });
         MenuItem delete = new MenuItem(Translator.translate("context-menu.delete"));
         delete.setOnAction(event -> {
@@ -951,7 +952,7 @@ public class Main extends Application {
 
     private void renameFile(File file) {
         Dialog<String> dialog = new Dialog<>();
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             dialog.setTitle("Rename Directory");
         } else {
             dialog.setTitle("Rename File");
@@ -987,7 +988,7 @@ public class Main extends Application {
             String newName = name.getText().trim();
             File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
 
-            if(file.renameTo(newFile)) {
+            if (file.renameTo(newFile)) {
                 refreshCurrentDirectory();
             } else {
                 error.setText("Could not rename: " + newName);
@@ -998,13 +999,13 @@ public class Main extends Application {
     }
 
     private String validateFileName(String name) {
-        if(name.isEmpty()) {
+        if (name.isEmpty()) {
             return Translator.translate("validator.empty-name");
         }
-        if(new File(FilesOperations.getCurrentDirectory(), name).exists()) {
+        if (new File(FilesOperations.getCurrentDirectory(), name).exists()) {
             return Translator.translate("validator.used-name");
         }
-        if(name.contains("/")) {
+        if (name.contains("/")) {
             return Translator.translate("validator.contains-slash");
         }
         return null;
@@ -1089,7 +1090,7 @@ public class Main extends Application {
     }
 
     private void getParentDirectory() {
-        if(!FilesOperations.getCurrentDirectory().getPath().equals("/")) {
+        if (!FilesOperations.getCurrentDirectory().getPath().equals("/")) {
             loadDirectoryContents(new File(FilesOperations.getCurrentDirectory().getParent()), true);
         }
     }

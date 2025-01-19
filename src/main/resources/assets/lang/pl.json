@@ -91,7 +91,7 @@
   "window.settings.menu": "Menu",
   "window.settings.files": "Pliki",
   "window.settings.menu.menu-position": "Pozycja menu",
-  "window.settings.title": "Settings",
+  "window.settings.title": "Ustawienia",
   "window.settings.menu.use-menu": "Wyświetlaj menu plików",
   "window.settings.menu.use-icon": "Wyświetlaj ikony",
   "window.settings.menu.use-text": "Wyświetlaj tekst",
@@ -110,6 +110,10 @@
   "window.settings.files.view": "Widok",
   "window.settings.files.view.grid": "Siatka",
   "window.settings.files.view.list": "Lista",
-  "window.archive.extract.password-required": "Archiwum jest zabezpieczone haslem",
-  "window.settings.language": "Język"
+  "window.archive.extract.password-required": "Archiwum jest chronione hasłem",
+  "window.settings.language": "Język",
+  "window.settings.menu.description": "Widok menu, pozycja i elementy",
+  "window.settings.files.description": "Rozmiar, archiwa, katalog startowy, ukryte pliki i więcej",
+  "window.settings.language.description": "Język i formaty czasu",
+  "window.settings.back-to-menu": "Powrót do menu"
 }

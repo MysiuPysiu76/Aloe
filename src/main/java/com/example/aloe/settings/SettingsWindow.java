@@ -8,13 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.controlsfx.control.ToggleSwitch;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -23,41 +21,66 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class SettingsWindow extends Stage {
-    ScrollPane menu;
-    ScrollPane settings;
+    private static ScrollPane settings;
 
     public SettingsWindow() {
-        loadMenu();
-
         settings = new ScrollPane();
-        loadMenuSettings();
-        HBox root = new HBox(menu, settings);
         settings.setFitToWidth(true);
+        settings.setPadding(new Insets(0, 65, 20, 65));
+
         HBox.setHgrow(settings, Priority.ALWAYS);
 
-        Scene scene = new Scene(root, 900, 560);
+        Scene scene = new Scene(settings, 900, 560);
         this.setTitle(Translator.translate("window.settings.title"));
         this.setScene(scene);
         this.setMinWidth(700);
         this.setMinHeight(500);
         this.initModality(Modality.APPLICATION_MODAL);
         this.setOnCloseRequest(event -> System.gc());
+        this.setResizable(false);
+        loadMenu();
     }
 
-    private void loadMenu() {
-        Button menuButton = SettingsControls.getMenuButton("window.settings.menu", FontIcon.of(FontAwesome.BARS));
-        menuButton.setOnAction(event -> loadMenuSettings());
-        Button filesButton = SettingsControls.getMenuButton("window.settings.files", FontIcon.of(FontAwesome.FILE_TEXT_O));
-        filesButton.setOnAction(event -> loadFilesSettings());
-        Button languageButton = SettingsControls.getMenuButton("window.settings.language", FontIcon.of(FontAwesome.GLOBE));
-        languageButton.setOnAction(event -> loadLanguageSettings());
-        this.menu = new ScrollPane(new VBox(menuButton, filesButton, languageButton));
-        menu.setFitToWidth(true);
-        menu.setMaxWidth(200);
-        menu.setMinWidth(200);
+    private static void loadMenu() {
+        HBox optionMenu = SettingsControls.getMenuButton(FontIcon.of(FontAwesome.BARS), "window.settings.menu", "window.settings.menu.description");
+        optionMenu.setOnMouseClicked(event -> {
+            loadMenuSettings();
+        });
+
+        HBox optionFiles = SettingsControls.getMenuButton(FontIcon.of(FontAwesome.FILE_TEXT_O), "window.settings.files", "window.settings.files.description");
+        optionFiles.setOnMouseClicked(event -> {
+           loadFilesSettings();
+        });
+
+        HBox optionsLanguage = SettingsControls.getMenuButton(FontIcon.of(FontAwesome.GLOBE), "window.settings.language", "window.settings.language.description");
+        optionsLanguage.setOnMouseClicked(event -> {
+            loadLanguageSettings();
+        });
+
+        Label titleLabel = SettingsControls.getTitleLabel(Translator.translate("window.settings.title"));
+        titleLabel.setPadding(new Insets(20, 0, 0, 0));
+
+        VBox content = new VBox(titleLabel,
+                optionMenu, optionFiles, optionsLanguage);
+        content.setMaxWidth(700);
+        VBox root = new VBox(content);
+        root.setAlignment(Pos.CENTER);
+        root.setFillWidth(true);
+        HBox.setHgrow(root, Priority.ALWAYS);
+        settings.setContent(root);
     }
 
-    private VBox getSettingBox(String key, Node control, String key1, Node control1) {
+    private static HBox getSettingBox(String key, Node control) {
+        Label title = getSettingLabel(key);
+        HBox box = new HBox(title, SettingsControls.getSpacer(), control);
+        box.setSpacing(10);
+        box.setMinHeight(50);
+        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
+        box.setMaxWidth(1000);
+        return box;
+    }
+
+    private static VBox getSettingBox(String key, Node control, String key1, Node control1) {
         VBox box = new VBox();
         box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
         box.setMaxWidth(Double.MAX_VALUE);
@@ -71,17 +94,7 @@ public final class SettingsWindow extends Stage {
         return box;
     }
 
-    private HBox getSettingBox(String key, Node control) {
-        Label title = getSettingLabel(key);
-        HBox box = new HBox(title, getSpacer(), control);
-        box.setSpacing(10);
-        box.setMinHeight(50);
-        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
-        box.setMaxWidth(Double.MAX_VALUE);
-        return box;
-    }
-
-    private Label getSettingLabel(String key) {
+    private static Label getSettingLabel(String key) {
         Label title = new Label(Translator.translate(key));
         title.setPadding(new Insets(4, 20, 4, 20));
         title.setStyle("-fx-font-size: 14px;");
@@ -89,7 +102,7 @@ public final class SettingsWindow extends Stage {
         return title;
     }
 
-    private VBox getContentBox(Node...nodes) {
+    private static VBox getContentBox(Node... nodes) {
         VBox content = new VBox(nodes);
         content.setSpacing(10);
         content.setPadding(new Insets(30));
@@ -97,23 +110,32 @@ public final class SettingsWindow extends Stage {
         return content;
     }
 
-    private Region getSpacer() {
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        return spacer;
+    static Button getBackToMenuButton() {
+        FontIcon icon = new FontIcon(FontAwesome.ANGLE_LEFT);
+        icon.setIconSize(25);
+
+        Button button = new Button(Translator.translate("window.settings.back-to-menu").intern(), icon);
+        button.setStyle("-fx-font-size: 15px; -fx-background-color: transparent; -fx-border-color: transparent;");
+        button.setGraphicTextGap(8);
+
+        button.setOnAction(event -> {
+           loadMenu();
+        });
+        return button;
     }
 
-    private void loadMenuSettings() {
+    private static void loadMenuSettings() {
         SettingsManager.setCategory("menu");
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),
+        settings.setContent(getContentBox(getBackToMenuButton(),
+            SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),
             getSettingBox("window.settings.menu.use-menu", SettingsControls.getToggleSwitch("use-menu")),
             getSettingBox("window.settings.menu.menu-position", SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
             getSettingBox("window.settings.menu.use-icon", SettingsControls.getToggleSwitch("use-icon")),
             getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text"))));
     }
 
-    private void loadFilesSettings() {
+    private static void loadFilesSettings() {
         SettingsManager.setCategory("files");
 
         ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", "home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
@@ -127,7 +149,8 @@ public final class SettingsWindow extends Stage {
             }
         });
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate("window.settings.files")),
+        settings.setContent(getContentBox(getBackToMenuButton(),
+            SettingsControls.getTitleLabel(Translator.translate("window.settings.files")),
             getSettingBox("window.settings.files.show-hidden-files", SettingsControls.getToggleSwitch("show-hidden")),
             getSettingBox("window.settings.files.view", SettingsControls.getChoiceBox("view", "grid", Translator.translate("window.settings.files.view.grid"), "list", Translator.translate("window.settings.files.view.list"))),
             getSettingBox("window.settings.files.use-binary-units", SettingsControls.getToggleSwitch("use-binary-units")),
@@ -137,10 +160,11 @@ public final class SettingsWindow extends Stage {
             getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails"))));
     }
 
-    private void loadLanguageSettings() {
+    private static void loadLanguageSettings() {
         SettingsManager.setCategory("language");
 
-        settings.setContent(getContentBox(SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.language"))),
+        settings.setContent(getContentBox(getBackToMenuButton(),
+                SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.language"))),
                 getSettingBox("window.settings.language", SettingsControls.getChoiceBox("lang", "en", "English", "pl", "Polski"))));
     }
 }
