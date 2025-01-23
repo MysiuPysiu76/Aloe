@@ -14,14 +14,12 @@ import java.io.File;
  * </p>
  *
  * <h2>Example usage:</h2>
- * <pre>
- *     List<File> files = List.of(new File("file1.txt"), new File("file2.txt"));
- *     ArchiveParameters params = new ArchiveParameters(files, "archive", ArchiveType.ZIP);
- *     ArchiveHandler.compress(params);
+ * <pre>{@code
+ *     ArchiveParameters parameters = new ArchiveParameters(List.of(new File("file1.txt"), new File("file2.txt")), ArchiveType.ZIP, "archive.zip", true);
+ *     ArchiveHandler.compress(parameters);
  *
- *     File archive = new File("archive.zip");
- *     ArchiveHandler.extract(archive);
- * </pre>
+ *     ArchiveHandler.decompress(new File("archive.tar"));
+ * }</pre>
  *
  * @since 0.8.6
  */
@@ -33,13 +31,12 @@ public class ArchiveHandler {
      * The method uses the provided {@link ArchiveParameters} object to determine the files to compress,
      * the name of the resulting archive, and the type of archive (ZIP, TAR, TAR.GZ).
      * </p>
-     *
      * @param parameters The {@link ArchiveParameters} object containing the compression details:
-     *                   <ul>
-     *                      <li>{@code files} - List of files to compress.</li>
-     *                      <li>{@code fileName} - Name of the resulting archive file (without extension).</li>
-     *                      <li>{@code archiveType} - Type of archive to create (e.g., ZIP, TAR, TAR.GZ).</li>
-     *                   </ul>
+     * <ul>
+     *     <li>{@code files} - List of files to compress.</li>
+     *     <li>{@code fileName} - Name of the resulting archive file (without extension).</li>
+     *     <li>{@code archiveType} - Type of archive to create (e.g., ZIP, TAR, TAR.GZ).</li>
+     * </ul>
      * @throws IllegalArgumentException if the {@code files} list is empty or {@code fileName} is blank.
      * @see ZipArchive
      * @see TarArchive
