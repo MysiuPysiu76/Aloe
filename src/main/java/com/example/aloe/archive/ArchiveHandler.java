@@ -31,12 +31,13 @@ public class ArchiveHandler {
      * The method uses the provided {@link ArchiveParameters} object to determine the files to compress,
      * the name of the resulting archive, and the type of archive (ZIP, TAR, TAR.GZ).
      * </p>
-     * @param parameters The {@link ArchiveParameters} object containing the compression details:
+     *
      * <ul>
      *     <li>{@code files} - List of files to compress.</li>
      *     <li>{@code fileName} - Name of the resulting archive file (without extension).</li>
      *     <li>{@code archiveType} - Type of archive to create (e.g., ZIP, TAR, TAR.GZ).</li>
      * </ul>
+     * @param parameters The {@link ArchiveParameters} object containing the compression details:
      * @throws IllegalArgumentException if the {@code files} list is empty or {@code fileName} is blank.
      * @see ZipArchive
      * @see TarArchive
