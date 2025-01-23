@@ -1,6 +1,7 @@
 package com.example.aloe;
 
 import com.example.aloe.archive.ArchiveHandler;
+import com.example.aloe.archive.ArchiveParameters;
 import com.example.aloe.archive.ArchiveType;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
@@ -37,6 +38,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.example.aloe.archive.ArchiveType.*;
 
 public class Main extends Application {
 
@@ -644,8 +647,9 @@ public class Main extends Application {
         fileName.setPadding(new Insets(7, 10, 7, 10));
 
         ComboBox<ArchiveType> archiveType = new ComboBox<>();
-        archiveType.setValue(ArchiveType.ZIP);
-        archiveType.setItems(FXCollections.observableArrayList(ArchiveType.values()));
+        archiveType.setValue(ZIP);
+        List<ArchiveType> filteredList = Arrays.stream(ArchiveType.values()).filter(type -> type != ArchiveType.RAR).toList();
+        archiveType.setItems(FXCollections.observableArrayList(filteredList));
         Label error = new Label();
         error.setMinWidth(210);
         error.setStyle("-fx-font-size: 14px; -fx-text-alignment: start");
@@ -688,7 +692,7 @@ public class Main extends Application {
             }
         });
         archiveType.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == ArchiveType.ZIP) {
+            if (newValue == ZIP) {
                 if (!root.getChildren().contains(optionsHBox)) {
                     root.getChildren().add(3, optionsHBox);
                     window.setMaxHeight(206);
@@ -728,7 +732,11 @@ public class Main extends Application {
         });
         create.setOnAction(event -> {
             window.close();
-            ArchiveHandler.compress(files, fileName.getText(), compress.isSelected(), password.isSelected(), passwordText.getText(), archiveType.getValue());
+            if (password.isSelected()) {
+                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText(), compress.isSelected(), passwordText.getText()));
+            } else {
+                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText(), compress.isSelected()));
+            }
             refreshCurrentDirectory();
         });
 

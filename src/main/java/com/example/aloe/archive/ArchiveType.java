@@ -5,8 +5,7 @@ package com.example.aloe.archive;
  * <p>
  * Each archive type is associated with its file extension.
  * </p>
- *
- * Example usage:
+ * <h2>Example usage:</h2>
  * <pre>
  *     ArchiveType type = ArchiveType.ZIP;
  *     System.out.println(type.getExtension()); // Output: .zip
@@ -20,6 +19,11 @@ public enum ArchiveType {
      * Represents the ZIP archive format.
      */
     ZIP(".zip"),
+
+    /**
+     * Represents the RAR archive format.
+     */
+    RAR(".rar"),
 
     /**
      * Represents the TAR archive format.

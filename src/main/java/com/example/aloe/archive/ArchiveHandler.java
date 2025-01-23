@@ -4,19 +4,20 @@ import com.example.aloe.FilesOperations;
 import com.example.aloe.settings.SettingsManager;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Provides methods for handling file archives, including compression and extraction.
  * <p>
  * This class supports multiple archive formats, such as ZIP, TAR, and TAR.GZ. It delegates the actual
- * operations to format-specific handlers and integrates with application settings for additional behavior.
+ * operations to format-specific handlers and integrates with application settings for additional behavior,
+ * such as optional deletion of the archive after extraction.
  * </p>
  *
- * Example usage:
+ * <h2>Example usage:</h2>
  * <pre>
  *     List<File> files = List.of(new File("file1.txt"), new File("file2.txt"));
- *     ArchiveHandler.compress(files, "archive.zip", true, false, null, ArchiveType.ZIP);
+ *     ArchiveParameters params = new ArchiveParameters(files, "archive", ArchiveType.ZIP);
+ *     ArchiveHandler.compress(params);
  *
  *     File archive = new File("archive.zip");
  *     ArchiveHandler.extract(archive);
@@ -28,36 +29,33 @@ public class ArchiveHandler {
 
     /**
      * Compresses a list of files into an archive of the specified type.
+     * <p>
+     * The method uses the provided {@link ArchiveParameters} object to determine the files to compress,
+     * the name of the resulting archive, and the type of archive (ZIP, TAR, TAR.GZ).
+     * </p>
      *
-     * @param files        the list of files to compress
-     * @param fileName     the name of the output archive file
-     * @param useCompress  whether to use compression
-     * @param usePassword  whether to use password protection
-     * @param password     the password for the archive (if {@code usePassword} is true)
-     * @param archiveType  the type of archive to create (e.g., ZIP, TAR, TAR.GZ)
-     * @throws IllegalArgumentException if {@code fileName} is blank
-     * @throws IllegalArgumentException if {@code files} is blank
-     * @see ZipArchiveHandler
-     * @see TarArchiveHandler
-     * @see TarGzArchiveHandler
+     * @param parameters The {@link ArchiveParameters} object containing the compression details:
+     *                   <ul>
+     *                      <li>{@code files} - List of files to compress.</li>
+     *                      <li>{@code fileName} - Name of the resulting archive file (without extension).</li>
+     *                      <li>{@code archiveType} - Type of archive to create (e.g., ZIP, TAR, TAR.GZ).</li>
+     *                   </ul>
+     * @throws IllegalArgumentException if the {@code files} list is empty or {@code fileName} is blank.
+     * @see ZipArchive
+     * @see TarArchive
+     * @see TarGzArchive
      */
-    public static void compress(List<File> files, String fileName, boolean useCompress, boolean usePassword, String password, ArchiveType archiveType) {
-        if (files.isEmpty()) {
+    public static void compress(ArchiveParameters parameters) {
+        if (parameters.getFiles().isEmpty()) {
             throw new IllegalArgumentException("Files list cannot be empty");
         }
-        if (fileName.isEmpty() || fileName.isBlank()) {
+        if (parameters.getFileName().isEmpty() || parameters.getFileName().isBlank()) {
             throw new IllegalArgumentException("File name cannot be blank");
         }
-        switch (archiveType) {
-            case ZIP -> {
-                if (usePassword) {
-                    ZipArchiveHandler.compress(files, fileName, useCompress, password);
-                } else {
-                    ZipArchiveHandler.compress(files, fileName, useCompress);
-                }
-            }
-            case TAR -> TarArchiveHandler.compress(files, fileName);
-            case TAR_GZ -> TarGzArchiveHandler.compress(files, fileName);
+        switch (parameters.getArchiveType()) {
+            case ZIP -> new ZipArchive().compress(parameters);
+            case TAR -> new TarArchive().compress(parameters);
+            case TAR_GZ -> new TarGzArchive().compress(parameters);
         }
     }
 
@@ -65,30 +63,36 @@ public class ArchiveHandler {
      * Extracts the contents of an archive file.
      * <p>
      * This method determines the archive type based on the file extension and delegates the extraction process
-     * to the appropriate handler. If the application setting "delete-archive-after-extract" is enabled,
-     * the archive will be deleted after extraction.
+     * to the appropriate handler. Supported archive formats include:
+     * <ul>
+     *     <li>ZIP (.zip)</li>
+     *     <li>RAR (.rar)</li>
+     *     <li>TAR (.tar)</li>
+     *     <li>TAR.GZ (.tar.gz)</li>
+     * </ul>
+     * If the application setting "delete-archive-after-extract" is enabled, the archive file will be deleted
+     * after successful extraction.
      * </p>
      *
-     * @param file the archive file to extract
-     * @throws IllegalArgumentException if {@code file} is not a supported archive format
-     * @throws IllegalArgumentException if {@code file} not exists
+     * @param file The archive file to extract. The file type is determined by its extension.
+     * @throws IllegalArgumentException if the file does not exist or if its format is unsupported.
      * @see FilesOperations#getExtension(File)
-     * @see ZipArchiveHandler
-     * @see RarArchiveHandler
-     * @see TarArchiveHandler
-     * @see TarGzArchiveHandler
+     * @see ZipArchive
+     * @see RarArchive
+     * @see TarArchive
+     * @see TarGzArchive
      */
-   public static void extract(File file) {
-       if (!file.exists()) {
-           throw new IllegalArgumentException("File does not exist");
-       }
-        switch (FilesOperations.getExtension(file)) {
-            case "zip" -> ZipArchiveHandler.extract(file);
-            case "rar" -> RarArchiveHandler.extract(file);
-            case "tar" -> TarArchiveHandler.extract(file);
-            case "tar.gz" -> TarGzArchiveHandler.extract(file);
+    public static void extract(File file) {
+        if (!file.exists()) {
+            throw new IllegalArgumentException("File does not exist");
         }
-        if (SettingsManager.getSetting("files", "delete-archive-after-extract")) {
+        switch (ArchiveType.valueOf(FilesOperations.getExtensionWithDot(file).toUpperCase())) {
+            case ZIP -> new ZipArchive().decompress(file);
+            case RAR -> new RarArchive().decompress(file);
+            case TAR -> new TarArchive().decompress(file);
+            case TAR_GZ -> new TarGzArchive().decompress(file);
+        }
+        if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "delete-archive-after-extract"))) {
             FilesOperations.deleteFile(file);
         }
     }

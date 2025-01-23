@@ -176,6 +176,10 @@ public class FilesOperations {
         return FilesOperations.getExtension(file.getName());
     }
 
+    public static String getExtensionWithDot(File file) {
+        return "." + getExtension(file.getName());
+    }
+
     public static String getExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf(".");
         if (lastDotIndex == -1 || lastDotIndex == fileName.length() - 1) {
