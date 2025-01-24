@@ -269,8 +269,8 @@ public class Main extends Application {
         grid.getStyleClass().add("files-grid");
         filesPane.setPadding(new Insets(5, 10, 10, 10));
         FlowPane.setMargin(grid, new Insets(5, 10, 10, 10));
-        ListView<String> filesList = new ListView<>();
-        filesList.getItems().clear();
+        ListView<String> filesListView = new ListView<>();
+        filesListView.getItems().clear();
 
         if (addToHistory) {
             if (directoryHistoryPosition != directoryHistory.size() - 1) {
@@ -282,50 +282,84 @@ public class Main extends Application {
 
         File[] files = FilesOperations.getCurrentDirectory().listFiles();
         if (files != null) {
+            List<String> filesList = new ArrayList<>();
             List<String> directories = new ArrayList<>();
             List<String> normalFiles = new ArrayList<>();
+            boolean displayDirectoriesBeforeFiles = SettingsManager.getSetting("files", "display-directories-before-files");
             for (File file : files) {
                 if (!(boolean) SettingsManager.getSetting("files", "show-hidden")) {
                     if (file.getName().startsWith(".")) {
                         continue;
                     }
                 }
-                if (file.isDirectory()) {
-                    directories.add(file.getName());
+                if (displayDirectoriesBeforeFiles) {
+                    if (file.isDirectory()) {
+                        directories.add(file.getName());
+                    } else {
+                        normalFiles.add(file.getName());
+                    }
                 } else {
-                    normalFiles.add(file.getName());
+                    filesList.add(file.getName());
                 }
             }
             Collections.sort(directories);
             Collections.sort(normalFiles);
+            Collections.sort(filesList);
 
-            if (((String) SettingsManager.getSetting("files", "view")).equals("grid") ? true : false) {
-                for (String dirName : directories) {
-                    VBox box = createFileBox(dirName, true);
-                    box.setOnMouseClicked(event -> {
-                        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                            loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), dirName), true);
+            if ((Objects.requireNonNull(SettingsManager.getSetting("files", "view"))).equals("grid")) {
+                if (displayDirectoriesBeforeFiles) {
+                    for (String dirName : directories) {
+                        VBox box = createFileBox(dirName, true);
+                        box.setOnMouseClicked(event -> {
+                            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                                loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), dirName), true);
+                            } else {
+                                selectFile(box, event);
+                                event.consume();
+                            }
+                        });
+                        grid.getChildren().add(box);
+                    }
+                    for (String fileName : normalFiles) {
+                        VBox box = createFileBox(fileName, false);
+                        box.setOnMouseClicked(event -> {
+                            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                                FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
+                            } else {
+                                selectFile(box, event);
+                                event.consume();
+                            }
+                        });
+                        grid.getChildren().add(box);
+                    }
+                } else {
+                    File currentDirectory = FilesOperations.getCurrentDirectory();
+                    for (String fileName : filesList) {
+                        VBox box;
+                        if (new File(currentDirectory, fileName).isDirectory()) {
+                            box = createFileBox(fileName, true);
+                            box.setOnMouseClicked(event -> {
+                                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                                    loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), fileName), true);
+                                } else {
+                                    selectFile(box, event);
+                                    event.consume();
+                                }
+                            });
                         } else {
-                            selectFile(box, event);
-                            event.consume();
+                            box = createFileBox(fileName, false);
+                            box.setOnMouseClicked(event -> {
+                                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                                    FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
+                                } else {
+                                    selectFile(box, event);
+                                    event.consume();
+                                }
+                            });
                         }
-                    });
-                    grid.getChildren().add(box);
+                        grid.getChildren().add(box);
+                    }
                 }
-
-                for (String fileName : normalFiles) {
-                    VBox box = createFileBox(fileName, false);
-                    box.setOnMouseClicked(event -> {
-                        if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                            FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
-                        } else {
-                            selectFile(box, event);
-                            event.consume();
-                        }
-                    });
-                    grid.getChildren().add(box);
-                }
-
                 filesPane.setFitToWidth(true);
                 filesPane.setContent(grid);
                 filesPane.getStyleClass().add("files-pane");
@@ -339,15 +373,14 @@ public class Main extends Application {
                 };
                 grid.heightProperty().addListener(heightListener);
             } else {
-                filesList.getItems().addAll(directories);
-                filesList.getItems().addAll(normalFiles);
-                filesBox.getChildren().add(filesList);
+                filesListView.getItems().addAll(directories);
+                filesListView.getItems().addAll(normalFiles);
+                filesBox.getChildren().add(filesListView);
                 filesPane.setContent(filesBox);
 
-                filesList.setOnMouseClicked(event -> {
+                filesListView.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-
-                        String selectedItem = filesList.getSelectionModel().getSelectedItem();
+                        String selectedItem = filesListView.getSelectionModel().getSelectedItem();
                         if (selectedItem != null) {
                             File selectedFile = new File(FilesOperations.getCurrentDirectory(), selectedItem);
                             if (selectedFile.isDirectory()) {

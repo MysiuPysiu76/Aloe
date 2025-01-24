@@ -115,5 +115,6 @@
   "window.settings.menu.description": "Widok menu, pozycja i elementy",
   "window.settings.files.description": "Rozmiar, archiwa, katalog startowy, ukryte pliki i więcej",
   "window.settings.language.description": "Język i formaty czasu",
-  "window.settings.back-to-menu": "Powrót do menu"
+  "window.settings.back-to-menu": "Powrót do menu",
+  "window.settings.files.display-directories-before-files": "Wyświetlaj katalogi przed plikami"
 }

@@ -26,7 +26,7 @@ public final class SettingsWindow extends Stage {
     public SettingsWindow() {
         settings = new ScrollPane();
         settings.setFitToWidth(true);
-        settings.setPadding(new Insets(0, 65, 20, 65));
+        settings.setPadding(new Insets(0, 65, 5, 65));
 
         HBox.setHgrow(settings, Priority.ALWAYS);
 
@@ -156,6 +156,7 @@ public final class SettingsWindow extends Stage {
             getSettingBox("window.settings.files.use-binary-units", SettingsControls.getToggleSwitch("use-binary-units")),
             getSettingBox("window.settings.files.start-folder", startFolder, "window.settings.files.start-folder-location", pathInput),
             getSettingBox("window.settings.files.delete-archive-after-extract", SettingsControls.getToggleSwitch("delete-archive-after-extract")),
+            getSettingBox("window.settings.files.display-directories-before-files", SettingsControls.getToggleSwitch("display-directories-before-files")),
             getSettingBox("window.settings.files.file-box-size", SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()))),
             getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails"))));
     }
