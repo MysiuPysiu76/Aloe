@@ -21,6 +21,11 @@ public enum ArchiveType {
     ZIP(".zip"),
 
     /**
+     * Represents the SEVEN.ZIP archive format.
+     */
+    SEVEN_ZIP(".7z"),
+
+    /**
      * Represents the RAR archive format.
      */
     RAR(".rar"),
@@ -54,6 +59,17 @@ public enum ArchiveType {
     public String getExtension() {
         return extension;
     }
+
+
+    public static ArchiveType fromString(String value) {
+        for (ArchiveType enumValue : ArchiveType.values()) {
+            if (enumValue.getExtension().equals(value)) {
+                return enumValue;
+            }
+        }
+        throw new IllegalArgumentException("Nie znaleziono enuma dla wartości: " + value);
+    }
+
 
     /**
      * Returns the file extension as the string representation of the archive type.

@@ -41,6 +41,7 @@ public class ArchiveHandler {
      * @param parameters The {@link ArchiveParameters} object containing the compression details:
      * @throws IllegalArgumentException if the {@code files} list is empty or {@code fileName} is blank.
      * @see ZipArchive
+     * @see SevenZipArchive
      * @see TarArchive
      * @see TarGzArchive
      */
@@ -53,6 +54,7 @@ public class ArchiveHandler {
         }
         switch (parameters.getArchiveType()) {
             case ZIP -> new ZipArchive().compress(parameters);
+            case SEVEN_ZIP -> new SevenZipArchive().compress(parameters);
             case TAR -> new TarArchive().compress(parameters);
             case TAR_GZ -> new TarGzArchive().compress(parameters);
         }
@@ -65,6 +67,7 @@ public class ArchiveHandler {
      * to the appropriate handler. Supported archive formats include:
      * <ul>
      *     <li>ZIP (.zip)</li>
+     *     <li>SEVEN_ZIP (.7z)</li>
      *     <li>RAR (.rar)</li>
      *     <li>TAR (.tar)</li>
      *     <li>TAR.GZ (.tar.gz)</li>
@@ -77,6 +80,7 @@ public class ArchiveHandler {
      * @throws IllegalArgumentException if the file does not exist or if its format is unsupported.
      * @see FilesOperations#getExtension(File)
      * @see ZipArchive
+     * @see SevenZipArchive
      * @see RarArchive
      * @see TarArchive
      * @see TarGzArchive
@@ -85,8 +89,9 @@ public class ArchiveHandler {
         if (!file.exists()) {
             throw new IllegalArgumentException("File does not exist");
         }
-        switch (ArchiveType.valueOf(FilesOperations.getExtensionWithDot(file).toUpperCase())) {
+        switch (ArchiveType.fromString(FilesOperations.getExtensionWithDot(file).toLowerCase())) {
             case ZIP -> new ZipArchive().decompress(file);
+            case SEVEN_ZIP -> new SevenZipArchive().decompress(file);
             case RAR -> new RarArchive().decompress(file);
             case TAR -> new TarArchive().decompress(file);
             case TAR_GZ -> new TarGzArchive().decompress(file);

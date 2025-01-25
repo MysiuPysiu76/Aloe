@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.controlsfx.control.SegmentedButton;
 
+import java.util.Objects;
+
 public class AboutWindow extends Stage {
     private final HostServices hostServices;
 
@@ -69,7 +71,7 @@ public class AboutWindow extends Stage {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("0.9.7");
+        Label version = new Label("0.9.8");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -91,7 +93,7 @@ public class AboutWindow extends Stage {
 
     private VBox getCreatorContainer() {
         VBox creatorContainer = new VBox();
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
+        ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/file.png"))));
         icon.setFitHeight(100);
         icon.setFitWidth(100);
         VBox.setMargin(icon, new Insets(25, 10, 25, 10));

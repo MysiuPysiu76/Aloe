@@ -603,7 +603,7 @@ public class Main extends Application {
             refreshCurrentDirectory();
         });
         MenuItem archive;
-        if (thisFile.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar"))) {
+        if (thisFile.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar") || fileName.endsWith(".7z"))) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
                 ArchiveHandler.extract(thisFile);

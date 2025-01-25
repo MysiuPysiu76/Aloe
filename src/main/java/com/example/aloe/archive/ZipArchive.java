@@ -26,6 +26,7 @@ import java.nio.file.Path;
  * </pre>
  * </p>
  *
+ * @see SevenZipArchive
  * @since 0.9.3
  */
 class ZipArchive implements Archive {

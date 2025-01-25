@@ -26,7 +26,7 @@ import java.util.Objects;
  * @see TarArchiveOutputStream
  * @since 0.9.7
  */
-public class TarArchive implements Archive {
+class TarArchive implements Archive {
 
     /**
      * Compresses the files specified in the parameters into a TAR archive.
