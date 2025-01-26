@@ -116,5 +116,10 @@
   "window.settings.files.description": "Rozmiar, archiwa, katalog startowy, ukryte pliki i więcej",
   "window.settings.language.description": "Język i formaty czasu",
   "window.settings.back-to-menu": "Powrót do menu",
-  "window.settings.files.display-directories-before-files": "Wyświetlaj katalogi przed plikami"
+  "window.settings.files.display-directories-before-files": "Wyświetlaj katalogi przed plikami",
+  "window.settings.appearance": "Wygląd",
+  "window.settings.appearance.description": "Zmień motyw i kolor akcentujący",
+  "window.settings.appearance.theme": "Motyw",
+  "window.settings.appearance.theme.dark": "Ciemny",
+  "window.settings.appearance.theme.light": "Jasny"
 }

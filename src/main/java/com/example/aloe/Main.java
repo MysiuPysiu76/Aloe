@@ -104,10 +104,10 @@ public class Main extends Application {
         darkMode.setOnAction(event -> {
             if (darkMode.isSelected()) {
                 darkMode.setText(Translator.translate("navigate.light-mode"));
-                scene.getStylesheets().add(getClass().getResource("/assets/css/style_dark.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/assets/styles/style_dark.css").toExternalForm());
             } else {
                 darkMode.setText(Translator.translate("navigate.dark-mode"));
-                scene.getStylesheets().remove(getClass().getResource("/assets/css/style_dark.css").toExternalForm());
+                scene.getStylesheets().remove(getClass().getResource("/assets/styles/style_dark.css").toExternalForm());
             }
         });
 
@@ -128,7 +128,7 @@ public class Main extends Application {
             filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
         });
 
-        scene.getStylesheets().add(getClass().getResource("/assets/css/style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/style.css").toExternalForm());
         createMultiSelectionFilesContextMenu();
 
         stage.setTitle(Translator.translate("root.title"));

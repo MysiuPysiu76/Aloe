@@ -32,7 +32,7 @@ public class AboutWindow extends Stage {
         container.getChildren().addAll(getSegmentedButtons(container, getAboutContainer(), getCreatorContainer()), getAboutContainer());
 
         Scene scene = new Scene(container, 300  , 390);
-        scene.getStylesheets().add(getClass().getResource("/assets/css/style_about.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/assets/styles/style_about.css")).toExternalForm());
         this.setScene(scene);
         this.setTitle(Translator.translate("window.about.title"));
         this.initModality(Modality.APPLICATION_MODAL);
@@ -62,7 +62,7 @@ public class AboutWindow extends Stage {
 
     private VBox getAboutContainer() {
         VBox aboutContainer = new VBox();
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
+        ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/folder.png"))));
         icon.setFitHeight(120);
         icon.setFitWidth(120);
         VBox.setMargin(icon, new Insets(25, 10, 25, 10));

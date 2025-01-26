@@ -114,7 +114,7 @@ public class WindowService {
 
         root.setContent(filesDecisionsView);
         Scene scene = new Scene(root, 430, 220);
-        scene.getStylesheets().add(WindowService.class.getResource("/assets/css/style_file_exists.css").toExternalForm());
+        scene.getStylesheets().add(WindowService.class.getResource("/assets/styles/style_file_exists.css").toExternalForm());
         filesDecisionsView.setMinWidth(425);
         decisionWindow.setScene(scene);
         decisionWindow.setTitle(Translator.translate("window.decision.title"));

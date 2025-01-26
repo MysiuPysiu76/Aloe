@@ -42,6 +42,9 @@ public final class SettingsWindow extends Stage {
     }
 
     private static void loadMenu() {
+        Label titleLabel = SettingsControls.getTitleLabel(Translator.translate("window.settings.title"));
+        titleLabel.setPadding(new Insets(20, 0, 0, 0));
+
         HBox optionMenu = SettingsControls.getMenuButton(FontIcon.of(FontAwesome.BARS), "window.settings.menu", "window.settings.menu.description");
         optionMenu.setOnMouseClicked(event -> {
             loadMenuSettings();
@@ -57,11 +60,12 @@ public final class SettingsWindow extends Stage {
             loadLanguageSettings();
         });
 
-        Label titleLabel = SettingsControls.getTitleLabel(Translator.translate("window.settings.title"));
-        titleLabel.setPadding(new Insets(20, 0, 0, 0));
+        HBox optionsAppearance = SettingsControls.getMenuButton(FontIcon.of(FontAwesome.PAINT_BRUSH), "window.settings.appearance", "window.settings.appearance.description");
+        optionsAppearance.setOnMouseClicked(event -> {
+           loadAppearanceSettings();
+        });
 
-        VBox content = new VBox(titleLabel,
-                optionMenu, optionFiles, optionsLanguage);
+        VBox content = new VBox(titleLabel, optionMenu, optionFiles, optionsLanguage, optionsAppearance);
         content.setMaxWidth(700);
         VBox root = new VBox(content);
         root.setAlignment(Pos.CENTER);
@@ -167,5 +171,13 @@ public final class SettingsWindow extends Stage {
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.language"))),
                 getSettingBox("window.settings.language", SettingsControls.getChoiceBox("lang", "en", "English", "pl", "Polski"))));
+    }
+
+    private static void loadAppearanceSettings() {
+        SettingsManager.setCategory("appearance");
+
+        settings.setContent(getContentBox(getBackToMenuButton(),
+                SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.appearance"))),
+                getSettingBox("window.settings.appearance.theme", SettingsControls.getChoiceBox("theme", "light", Translator.translate("window.settings.appearance.theme.light"), "dark", Translator.translate("window.settings.appearance.theme.dark")))));
     }
 }

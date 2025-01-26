@@ -116,5 +116,10 @@
   "window.settings.files.description": "Size, archives, start directory, hidden files and more",
   "window.settings.language.description": "Language and time formats",
   "window.settings.back-to-menu": "Back to menu",
-  "window.settings.files.display-directories-before-files": "Display directories before files"
+  "window.settings.files.display-directories-before-files": "Display directories before files",
+  "window.settings.appearance": "Appearance",
+  "window.settings.appearance.description": "Change theme and accent color",
+  "window.settings.appearance.theme": "Theme",
+  "window.settings.appearance.theme.dark": "Dark",
+  "window.settings.appearance.theme.light": "Light"
 }

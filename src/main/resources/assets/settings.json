@@ -19,5 +19,8 @@
   },
   "language": {
     "lang": "en"
+  },
+  "appearance": {
+    "theme": "light"
   }
 }
