@@ -342,4 +342,19 @@ public class FilesOperations {
             }
         }
     }
+
+    public static long calculateDirectorySize(File file) {
+        long size = 0;
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isFile()) {
+                    size += f.length();
+                } else {
+                    size += calculateDirectorySize(f);
+                }
+            }
+        }
+        return size;
+    }
 }

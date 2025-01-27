@@ -1,6 +1,7 @@
 package com.example.aloe.menu;
 
 import com.example.aloe.Main;
+import com.example.aloe.PropertiesWindow;
 import com.example.aloe.Translator;
 import com.example.aloe.settings.SettingsManager;
 import javafx.geometry.Pos;
@@ -91,11 +92,7 @@ public class MenuManager {
         });
         MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
         properties.setOnAction(event -> {
-            try {
-                new Main().openPropertiesWindow(new VBox(), new File(path));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            new PropertiesWindow(new File(path));
         });
         contextMenu.getItems().addAll(open, edit, remove, properties);
         button.setOnContextMenuRequested(event -> {

@@ -543,11 +543,7 @@ public class Main extends Application {
         });
         MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
         properties.setOnAction(event -> {
-            try {
-                openPropertiesWindow(new VBox(), FilesOperations.getCurrentDirectory());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            new PropertiesWindow(FilesOperations.getCurrentDirectory());
         });
         directoryMenu.getItems().addAll(newDirectory, newFile, paste, selectAll, properties);
         filesPane.setOnContextMenuRequested(event -> {
@@ -628,11 +624,7 @@ public class Main extends Application {
         });
         MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
         properties.setOnAction(event -> {
-            try {
-                openPropertiesWindow(item, thisFile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            new PropertiesWindow(thisFile);
         });
         fileMenu.getItems().addAll(open, copy, rename, duplicate, moveTo, moveToParent, archive, moveToTrash, delete, properties);
         if (thisFile.isDirectory()) {
@@ -777,146 +769,6 @@ public class Main extends Application {
         window.setScene(scene);
         window.initOwner(stage);
         window.show();
-    }
-
-    private ArrayList<String> getFilePropertiesNames() {
-        ArrayList<String> names = new ArrayList<>();
-        names.add(Translator.translate("window.properties.file-name"));
-        names.add(Translator.translate("window.properties.file-path"));
-        names.add(Translator.translate("window.properties.file-type"));
-        names.add(Translator.translate("window.properties.file-size"));
-        names.add(Translator.translate("window.properties.file-parent"));
-        names.add(Translator.translate("window.properties.file-created"));
-        names.add(Translator.translate("window.properties.file-modified"));
-        names.add(Translator.translate("window.properties.free-space"));
-        return names;
-    }
-
-    private ArrayList<String> getFilePropertiesValues(File file) throws IOException {
-        ArrayList<String> values = new ArrayList<>();
-        values.add(file.getName());
-        values.add(file.getPath());
-        if (file.isDirectory()) {
-            long directorySize = calculateDirectorySize(file);
-            values.add(convertBytesByUnit(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")");
-        } else {
-            values.add(convertBytesByUnit(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")");
-        }
-        values.add(file.getParent());
-        BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-        FileTime creationTime = attrs.creationTime();
-        String creationTimeString = creationTime.toString();
-        values.add(OffsetDateTime.parse(creationTimeString).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-        LocalDateTime modifiedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
-        values.add(modifiedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-        values.add(convertBytesByUnit(file.getFreeSpace()));
-        return values;
-    }
-
-    private long calculateDirectorySize(File file) {
-        long size = 0;
-        File[] files = file.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (f.isFile()) {
-                    size += f.length();
-                } else {
-                    size += calculateDirectorySize(f);
-                }
-            }
-        }
-        return size;
-    }
-
-    private String convertBytesByUnit(long size) {
-        if (SettingsManager.getSetting("files", "use-binary-units")) {
-            return convertBytesToGiB(size);
-        } else {
-            return convertBytesToGB(size);
-        }
-    }
-
-    private String convertBytesToGiB(long size) {
-        if (size < 1024) {
-            return "";
-        } else if (size < 1024 * 1024) {
-            return String.format("%.1f KiB ", size / 1024.0);
-        } else if (size < 1024 * 1024 * 1024) {
-            return String.format("%.1f MiB ", size / (1024.0 * 1024.0));
-        } else if (size < 1024L * 1024 * 1024 * 1024) {
-            return String.format("%.1f GiB ", size / (1024.0 * 1024.0 * 1024.0));
-        } else if (size < 1024L * 1024 * 1024 * 1024 * 1024) {
-            return String.format("%.1f TiB ", size / (1024 * 1024.0 * 1024.0 * 1024));
-        } else {
-            return String.format("%.1f PiB ", size / (1024 * 1024.0 * 1024.0 * 1024 * 1024));
-        }
-    }
-
-    private String convertBytesToGB(long size) {
-        if (size < 1000) {
-            return "";
-        } else if (size < 1000 * 1000) {
-            return String.format("%.1f KB ", size / 1000.0);
-        } else if (size < 1000 * 1000 * 1000) {
-            return String.format("%.1f MB ", size / (1000.0 * 1000.0));
-        } else if (size < 1000L * 1000 * 1000 * 1000) {
-            return String.format("%.1f GB ", size / (1000.0 * 1000.0 * 1000.0));
-        } else if (size < 1000L * 1000 * 1000 * 1000 * 1000) {
-            return String.format("%.1f TB ", size / (1000 * 1000.0 * 1000.0 * 1000));
-        } else {
-            return String.format("%.1f PB ", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000));
-        }
-    }
-
-    public void openPropertiesWindow(VBox box, File file) throws IOException {
-        Stage window = new Stage();
-        VBox root = new VBox();
-        window.setMinHeight(380);
-        window.setMinWidth(330);
-        window.initModality(Modality.WINDOW_MODAL);
-        window.initStyle(StageStyle.UNIFIED);
-
-        ImageView icon = new ImageView();
-        icon.setFitHeight(75);
-        icon.setFitWidth(75);
-        VBox iconWrapper = new VBox();
-        iconWrapper.setAlignment(Pos.TOP_CENTER);
-        iconWrapper.getChildren().add(icon);
-        VBox.setMargin(icon, new Insets(30, 10, 10, 2));
-
-        List<String> names = getFilePropertiesNames();
-        List<String> values = getFilePropertiesValues(file);
-
-        if (file.isFile()) {
-            window.setTitle(Translator.translate("window.properties.file-properties"));
-            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
-            values.add(2, new Tika().detect(file));
-        } else {
-            window.setTitle(Translator.translate("window.properties.folder-properties"));
-            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
-            values.add(2, Translator.translate("window.properties.folder"));
-            names.add(5, Translator.translate("window.properties.folder-contents"));
-            values.add(5, Files.list(Path.of(file.getPath())).count() + Translator.translate("window.properties.items"));
-        }
-        GridPane fileData = new GridPane();
-        VBox.setMargin(fileData, new Insets(20, 0, 0, 0));
-
-        for (int i = 0; i < names.size(); i++) {
-            Label name = new Label(names.get(i));
-            name.setAlignment(Pos.CENTER_RIGHT);
-            name.setPadding(new Insets(4, 10, 4, 0));
-            name.getStyleClass().add("name");
-            name.setMinWidth(110);
-            name.setMaxWidth(110);
-            Label value = new Label(values.get(i));
-            fileData.add(name, 0, i);
-            fileData.add(value, 1, i);
-        }
-        root.getChildren().addAll(iconWrapper, fileData);
-        Scene scene = new Scene(root, 330, 390);
-        window.setScene(scene);
-        window.initOwner(stage);
-        window.showAndWait();
     }
 
     private ContextMenu multiSelectionFilesContextMenu;
