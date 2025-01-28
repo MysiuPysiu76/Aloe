@@ -10,7 +10,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.apache.tika.Tika;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.application.Platform;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.tika.Tika;
+
 public class PropertiesWindow extends Stage {
+
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     public PropertiesWindow(File file) {
         this.setMinHeight(380);
@@ -66,6 +73,7 @@ public class PropertiesWindow extends Stage {
         GridPane fileData = new GridPane();
         VBox.setMargin(fileData, new Insets(20, 0, 0, 0));
 
+        List<Label> valueLabels = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
             Label name = new Label(names.get(i));
             name.setAlignment(Pos.CENTER_RIGHT);
@@ -76,11 +84,20 @@ public class PropertiesWindow extends Stage {
             Label value = new Label(values.get(i));
             fileData.add(name, 0, i);
             fileData.add(value, 1, i);
+            valueLabels.add(value);
         }
         root.getChildren().addAll(iconWrapper, fileData);
         Scene scene = new Scene(root, 330, 390);
         this.setScene(scene);
-        this.showAndWait();
+        this.show();
+        CompletableFuture.supplyAsync(() -> getFileSize(file), executor).thenAccept(result -> Platform.runLater(() -> valueLabels.get(3).setText(result)));
+        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> valueLabels.get(8).setText(result)));
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        executor.shutdown();
     }
 
     private ArrayList<String> getFilePropertiesNames() {
@@ -100,11 +117,11 @@ public class PropertiesWindow extends Stage {
         List<String> values = new ArrayList<>();
         values.add(file.getName());
         values.add(file.getPath());
-        values.add(getFileSize(file));
+        values.add("Calculating...");
         values.add(file.getParent());
         values.add(getCreationTime(file));
         values.add(getModifiedTime(file));
-        values.add(Utils.convertBytesByUnit(file.getFreeSpace()));
+        values.add("Calculating...");
         return values;
     }
 
@@ -150,8 +167,7 @@ public class PropertiesWindow extends Stage {
 
     private Image loadIconForFile(File file, boolean useThumbnails) {
         return switch (FilesOperations.getExtension(file).toLowerCase()) {
-            case "jpg", "jpeg", "png", "gif" ->
-                    useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
+            case "jpg", "jpeg", "png", "gif" -> useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
             case "mp4" -> loadIcon("/assets/icons/video.png");
             case "mp3", "ogg" -> loadIcon("/assets/icons/music.png");
             case "iso" -> loadIcon("/assets/icons/cd.png");

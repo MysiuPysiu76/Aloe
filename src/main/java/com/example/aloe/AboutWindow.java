@@ -31,7 +31,7 @@ public class AboutWindow extends Stage {
         container.setAlignment(Pos.TOP_CENTER);
         container.getChildren().addAll(getSegmentedButtons(container, getAboutContainer(), getCreatorContainer()), getAboutContainer());
 
-        Scene scene = new Scene(container, 300  , 390);
+        Scene scene = new Scene(container, 300, 390);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/assets/styles/style_about.css")).toExternalForm());
         this.setScene(scene);
         this.setTitle(Translator.translate("window.about.title"));
@@ -71,7 +71,7 @@ public class AboutWindow extends Stage {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("1.0.1");
+        Label version = new Label("1.0.2");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
