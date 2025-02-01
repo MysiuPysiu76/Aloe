@@ -6,6 +6,7 @@
   "button.exit": "Exit",
   "button.extract": "Extract",
   "button.save": "Save",
+  "button.copy": "Copy",
   "confirm.skip.copy": "Confirm skipping pending operations",
   "context-menu.add": "Add",
   "context-menu.add-to-menu": "Add to menu",
@@ -121,5 +122,16 @@
   "window.settings.appearance.description": "Change theme and accent color",
   "window.settings.appearance.theme": "Theme",
   "window.settings.appearance.theme.dark": "Dark",
-  "window.settings.appearance.theme.light": "Light"
+  "window.settings.appearance.theme.light": "Light",
+  "window.properties.calculating": "Calculating...",
+  "window.properties.checksum": "Checksum",
+  "window.properties": "Properties",
+  "window.properties.checksum.verify": "Verify file",
+  "window.properties.checksum.generate": "Generate checksum",
+  "window.properties.checksum.chose-algorithm": "Chose algorithm: ",
+  "window.properties.checksum.generate-hash": "Generate",
+  "window.properties.checksum.enter-checksum": "Enter checksum",
+  "window.properties.checksum.verify-checksum": "Verify",
+  "window.properties.checksum.verify.not-equals": "The checksum does not match! The file may be corrupted or modified.",
+  "window.properties.checksum.verify.equals": "The checksum is correct. The file has not been modified."
 }

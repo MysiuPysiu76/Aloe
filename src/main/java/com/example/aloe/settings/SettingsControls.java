@@ -2,6 +2,7 @@ package com.example.aloe.settings;
 
 import com.example.aloe.Translator;
 import com.example.aloe.Utils;
+import com.example.aloe.WindowComponents;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -27,7 +28,7 @@ class SettingsControls {
         description.setStyle("-fx-font-size: 12px");
         VBox descriptionVBox = new VBox(title, description);
         descriptionVBox.setAlignment(Pos.CENTER_LEFT);
-        HBox box = new HBox(iconPane, descriptionVBox, getSpacer(), getMenuArrow());
+        HBox box = new HBox(iconPane, descriptionVBox, WindowComponents.getSpacer(), getMenuArrow());
         VBox.setMargin(box, new Insets(5));
         box.setAlignment(Pos.CENTER_LEFT);
         box.setMinWidth(500);
@@ -46,7 +47,7 @@ class SettingsControls {
 
     static ToggleSwitch getToggleSwitch(String key) {
         ToggleSwitch toggleSwitch = new ToggleSwitch();
-        toggleSwitch.setSelected(SettingsManager.getSetting(SettingsManager.getCategory(), key));
+        toggleSwitch.setSelected(Boolean.TRUE.equals(SettingsManager.getSetting(SettingsManager.getCategory(), key)));
         toggleSwitch.setOnMouseClicked(event -> {
             SettingsManager.setSetting(SettingsManager.getCategory(), key, toggleSwitch.isSelected());
         });
@@ -54,7 +55,7 @@ class SettingsControls {
         return toggleSwitch;
     }
 
-    static ChoiceBox<Map.Entry<String, String>> getChoiceBox(String key, String ...values) {
+    static ChoiceBox<Map.Entry<String, String>> getChoiceBox(String key, String... values) {
         ChoiceBox<Map.Entry<String, String>> choiceBox = new ChoiceBox<>();
         Map<String, String> items = getMapFromValues(values);
         HBox.setMargin(choiceBox, new Insets(0, 20, 0, 20));
@@ -64,6 +65,7 @@ class SettingsControls {
             public String toString(Map.Entry<String, String> entry) {
                 return entry.getValue();
             }
+
             @Override
             public Map.Entry<String, String> fromString(String string) {
                 return null;
@@ -79,7 +81,7 @@ class SettingsControls {
     }
 
 
-    private static Map<String, String> getMapFromValues(String ...values) {
+    private static Map<String, String> getMapFromValues(String... values) {
         Map<String, String> map = new HashMap<>();
         if (values.length % 2 == 0) {
             for (int i = 0; i < values.length; i += 2) {
@@ -102,7 +104,8 @@ class SettingsControls {
         TextField textField = new TextField(SettingsManager.getSetting(SettingsManager.getCategory(), key));
         textField.setPadding(new Insets(5, 7, 5, 7));
         textField.setOnKeyReleased(event -> {
-            SettingsManager.setSetting(SettingsManager.getCategory(), key, textField.getText());});
+            SettingsManager.setSetting(SettingsManager.getCategory(), key, textField.getText());
+        });
         textField.setPromptText(Translator.translate("files-menu.example-path"));
         HBox.setMargin(textField, new Insets(0, 20, 0, 20));
         return textField;
@@ -126,11 +129,5 @@ class SettingsControls {
         HBox.setMargin(slider, new Insets(0, 7, 0, 7));
         HBox.setMargin(box, new Insets(0, 20, 0, 20));
         return box;
-    }
-
-    public static Region getSpacer() {
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        return spacer;
     }
 }

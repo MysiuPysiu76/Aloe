@@ -2,6 +2,9 @@ package com.example.aloe;
 
 import com.example.aloe.settings.SettingsManager;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -93,5 +96,11 @@ public class Utils {
         } else {
             return String.format("%.1f PB ", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000));
         }
+    }
+
+    public static void copyTextToClipboard(String text) {
+        StringSelection selection = new StringSelection(text);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, null);
     }
 }

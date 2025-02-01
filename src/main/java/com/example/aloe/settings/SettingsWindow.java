@@ -1,6 +1,7 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.Translator;
+import com.example.aloe.WindowComponents;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -76,7 +77,7 @@ public final class SettingsWindow extends Stage {
 
     private static HBox getSettingBox(String key, Node control) {
         Label title = getSettingLabel(key);
-        HBox box = new HBox(title, SettingsControls.getSpacer(), control);
+        HBox box = new HBox(title, WindowComponents.getSpacer(), control);
         box.setSpacing(10);
         box.setMinHeight(50);
         box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
@@ -114,17 +115,9 @@ public final class SettingsWindow extends Stage {
         return content;
     }
 
-    static Button getBackToMenuButton() {
-        FontIcon icon = new FontIcon(FontAwesome.ANGLE_LEFT);
-        icon.setIconSize(25);
-
-        Button button = new Button(Translator.translate("window.settings.back-to-menu").intern(), icon);
-        button.setStyle("-fx-font-size: 15px; -fx-background-color: transparent; -fx-border-color: transparent;");
-        button.setGraphicTextGap(8);
-
-        button.setOnAction(event -> {
-            loadMenu();
-        });
+    private static Button getBackToMenuButton() {
+        Button button = WindowComponents.getBackButton("window.settings.back-to-menu", true);
+        button.setOnAction(event -> {loadMenu();});
         return button;
     }
 

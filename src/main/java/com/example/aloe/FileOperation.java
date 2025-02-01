@@ -10,7 +10,7 @@ class FileOperation {
         COPY, MOVE;
     }
 
-    private static Queue<FileOperation> queue = new LinkedList<>();
+    private static final Queue<FileOperation> queue = new LinkedList<>();
     private OperationType operationType;
     private File source;
     private File destination;
@@ -47,7 +47,7 @@ class FileOperation {
 
     public static boolean addOperationToQueue(FileOperation operation) {
         for (FileOperation o : queue) {
-            if(o.equals(operation)) {
+            if (o.equals(operation)) {
                 return false;
             }
         }

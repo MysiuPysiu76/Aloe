@@ -22,20 +22,10 @@ import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.*;
-import org.apache.tika.Tika;
 import org.controlsfx.control.PopOver;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -453,7 +443,7 @@ public class Main extends Application {
         Label fileName = new Label(name);
         fileName.setWrapText(true);
         fileName.setMaxWidth(90 * scale);
-        fileName.setAlignment(Pos.CENTER);
+        fileName.setAlignment(Pos.TOP_CENTER);
         fileName.setTooltip(new Tooltip(name));
         fileName.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
 

@@ -110,6 +110,7 @@
   "window.settings.files.view": "Widok",
   "window.settings.files.view.grid": "Siatka",
   "window.settings.files.view.list": "Lista",
+  "window.properties": "Właściwości",
   "window.archive.extract.password-required": "Archiwum jest chronione hasłem",
   "window.settings.language": "Język",
   "window.settings.menu.description": "Widok menu, pozycja i elementy",
@@ -121,5 +122,16 @@
   "window.settings.appearance.description": "Zmień motyw i kolor akcentujący",
   "window.settings.appearance.theme": "Motyw",
   "window.settings.appearance.theme.dark": "Ciemny",
-  "window.settings.appearance.theme.light": "Jasny"
+  "window.settings.appearance.theme.light": "Jasny",
+  "window.properties.calculating": "Obliczanie...",
+  "window.properties.checksum": "Sumy kontrolne",
+  "window.properties.checksum.verify": "Zweryfikuj plik",
+  "button.copy": "Kopiuj",
+  "window.properties.checksum.generate": "Generuj sumę kontrolną",
+  "window.properties.checksum.chose-algorithm": "Wybierz algorytm: ",
+  "window.properties.checksum.generate-hash": "Generuj",
+  "window.properties.checksum.enter-checksum": "Wprowadź sumę kontrolną",
+  "window.properties.checksum.verify-checksum": "Zweryfikuj",
+  "window.properties.checksum.verify.not-equals": "Suma kontrolna nie pasuje! Plik może być uszkodzony lub zmodyfikowany.",
+  "window.properties.checksum.verify.equals": "Suma kontrolna jest poprawna. Plik nie został zmodyfikowany."
 }
