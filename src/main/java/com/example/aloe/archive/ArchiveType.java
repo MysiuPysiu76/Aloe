@@ -67,7 +67,7 @@ public enum ArchiveType {
                 return enumValue;
             }
         }
-        throw new IllegalArgumentException("Nie znaleziono enuma dla wartości: " + value);
+        throw new IllegalArgumentException("Enum not found: " + value);
     }
 
 

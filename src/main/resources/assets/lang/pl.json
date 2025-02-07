@@ -133,5 +133,14 @@
   "window.properties.checksum.enter-checksum": "Wprowadź sumę kontrolną",
   "window.properties.checksum.verify-checksum": "Zweryfikuj",
   "window.properties.checksum.verify.not-equals": "Suma kontrolna nie pasuje! Plik może być uszkodzony lub zmodyfikowany.",
-  "window.properties.checksum.verify.equals": "Suma kontrolna jest poprawna. Plik nie został zmodyfikowany."
+  "window.properties.checksum.verify.equals": "Suma kontrolna jest poprawna. Plik nie został zmodyfikowany.",
+  "window.properties.permissions": "Uprawnienia",
+  "window.properties.permissions.read": "Odczyt: ",
+  "window.properties.permissions.write": "Zapis: ",
+  "window.properties.permissions.execute": "Wykonywanie: ",
+  "window.properties.permissions.owner": "Właściciel: ",
+  "window.properties.permissions.group": "Grupa: ",
+  "window.properties.permissions.other": "Inni: ",
+  "window.properties.permissions.update": "Aktualizuj",
+  "window.properties.permissions.apply-to-subdirectories": "Zastosuj do podkatalogów"
 }

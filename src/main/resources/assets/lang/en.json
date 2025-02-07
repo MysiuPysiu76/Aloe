@@ -133,5 +133,14 @@
   "window.properties.checksum.enter-checksum": "Enter checksum",
   "window.properties.checksum.verify-checksum": "Verify",
   "window.properties.checksum.verify.not-equals": "The checksum does not match! The file may be corrupted or modified.",
-  "window.properties.checksum.verify.equals": "The checksum is correct. The file has not been modified."
+  "window.properties.checksum.verify.equals": "The checksum is correct. The file has not been modified.",
+  "window.properties.permissions": "Permissions",
+  "window.properties.permissions.read": "Read: ",
+  "window.properties.permissions.write": "Write: ",
+  "window.properties.permissions.execute": "Execute: ",
+  "window.properties.permissions.owner": "Owner: ",
+  "window.properties.permissions.group": "Group: ",
+  "window.properties.permissions.other": "Other: ",
+  "window.properties.permissions.update": "Update",
+  "window.properties.permissions.apply-to-subdirectories": "Apply to subdirectories"
 }

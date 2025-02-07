@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -82,6 +83,12 @@ public class WindowComponents {
     public static Region getSpacer() {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+        return spacer;
+    }
+
+    public static Region getVBoxSpacer() {
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
         return spacer;
     }
 }
