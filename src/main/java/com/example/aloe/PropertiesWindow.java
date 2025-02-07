@@ -45,7 +45,7 @@ public class PropertiesWindow extends Stage {
     private String hash = "";
     private final File file;
     private GridPane permissions;
-    private short height;
+    private final short height;
 
     public PropertiesWindow(File file) {
         this.file = file;
@@ -193,8 +193,7 @@ public class PropertiesWindow extends Stage {
 
     private Image loadIconForFile(File file, boolean useThumbnails) {
         return switch (FilesOperations.getExtension(file).toLowerCase()) {
-            case "jpg", "jpeg", "png", "gif" ->
-                    useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
+            case "jpg", "jpeg", "png", "gif" -> useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
             case "mp4" -> loadIcon("/assets/icons/video.png");
             case "mp3", "ogg" -> loadIcon("/assets/icons/music.png");
             case "iso" -> loadIcon("/assets/icons/cd.png");
@@ -211,9 +210,7 @@ public class PropertiesWindow extends Stage {
     private void loadChecksum() {
         VBox root = new VBox();
         Button backToProperties = getNavigateButton("window.properties", false);
-        backToProperties.setOnAction(e -> {
-            loadProperties();
-        });
+        backToProperties.setOnAction(_ -> loadProperties());
         VBox buttonWrapper = new VBox(backToProperties);
         buttonWrapper.setAlignment(Pos.TOP_RIGHT);
 
@@ -253,8 +250,7 @@ public class PropertiesWindow extends Stage {
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
 
         contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, spacer, buttonPanel);
-        TitledPane titledPane = new TitledPane(Translator.translate("window.properties.checksum.verify"), contentPane);
-        return titledPane;
+        return new TitledPane(Translator.translate("window.properties.checksum.verify"), contentPane);
     }
 
     private TitledPane getGenerateChecksum() {
@@ -274,7 +270,7 @@ public class PropertiesWindow extends Stage {
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
         Button copy = WindowComponents.getButton(Translator.translate("button.copy"));
-        copy.setOnAction(e -> copyHashToClipboard());
+        copy.setOnAction(e -> Utils.copyTextToClipboard(this.hash));
         Button generate = WindowComponents.getButton(Translator.translate("window.properties.checksum.generate-hash"));
         generate.setOnAction(e -> generateHash(hash, comboBox.getSelectionModel().getSelectedItem()));
         HBox buttonPanel = new HBox(copy, generate);
@@ -285,18 +281,13 @@ public class PropertiesWindow extends Stage {
         return new TitledPane(Translator.translate("window.properties.checksum.generate"), contentPane);
     }
 
-    private void copyHashToClipboard() {
-        Utils.copyTextToClipboard(this.hash);
-    }
-
     private void generateHash(Label labelHash, String algorithm) {
-        hash = ChecksumGenerator.generateChecksum(this.file, algorithm);
+        hash = new Checksum(file).generateChecksum(algorithm);
         labelHash.setText(hash);
     }
 
     private void verifyChecksum(Label info, String algorithm, String hash) {
-        String generatedChecksum = ChecksumGenerator.generateChecksum(this.file, algorithm);
-        if (generatedChecksum.equals(hash)) {
+        if (new Checksum(file).verifyChecksum(algorithm, hash)) {
             info.setText(Translator.translate("window.properties.checksum.verify.equals"));
         } else {
             info.setText(Translator.translate("window.properties.checksum.verify.not-equals"));
@@ -316,9 +307,7 @@ public class PropertiesWindow extends Stage {
     private void loadPermissions() {
         VBox root = new VBox();
         Button backToProperties = getNavigateButton("window.properties", true);
-        backToProperties.setOnAction(e -> {
-            loadProperties();
-        });
+        backToProperties.setOnAction(e -> loadProperties());
         VBox buttonWrapper = new VBox(backToProperties);
         buttonWrapper.setAlignment(Pos.TOP_LEFT);
 
@@ -472,7 +461,7 @@ public class PropertiesWindow extends Stage {
                         updatePermissionsRecursively(child, permissionsSet);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         }

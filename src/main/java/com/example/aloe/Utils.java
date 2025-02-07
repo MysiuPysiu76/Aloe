@@ -59,7 +59,7 @@ public class Utils {
     }
 
     public static String convertBytesByUnit(long size) {
-        if (SettingsManager.getSetting("files", "use-binary-units")) {
+        if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "use-binary-units"))) {
             return convertBytesToGiB(size);
         } else {
             return convertBytesToGB(size);
