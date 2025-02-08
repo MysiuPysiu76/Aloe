@@ -65,7 +65,24 @@ public enum ArchiveType {
         return extension;
     }
 
-
+    /**
+     * Returns the {@code ArchiveType} corresponding to the given file extension.
+     * <p>
+     * This method searches for an archive type that matches the provided extension.
+     * If no match is found, it throws an {@code IllegalArgumentException}.
+     * </p>
+     *
+     * <h2>Example usage:</h2>
+     * <pre>
+     *     ArchiveType type = ArchiveType.fromString(".zip");
+     *     System.out.println(type); // Output: .zip
+     * </pre>
+     *
+     * @param value the file extension of the archive type (e.g., ".zip", ".jar")
+     * @return the corresponding {@code ArchiveType} if a match is found
+     * @throws IllegalArgumentException if no matching archive type is found
+     * @since 0.8.5
+     */
     public static ArchiveType fromString(String value) {
         for (ArchiveType enumValue : ArchiveType.values()) {
             if (enumValue.getExtension().equals(value)) {

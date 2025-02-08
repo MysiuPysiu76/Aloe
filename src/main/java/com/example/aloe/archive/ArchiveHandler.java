@@ -21,6 +21,12 @@ import java.io.File;
  *     ArchiveHandler.decompress(new File("archive.tar"));
  * }</pre>
  *
+ * @see ZipArchive
+ * @see SevenZipArchive
+ * @see JarArchive
+ * @see RarArchive
+ * @see TarArchive
+ * @see TarGzArchive
  * @since 0.8.6
  */
 public class ArchiveHandler {
@@ -40,11 +46,6 @@ public class ArchiveHandler {
      *
      * @param parameters The {@link ArchiveParameters} object containing the compression details:
      * @throws IllegalArgumentException if the {@code files} list is empty or {@code fileName} is blank.
-     * @see ZipArchive
-     * @see SevenZipArchive
-     * @see JarArchive
-     * @see TarArchive
-     * @see TarGzArchive
      */
     public static void compress(ArchiveParameters parameters) {
         if (parameters.getFiles().isEmpty()) {
@@ -82,12 +83,6 @@ public class ArchiveHandler {
      * @param file The archive file to extract. The file type is determined by its extension.
      * @throws IllegalArgumentException if the file does not exist or if its format is unsupported.
      * @see FilesOperations#getExtension(File)
-     * @see ZipArchive
-     * @see SevenZipArchive
-     * @see JarArchive
-     * @see RarArchive
-     * @see TarArchive
-     * @see TarGzArchive
      */
     public static void extract(File file) {
         if (!file.exists()) {
