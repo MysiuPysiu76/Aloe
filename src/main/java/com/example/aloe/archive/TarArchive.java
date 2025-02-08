@@ -39,7 +39,7 @@ class TarArchive implements Archive {
      */
     @Override
     public void compress(ArchiveParameters parameters) {
-        File outputFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName() + ".tar");
+        File outputFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName());
         try (TarArchiveOutputStream tarOut = new TarArchiveOutputStream(new FileOutputStream(outputFile))) {
             for (File file : parameters.getFiles()) {
                 addFileToTar(tarOut, file, "");

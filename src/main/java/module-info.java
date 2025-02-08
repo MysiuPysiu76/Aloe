@@ -20,6 +20,7 @@ module com.example.aloe {
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.fontawesome;
     requires junrar;
+    requires org.apache.commons.io;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;

@@ -27,7 +27,7 @@ class SevenZipArchive implements Archive {
      */
     @Override
     public void compress(ArchiveParameters parameters) {
-        File archiveFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName() + ".7z");
+        File archiveFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName());
 
         try (SevenZOutputFile out = new SevenZOutputFile(archiveFile)) {
             for (File file : parameters.getFiles()) {

@@ -108,8 +108,8 @@ public class Main extends Application {
         navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
         root.getChildren().addAll(navigationPanel, filesPanel);
 
-        if (!SettingsManager.getSetting("files", "start-folder").equals("home")) {
-            loadDirectoryContents(new File((String) SettingsManager.getSetting("files", "start-folder-location")), true);
+        if (!Objects.equals(SettingsManager.getSetting("files", "start-folder"), "home")) {
+            loadDirectoryContents(new File((String) Objects.requireNonNull(SettingsManager.getSetting("files", "start-folder-location"))), true);
         } else {
             loadDirectoryContents(new File(System.getProperty("user.home")), true);
         }
@@ -119,17 +119,15 @@ public class Main extends Application {
         });
 
         scene.getStylesheets().add(getClass().getResource("/assets/styles/style.css").toExternalForm());
-        createMultiSelectionFilesContextMenu();
 
         stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
-//        new SettingsWindow().show();
         stage.setOnCloseRequest(event -> {
             SettingsManager.setSetting("menu", "divider-position", filesPanel.getDividerPositions());
-            if (SettingsManager.getSetting("files", "start-folder").equals("last")) {
+            if (Objects.equals(SettingsManager.getSetting("files", "start-folder"), "last")) {
                 SettingsManager.setSetting("files", "start-folder-location", FilesOperations.getCurrentDirectory().getAbsolutePath());
             }
         });
@@ -253,6 +251,8 @@ public class Main extends Application {
         FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);
         checkParentDirectory();
+        createMultiSelectionFilesContextMenu();
+
 
         grid = new FlowPane();
         grid.setPadding(new Insets(5));
@@ -589,7 +589,7 @@ public class Main extends Application {
             refreshCurrentDirectory();
         });
         MenuItem archive;
-        if (thisFile.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar") || fileName.endsWith(".7z"))) {
+        if (thisFile.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar") || fileName.endsWith(".7z") || fileName.endsWith(".jar"))) {
             archive = new MenuItem(Translator.translate("context-menu.extract"));
             archive.setOnAction(event -> {
                 ArchiveHandler.extract(thisFile);
@@ -748,9 +748,9 @@ public class Main extends Application {
         create.setOnAction(event -> {
             window.close();
             if (password.isSelected()) {
-                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText(), compress.isSelected(), passwordText.getText()));
+                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText() + archiveType.getValue().getExtension(), compress.isSelected(), passwordText.getText()));
             } else {
-                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText(), compress.isSelected()));
+                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText() + archiveType.getValue().getExtension(), compress.isSelected()));
             }
             refreshCurrentDirectory();
         });

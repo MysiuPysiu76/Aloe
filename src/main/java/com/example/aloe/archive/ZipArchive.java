@@ -88,7 +88,7 @@ class ZipArchive implements Archive {
      * @return a configured {@link ZipFile} instance.
      */
     private ZipFile createZipFileInstance(ArchiveParameters parameters) {
-        File zipFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName() + ".zip");
+        File zipFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName());
         return (parameters.getPassword() == null) ? new ZipFile(zipFile) : new ZipFile(zipFile, parameters.getPassword().toCharArray());
     }
 

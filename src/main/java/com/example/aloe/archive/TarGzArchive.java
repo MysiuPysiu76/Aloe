@@ -39,7 +39,7 @@ class TarGzArchive extends TarArchive {
      */
     @Override
     public void compress(ArchiveParameters parameters) {
-        File outputFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName() + ".tar.gz");
+        File outputFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName());
         try (FileOutputStream fos = new FileOutputStream(outputFile);
              BufferedOutputStream bos = new BufferedOutputStream(fos);
              GZIPOutputStream gzos = new GZIPOutputStream(bos);

@@ -26,6 +26,11 @@ public enum ArchiveType {
     SEVEN_ZIP(".7z"),
 
     /**
+     * Represents the JAR archive format.
+     */
+    JAR(".jar"),
+
+    /**
      * Represents the RAR archive format.
      */
     RAR(".rar"),
@@ -69,7 +74,6 @@ public enum ArchiveType {
         }
         throw new IllegalArgumentException("Enum not found: " + value);
     }
-
 
     /**
      * Returns the file extension as the string representation of the archive type.
