@@ -71,7 +71,7 @@ public class AboutWindow extends Stage {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("1.0.7");
+        Label version = new Label("1.0.8");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));
@@ -110,7 +110,7 @@ public class AboutWindow extends Stage {
         inspiration.getStyleClass().add("text-center");
         inspiration.setWrapText(true);
 
-        Hyperlink linkCreator = createLink(Translator.translate("window.about.creator-website"), "https://github.com/Meiroth73");
+        Hyperlink linkCreator = createLink(Translator.translate("window.about.creator-website"), "https://github.com/MysiuPysiu76");
 
         Label usedIcons = new Label(Translator.translate("window.about.used-icons"));
 

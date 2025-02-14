@@ -142,5 +142,19 @@
   "window.properties.permissions.group": "Group: ",
   "window.properties.permissions.other": "Other: ",
   "window.properties.permissions.update": "Update",
-  "window.properties.permissions.apply-to-subdirectories": "Apply to subdirectories"
+  "window.properties.permissions.apply-to-subdirectories": "Apply to subdirectories",
+  "window.properties.permissions.acl.read-data": "Read data",
+  "window.properties.permissions.acl.write-data": "Write data",
+  "window.properties.permissions.acl.append-data": "Append data",
+  "window.properties.permissions.acl.read-named-attrs": "Read named attributes",
+  "window.properties.permissions.acl.write-named-attrs": "Write named attributes",
+  "window.properties.permissions.acl.execute": "Execute",
+  "window.properties.permissions.acl.delete-child": "Delete child",
+  "window.properties.permissions.acl.read-attributes": "Read attributes",
+  "window.properties.permissions.acl.write-attributes": "Write attributes",
+  "window.properties.permissions.acl.delete": "Delete",
+  "window.properties.permissions.acl.read-acl": "Read ACL",
+  "window.properties.permissions.acl.write-acl": "Write ACL",
+  "window.properties.permissions.acl.write-owner": "Write owner",
+  "window.properties.permissions.acl.synchronize": "Synchronize"
 }

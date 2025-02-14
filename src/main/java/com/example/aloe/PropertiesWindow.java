@@ -1,6 +1,9 @@
 package com.example.aloe;
 
 import com.example.aloe.settings.SettingsManager;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,7 +22,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
-import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.FileSystems;
+import java.nio.file.attribute.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -29,8 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -46,6 +48,8 @@ public class PropertiesWindow extends Stage {
     private final File file;
     private GridPane permissions;
     private final short height;
+    private ListView<String> usersListView = new ListView<>();
+    private ObservableList<String> usersList = FXCollections.observableArrayList();
 
     public PropertiesWindow(File file) {
         this.file = file;
@@ -305,6 +309,16 @@ public class PropertiesWindow extends Stage {
     }
 
     private void loadPermissions() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+            loadPOSIXPermissions();
+        } else {
+            loadWindowsPermissions();
+        }
+        this.setTitle(Translator.translate("window.properties.permissions"));
+    }
+
+    private void loadPOSIXPermissions() {
         VBox root = new VBox();
         Button backToProperties = getNavigateButton("window.properties", true);
         backToProperties.setOnAction(e -> loadProperties());
@@ -332,7 +346,178 @@ public class PropertiesWindow extends Stage {
         root.getChildren().addAll(buttonWrapper, content);
         root.setAlignment(Pos.TOP_CENTER);
         this.setScene(new Scene(root, 330, height));
-        this.setTitle(Translator.translate("window.properties.permissions"));
+    }
+
+    private void loadWindowsPermissions() {
+        VBox root = new VBox();
+        Button backToProperties = getNavigateButton("window.properties", true);
+        backToProperties.setOnAction(e -> loadProperties());
+        VBox buttonWrapper = new VBox(backToProperties);
+        buttonWrapper.setAlignment(Pos.TOP_LEFT);
+
+        usersListView.setItems(usersList);
+        usersListView.setMaxHeight(120);
+        usersListView.setMinWidth(100);
+        usersListView.setPrefWidth(200);
+        usersListView.setMaxWidth(400);
+
+        usersListView.getSelectionModel().selectedItemProperty().addListener((obs, oldUser, newUser) -> {
+            if (newUser != null) {
+                loadWindowsPermissionsGrid(newUser);
+            }
+        });
+
+        Label choseUserLabel = new Label(Translator.translate("window.properties.permissions.chose-user"));
+        Label modifyPermissionsLabel = new Label(Translator.translate("window.properties.permissions.modify-permissions"));
+
+        Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
+        updatePermissions.setOnAction(e -> {
+            applyWindowsPermissions();
+        });
+        HBox.setMargin(updatePermissions, new Insets(25));
+        HBox bottomButtonWrapper = new HBox(WindowComponents.getSpacer(), updatePermissions);
+
+        AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
+        List<String> users = new ArrayList<>();
+        try {
+            for (AclEntry entry : view.getAcl()) {
+                users.add(entry.principal().getName());
+                Collections.sort(users);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        loadWindowsPermissionsGrid(users.getFirst());
+
+        permissionsPane.setMinWidth(150);
+        permissionsPane.setPrefWidth(200);
+        permissionsPane.setMaxWidth(400);
+        permissionsPane.setPrefHeight(200);
+        permissionsPane.setMaxHeight(400);
+
+        root.getChildren().addAll(buttonWrapper, choseUserLabel, usersListView, modifyPermissionsLabel, permissionsPane, bottomButtonWrapper);
+        root.setAlignment(Pos.TOP_CENTER);
+        this.setScene(new Scene(root, 330, height));
+        loadUsers();
+    }
+
+    private ScrollPane permissionsPane = new ScrollPane();
+
+    private void loadWindowsPermissionsGrid(String userName) {
+        GridPane permissions = new GridPane();
+        AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
+        if (view == null) {
+            return;
+        }
+
+        List<AclEntry> aclEntries;
+        try {
+            aclEntries = view.getAcl();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (AclEntry entry : aclEntries) {
+            if (entry.principal().getName().equals(userName)) {
+                byte i = 0;
+                for (AclEntryPermission perm : AclEntryPermission.values()) {
+                    String permName = perm.toString().toLowerCase().replace("_", "-");
+                    permissions.add(getLabel(Translator.translate("window.properties.permissions.acl." + permName)), 0, i);
+                    permissions.add(getCheckBox(entry.permissions().contains(perm)), 1, i);
+                    i++;
+                }
+            }
+        }
+        permissionsPane.setContent(permissions);
+        permissionsPane.setVvalue(0);
+    }
+
+    private List<Boolean> getSelectedWindowsPermissions() {
+        List<Boolean> permissions = new ArrayList<>();
+        GridPane permissionsGrid = (GridPane) permissionsPane.getContent();
+
+        for (Node node : permissionsGrid.getChildren()) {
+            if (node instanceof CheckBox checkBox) {
+                permissions.add(checkBox.isSelected());
+            }
+        }
+
+        return permissions;
+    }
+
+    private void applyWindowsPermissions() {
+        String userName = usersListView.getSelectionModel().getSelectedItem();
+        List<Boolean> permissionsList = getSelectedWindowsPermissions();
+
+        try {
+            UserPrincipal user = FileSystems.getDefault()
+                    .getUserPrincipalLookupService()
+                    .lookupPrincipalByName(userName);
+
+            AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
+            List<AclEntry> aclList = view.getAcl();
+            aclList.removeIf(entry -> entry.principal().equals(userName));
+
+            Set<AclEntryPermission> permissions = new HashSet<>();
+            if (permissionsList.get(0)) permissions.add(AclEntryPermission.READ_DATA);
+            if (permissionsList.get(1)) permissions.add(AclEntryPermission.WRITE_DATA);
+            if (permissionsList.get(2)) permissions.add(AclEntryPermission.APPEND_DATA);
+            if (permissionsList.get(3)) permissions.add(AclEntryPermission.READ_NAMED_ATTRS);
+            if (permissionsList.get(4)) permissions.add(AclEntryPermission.WRITE_NAMED_ATTRS);
+            if (permissionsList.get(5)) permissions.add(AclEntryPermission.EXECUTE);
+            if (permissionsList.get(6)) permissions.add(AclEntryPermission.DELETE_CHILD);
+            if (permissionsList.get(7)) permissions.add(AclEntryPermission.READ_ATTRIBUTES);
+            if (permissionsList.get(8)) permissions.add(AclEntryPermission.WRITE_ATTRIBUTES);
+            if (permissionsList.get(9)) permissions.add(AclEntryPermission.DELETE);
+            if (permissionsList.get(10)) permissions.add(AclEntryPermission.READ_ACL);
+            if (permissionsList.get(11)) permissions.add(AclEntryPermission.WRITE_ACL);
+            if (permissionsList.get(12)) permissions.add(AclEntryPermission.WRITE_OWNER);
+            if (permissionsList.get(13)) permissions.add(AclEntryPermission.SYNCHRONIZE);
+
+            AclEntry entry = AclEntry.newBuilder()
+                    .setType(AclEntryType.ALLOW)
+                    .setPrincipal(user)
+                    .setPermissions(permissions)
+                    .build();
+
+            aclList.add(entry);
+            view.setAcl(aclList);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void loadUsers() {
+        try {
+            AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
+            if (view == null) {
+                return;
+            }
+            usersList.clear();
+            for (AclEntry entry : view.getAcl()) {
+                usersList.add(entry.principal().getName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class PermissionEntry {
+        private final AclEntryPermission permission;
+        private final SimpleBooleanProperty allow;
+
+        public PermissionEntry(AclEntryPermission permission, boolean allowed) {
+            this.permission = permission;
+            this.allow = new SimpleBooleanProperty(allowed);
+        }
+
+        public SimpleBooleanProperty allowProperty() {
+            return allow;
+        }
+
+        public AclEntryPermission getPermission() {
+            return permission;
+        }
     }
 
     private void loadPermissionsGrid() {
