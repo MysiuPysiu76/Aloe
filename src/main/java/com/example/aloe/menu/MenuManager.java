@@ -6,6 +6,7 @@ import com.example.aloe.Translator;
 import com.example.aloe.settings.SettingsManager;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -19,6 +20,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class MenuManager {
     private static VBox menu;
@@ -37,30 +39,36 @@ public class MenuManager {
         List<Map<String, Object>> items = (List<Map<String, Object>>) SettingsManager.getSetting("menu", "items");
         menu = new VBox();
         menu.setAlignment(Pos.TOP_CENTER);
-        boolean useIcon = SettingsManager.getSetting("menu", "use-icon");
-        boolean useText = SettingsManager.getSetting("menu", "use-text");
-        if (!(items == null || items.size() == 0)) {
+        boolean useIcon = Boolean.TRUE.equals(SettingsManager.getSetting("menu", "use-icon"));
+        boolean useText = Boolean.TRUE.equals(SettingsManager.getSetting("menu", "use-text"));
+        boolean rightPageIcon = Objects.equals(SettingsManager.getSetting("menu", "icon-position"), "right");
+        if (!(items == null || items.isEmpty())) {
             for (Map<String, Object> item : items) {
-                menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon"), useIcon, useText));
+                menu.getChildren().add(getMenuButton((String) item.get("path"), (String) item.get("name"), (String) item.get("icon"), useIcon, useText, rightPageIcon));
             }
         }
         Main.loadMenu();
         MenuManager.setMenuOptions();
     }
 
-    private static Button getMenuButton(String path, String name, String icon, boolean useIcon, boolean useText) {
+    private static Button getMenuButton(String path, String name, String icon, boolean useIcon, boolean useText, boolean rightPageIcon) {
         Button button = new Button();
         if (useIcon) {
             FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
             fontIcon.setIconSize(16);
             button.setGraphicTextGap(10);
             button.setGraphic(fontIcon);
+            if (rightPageIcon) {
+                button.setAlignment(Pos.CENTER_RIGHT);
+                button.setContentDisplay(ContentDisplay.RIGHT);
+            } else {
+                button.setAlignment(Pos.CENTER_LEFT);
+            }
         }
         if (useText) {
             button.setText(name);
         }
         button.getStyleClass().add("menu-option");
-        button.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(button, Priority.ALWAYS);
         button.setMaxWidth(Double.MAX_VALUE);
         setMenuItemOptions(button, path, name, FontAwesome.valueOf(icon));
@@ -68,9 +76,6 @@ public class MenuManager {
             if (e.getButton() == MouseButton.PRIMARY) {
                 new Main().loadDirectoryContents(new File(path), true);
             }
-        });
-        Main.filesMenu.widthProperty().addListener((observable, oldValue, newValue) -> {
-            button.setMinWidth(newValue.doubleValue());
         });
         return button;
     }

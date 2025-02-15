@@ -4,7 +4,8 @@
     "position": "left",
     "divider-position": 0.2,
     "use-icon": true,
-    "use-text": true
+    "use-text": true,
+    "icon-position": "left"
   },
   "files": {
     "show-hidden": false,

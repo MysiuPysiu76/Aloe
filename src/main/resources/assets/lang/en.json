@@ -156,5 +156,6 @@
   "window.properties.permissions.acl.read-acl": "Read ACL",
   "window.properties.permissions.acl.write-acl": "Write ACL",
   "window.properties.permissions.acl.write-owner": "Write owner",
-  "window.properties.permissions.acl.synchronize": "Synchronize"
+  "window.properties.permissions.acl.synchronize": "Synchronize",
+  "window.settings.menu.icons-page": "Icons page"
 }

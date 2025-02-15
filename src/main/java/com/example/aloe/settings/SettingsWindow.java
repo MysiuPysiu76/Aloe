@@ -129,7 +129,8 @@ public final class SettingsWindow extends Stage {
                 getSettingBox("window.settings.menu.use-menu", SettingsControls.getToggleSwitch("use-menu")),
                 getSettingBox("window.settings.menu.menu-position", SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
                 getSettingBox("window.settings.menu.use-icon", SettingsControls.getToggleSwitch("use-icon")),
-                getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text"))));
+                getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text")),
+                getSettingBox("window.settings.menu.icons-page", SettingsControls.getChoiceBox("icon-position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right")))));
     }
 
     private static void loadFilesSettings() {
