@@ -16,21 +16,17 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public record FileProperties(File file) {
+public record FileProperties(@NotNull File file) {
 
-    public FileProperties(@NotNull File file) {
-        this.file = file;
-    }
-
-    private String getName() {
+    public String getName() {
         return this.file.getName();
     }
 
-    private String getPath() {
+    public String getPath() {
         return this.file.getPath();
     }
 
-    private String getType() {
+    public String getType() {
         if (this.file.isFile()) {
             try {
                 return new Tika().detect(this.file);
@@ -51,11 +47,11 @@ public record FileProperties(File file) {
         }
     }
 
-    private String getParent() {
+    public String getParent() {
         return this.file.getParent();
     }
 
-    private String getItemsCount() {
+    public String getItemsCount() {
         try {
             return String.valueOf(Files.list(Path.of(this.file.getPath())).count());
         } catch (IOException e) {
@@ -63,7 +59,7 @@ public record FileProperties(File file) {
         }
     }
 
-    private String getCreationTime() {
+    public String getCreationTime() {
         try {
             FileTime creationTime = Files.readAttributes(this.file.toPath(), BasicFileAttributes.class).creationTime();
             return OffsetDateTime.parse(creationTime.toString()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
@@ -72,7 +68,7 @@ public record FileProperties(File file) {
         }
     }
 
-    private String getModifiedTime() {
+    public String getModifiedTime() {
         LocalDateTime modifiedDate = LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(this.file.lastModified()),
                 ZoneId.systemDefault()

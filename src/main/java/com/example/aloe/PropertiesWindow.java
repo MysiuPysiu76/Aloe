@@ -38,18 +38,18 @@ import org.jetbrains.annotations.NotNull;
 public class PropertiesWindow extends Stage {
 
     private final File file;
-    private VBox root= new VBox();
+    private final VBox root = new VBox();
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
     private String hash = "";
 
     public PropertiesWindow(@NotNull File file) {
         this.file = file;
-        this.setMinHeight(file.isFile() ? 400 : 430);
+        this.setMinHeight(430);
         this.setMinWidth(350);
 
         root.getChildren().addAll(WindowComponents.getSpacer(), WindowComponents.getSpacer());
 
-        this.setScene(new Scene(root, 300, file.isFile() ? 400 : 430));
+        this.setScene(new Scene(root, 300, 430));
         this.show();
         loadProperties();
     }
@@ -100,16 +100,14 @@ public class PropertiesWindow extends Stage {
 
         byte index = 0;
         for (Map.Entry<String, String> entry : properties.getProperties().entrySet()) {
-            Label title = new Label(entry.getKey());
-            title.setAlignment(Pos.CENTER_RIGHT);
-            title.setPadding(new Insets(4, 10, 4, 0));
-            title.setMinWidth(110);
-            title.setMaxWidth(160);
+            Label title = getPropertiesLabel(entry.getKey());
             Label value = new Label(entry.getValue());
             fileData.add(title, 0, index);
             fileData.add(value, 1, index);
             index++;
         }
+
+        tryAddOtherProperties(fileData);
 
         content.getChildren().addAll(iconWrapper, fileData);
         this.root.getChildren().set(1, content);
@@ -117,10 +115,36 @@ public class PropertiesWindow extends Stage {
         calculateFilesSizes();
     }
 
+    private Label getPropertiesLabel(String text) {
+        Label label = new Label(text);
+        label.setAlignment(Pos.CENTER_RIGHT);
+        label.setPadding(new Insets(4, 10, 4, 0));
+        label.setMinWidth(110);
+        label.setMaxWidth(160);
+        return label;
+    }
+
+    private void tryAddOtherProperties(GridPane grid) {
+        String type = ((Label) grid.getChildren().get(5)).getText();
+
+        if (Arrays.asList(new String[]{"image/jpeg", "image/png", "image/tiff", "image/gif", "image/bmp", "image/webp"}).contains(type)) {
+            Button button = getLinkButton(Translator.translate("show"));
+            button.setOnAction(event -> loadImageProperties());
+            grid.add(getPropertiesLabel(Translator.translate("window.properties.image")), 0, grid.getRowCount());
+            grid.add(button, 1, grid.getRowCount() - 1);
+        }
+    }
+
+    private Button getLinkButton(String text) {
+        Button button = new Button(text);
+        button.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 2 0 2 0; -fx-text-decoration: underline; -fx-text-fill: #24baba; -fx-cursor: pointer;");
+        return button;
+    }
+
     private void calculateFilesSizes() {
-        GridPane pane = (GridPane)((VBox)(root.getChildren().get(1))).getChildren().get(1);
-        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.isFile() ? file.length() : FilesOperations.calculateDirectorySize(this.file)), executor).thenAccept(result -> Platform.runLater(() -> ((Label)pane.getChildren().get(7)).setText(result)));
-        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> ((Label)pane.getChildren().get(file.isFile() ? 15 : 17)).setText(result)));
+        GridPane pane = (GridPane) ((VBox) (root.getChildren().get(1))).getChildren().get(1);
+        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.isFile() ? file.length() : FilesOperations.calculateDirectorySize(this.file)), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(7)).setText(result)));
+        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(file.isFile() ? 15 : 17)).setText(result)));
     }
 
     private ImageView getIcon(File file, boolean useThumbnails) {
@@ -139,7 +163,8 @@ public class PropertiesWindow extends Stage {
 
     private Image loadIconForFile(File file, boolean useThumbnails) {
         return switch (FilesOperations.getExtension(file).toLowerCase()) {
-            case "jpg", "jpeg", "png", "gif" -> useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
+            case "jpg", "jpeg", "png", "gif" ->
+                    useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
             case "mp4" -> loadIcon("/assets/icons/video.png");
             case "mp3", "ogg" -> loadIcon("/assets/icons/music.png");
             case "iso" -> loadIcon("/assets/icons/cd.png");
@@ -330,7 +355,7 @@ public class PropertiesWindow extends Stage {
                 permissions.add(checkBox.isSelected());
             }
         }
-        return permissions; 
+        return permissions;
     }
 
     private CheckBox getCheckBox(boolean isSelected) {
@@ -419,7 +444,7 @@ public class PropertiesWindow extends Stage {
     }
 
     private ScrollPane getScrollPane() {
-        return (ScrollPane) ((VBox)((VBox)(root.getChildren().get(1))).getChildren().get(0)).getChildren().get(3);
+        return (ScrollPane) ((VBox) ((VBox) (root.getChildren().get(1))).getChildren().get(0)).getChildren().get(3);
     }
 
     private void loadACLPermissionsPane(List<String> permissionsList, List<Boolean> permissions) {
@@ -427,7 +452,7 @@ public class PropertiesWindow extends Stage {
         GridPane permissionsGrid = new GridPane();
 
         System.out.println(permissions.size());
-        for(byte i = 0; i < permissions.size(); i++) {
+        for (byte i = 0; i < permissions.size(); i++) {
             permissionsGrid.addRow(i, getLabel(Translator.translate("window.properties.permissions.acl." + permissionsList.get(i).toLowerCase().replace('_', '-'))), getCheckBox(permissions.get(i)));
         }
 
@@ -446,6 +471,24 @@ public class PropertiesWindow extends Stage {
         }
 
         return permissions;
+    }
+
+    private void loadImageProperties() {
+        loadPermissionsButtonBar();
+        VBox content = new VBox();
+
+        GridPane imageData = new GridPane();
+        imageData.setPadding(new Insets(5, 25, 5, 10));
+        imageData.setAlignment(Pos.TOP_CENTER);
+        ImageProperties imageProperties = new ImageProperties(this.file);
+
+        for (Map.Entry<String, String> entry : imageProperties.getProperties().entrySet()) {
+            imageData.addRow(imageData.getRowCount(), getPropertiesLabel(entry.getKey()), new Label(entry.getValue()));
+        }
+
+        content.getChildren().add(imageData);
+        this.root.getChildren().set(1, content);
+        this.setTitle(Translator.translate("window.properties.image-properties"));
     }
 
     @Override
