@@ -1,7 +1,8 @@
 package com.example.aloe;
 
+import com.example.aloe.permissions.ACLPermissions;
+import com.example.aloe.permissions.POSIXPermissions;
 import com.example.aloe.settings.SettingsManager;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -22,7 +23,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
-import java.nio.file.FileSystems;
 import java.nio.file.attribute.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -32,153 +32,95 @@ import java.util.concurrent.Executors;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
-import org.apache.tika.Tika;
+import org.jetbrains.annotations.NotNull;
 
 public class PropertiesWindow extends Stage {
 
+    private final File file;
+    private VBox root= new VBox();
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
     private String hash = "";
-    private final File file;
-    private GridPane permissions;
-    private final short height;
-    private ListView<String> usersListView = new ListView<>();
-    private ObservableList<String> usersList = FXCollections.observableArrayList();
 
-    public PropertiesWindow(File file) {
+    public PropertiesWindow(@NotNull File file) {
         this.file = file;
-        height = (short) (file.isFile() ? 385 : 410);
-        this.setMinHeight(height);
-        this.setMinWidth(330);
-        loadProperties();
+        this.setMinHeight(file.isFile() ? 400 : 430);
+        this.setMinWidth(350);
+
+        root.getChildren().addAll(WindowComponents.getSpacer(), WindowComponents.getSpacer());
+
+        this.setScene(new Scene(root, 300, file.isFile() ? 400 : 430));
         this.show();
+        loadProperties();
+    }
+
+    private void loadChecksumButtonBar() {
+        Button properties = getNavigateButton("window.properties", false);
+        properties.setOnAction(e -> loadProperties());
+        this.root.getChildren().set(0, new HBox(WindowComponents.getSpacer(), properties));
+    }
+
+    private void loadPropertiesButtonBar() {
+        HBox bar = new HBox();
+        if (this.file.isFile()) {
+            Button checksum = getNavigateButton("window.properties.checksum", true);
+            checksum.setOnAction(event -> loadChecksum());
+            bar.getChildren().add(checksum);
+        }
+        Button permissions = getNavigateButton("window.properties.permissions", false);
+        permissions.setOnAction(event -> {
+            loadPermissions();
+        });
+        bar.getChildren().addAll(WindowComponents.getSpacer(), permissions);
+        this.root.getChildren().set(0, bar);
+    }
+
+    private void loadPermissionsButtonBar() {
+        Button properties = getNavigateButton("window.properties", true);
+        properties.setOnAction(e -> loadProperties());
+        this.root.getChildren().set(0, new HBox(properties, WindowComponents.getSpacer()));
     }
 
     private void loadProperties() {
-        VBox root = new VBox();
-        HBox navigate = new HBox();
-
-        if (file.isFile()) {
-            Button checksum = getNavigateButton("window.properties.checksum", true);
-            checksum.setOnAction(event -> loadChecksum());
-            VBox checksumWrapper = new VBox(checksum);
-            checksumWrapper.setAlignment(Pos.CENTER_LEFT);
-            navigate.getChildren().add(checksumWrapper);
-        }
-
-        Button permissions = getNavigateButton("window.properties.permissions", false);
-        permissions.setOnAction(event -> loadPermissions());
-        VBox permissionWrapper = new VBox(permissions);
-        permissionWrapper.setAlignment(Pos.CENTER_RIGHT);
-        navigate.getChildren().addAll(WindowComponents.getSpacer(), permissionWrapper);
+        loadPropertiesButtonBar();
+        VBox content = new VBox();
 
         ImageView icon = getIcon(file, false);
-        icon.setFitHeight(75);
-        icon.setFitWidth(75);
+        icon.setFitHeight(77);
+        icon.setFitWidth(77);
         VBox iconWrapper = new VBox();
         iconWrapper.setAlignment(Pos.TOP_CENTER);
         iconWrapper.getChildren().add(icon);
-        VBox.setMargin(icon, new Insets(20, 10, 10, 2));
-
-        List<String> names = getFilePropertiesNames();
-        List<String> values = getFilePropertiesValues(file);
-
-        if (file.isFile()) {
-            this.setTitle(Translator.translate("window.properties.file-properties"));
-            try {
-                values.add(2, new Tika().detect(file));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            this.setTitle(Translator.translate("window.properties.folder-properties"));
-            values.add(2, Translator.translate("window.properties.folder"));
-            names.add(5, Translator.translate("window.properties.folder-contents"));
-            try {
-                values.add(5, Files.list(Path.of(file.getPath())).count() + Translator.translate("window.properties.items"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        VBox.setMargin(icon, new Insets(25, 10, 10, 2));
 
         GridPane fileData = new GridPane();
-        VBox.setMargin(fileData, new Insets(25, 0, -20, 0));
+        fileData.setAlignment(Pos.TOP_CENTER);
+        VBox.setMargin(fileData, new Insets(30, 15, -20, 0));
+        FileProperties properties = new FileProperties(file);
 
-        List<Label> valueLabels = new ArrayList<>();
-        for (int i = 0; i < names.size(); i++) {
-            Label name = new Label(names.get(i));
-            name.setAlignment(Pos.CENTER_RIGHT);
-            name.setPadding(new Insets(4, 10, 4, 0));
-            name.getStyleClass().add("name");
-            name.setMinWidth(110);
-            name.setMaxWidth(110);
-            Label value = new Label(values.get(i));
-            fileData.add(name, 0, i);
-            fileData.add(value, 1, i);
-            valueLabels.add(value);
+        byte index = 0;
+        for (Map.Entry<String, String> entry : properties.getProperties().entrySet()) {
+            Label title = new Label(entry.getKey());
+            title.setAlignment(Pos.CENTER_RIGHT);
+            title.setPadding(new Insets(4, 10, 4, 0));
+            title.setMinWidth(110);
+            title.setMaxWidth(160);
+            Label value = new Label(entry.getValue());
+            fileData.add(title, 0, index);
+            fileData.add(value, 1, index);
+            index++;
         }
-        root.getChildren().addAll(navigate, iconWrapper, fileData);
-        Scene scene = new Scene(root, 330, height);
-        this.setScene(scene);
-        CompletableFuture.supplyAsync(() -> getFileSize(file), executor).thenAccept(result -> Platform.runLater(() -> valueLabels.get(3).setText(result)));
-        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> valueLabels.get(file.isFile() ? 7 : 8).setText(result)));
+
+        content.getChildren().addAll(iconWrapper, fileData);
+        this.root.getChildren().set(1, content);
+        this.setTitle(Translator.translate("window.properties"));
+        calculateFilesSizes();
     }
 
-    private ArrayList<String> getFilePropertiesNames() {
-        ArrayList<String> names = new ArrayList<>();
-        names.add(Translator.translate("window.properties.file-name"));
-        names.add(Translator.translate("window.properties.file-path"));
-        names.add(Translator.translate("window.properties.file-type"));
-        names.add(Translator.translate("window.properties.file-size"));
-        names.add(Translator.translate("window.properties.file-parent"));
-        names.add(Translator.translate("window.properties.file-created"));
-        names.add(Translator.translate("window.properties.file-modified"));
-        names.add(Translator.translate("window.properties.free-space"));
-        return names;
-    }
-
-    private List<String> getFilePropertiesValues(File file) {
-        List<String> values = new ArrayList<>();
-        values.add(file.getName());
-        values.add(file.getPath());
-        values.add(Translator.translate("window.properties.calculating"));
-        values.add(file.getParent());
-        values.add(getCreationTime(file));
-        values.add(getModifiedTime(file));
-        values.add(Translator.translate("window.properties.calculated"));
-        return values;
-    }
-
-    private String getFileSize(File file) {
-        if (file.isDirectory()) {
-            long directorySize = FilesOperations.calculateDirectorySize(file);
-            return Utils.convertBytesByUnit(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")";
-        } else {
-            return Utils.convertBytesByUnit(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")";
-        }
-    }
-
-    private String getCreationTime(File file) {
-        try {
-            FileTime creationTime = Files.readAttributes(file.toPath(), BasicFileAttributes.class).creationTime();
-            return OffsetDateTime.parse(creationTime.toString()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getModifiedTime(File file) {
-        LocalDateTime modifiedDate = LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(file.lastModified()),
-                ZoneId.systemDefault()
-        );
-        return modifiedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+    private void calculateFilesSizes() {
+        GridPane pane = (GridPane)((VBox)(root.getChildren().get(1))).getChildren().get(1);
+        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.isFile() ? file.length() : FilesOperations.calculateDirectorySize(this.file)), executor).thenAccept(result -> Platform.runLater(() -> ((Label)pane.getChildren().get(7)).setText(result)));
+        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> ((Label)pane.getChildren().get(file.isFile() ? 15 : 17)).setText(result)));
     }
 
     private ImageView getIcon(File file, boolean useThumbnails) {
@@ -208,22 +150,21 @@ public class PropertiesWindow extends Stage {
     private Button getNavigateButton(String key, boolean leftIcon) {
         Button button = WindowComponents.getBackButton(key, leftIcon);
         button.setFont(Font.font(14 * 0.95));
+        button.setAlignment(Pos.CENTER);
         return button;
     }
 
     private void loadChecksum() {
-        VBox root = new VBox();
-        Button backToProperties = getNavigateButton("window.properties", false);
-        backToProperties.setOnAction(_ -> loadProperties());
-        VBox buttonWrapper = new VBox(backToProperties);
-        buttonWrapper.setAlignment(Pos.TOP_RIGHT);
+        loadChecksumButtonBar();
 
+        VBox content = new VBox();
         Accordion checksumAccordion = new Accordion(getVerifyChecksum(), getGenerateChecksum());
         checksumAccordion.setExpandedPane(checksumAccordion.getPanes().get(1));
         VBox.setVgrow(checksumAccordion, Priority.ALWAYS);
+        VBox.setVgrow(content, Priority.ALWAYS);
+        content.getChildren().add(checksumAccordion);
 
-        root.getChildren().addAll(buttonWrapper, checksumAccordion);
-        this.setScene(new Scene(root, 330, height));
+        this.root.getChildren().set(1, content);
         this.setTitle(Translator.translate("window.properties.checksum"));
     }
 
@@ -245,15 +186,13 @@ public class PropertiesWindow extends Stage {
         Label infoLabel = new Label();
         infoLabel.setWrapText(true);
         infoLabel.setStyle("-fx-font-size: 14px; -fx-padding: 4px");
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
 
         Button verifyChecksum = WindowComponents.getButton(Translator.translate("window.properties.checksum.verify-checksum"));
         verifyChecksum.setOnAction(e -> verifyChecksum(infoLabel, comboBox.getSelectionModel().getSelectedItem(), textArea.getText()));
         HBox buttonPanel = new HBox(verifyChecksum);
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
 
-        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, spacer, buttonPanel);
+        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, WindowComponents.getSpacer(), buttonPanel);
         return new TitledPane(Translator.translate("window.properties.checksum.verify"), contentPane);
     }
 
@@ -270,8 +209,6 @@ public class PropertiesWindow extends Stage {
         Label hash = new Label();
         hash.setWrapText(true);
         hash.setStyle("-fx-font-size: 13.5px; -fx-padding: 4px 10px 10px 10px");
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
 
         Button copy = WindowComponents.getButton(Translator.translate("button.copy"));
         copy.setOnAction(e -> Utils.copyTextToClipboard(this.hash));
@@ -281,7 +218,7 @@ public class PropertiesWindow extends Stage {
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
         buttonPanel.setSpacing(10);
 
-        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, checksumLabel, hash, spacer, buttonPanel);
+        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, checksumLabel, hash, WindowComponents.getVBoxSpacer(), buttonPanel);
         return new TitledPane(Translator.translate("window.properties.checksum.generate"), contentPane);
     }
 
@@ -313,270 +250,87 @@ public class PropertiesWindow extends Stage {
         if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
             loadPOSIXPermissions();
         } else {
-            loadWindowsPermissions();
+            loadACLPermissions();
         }
+        loadPermissionsButtonBar();
         this.setTitle(Translator.translate("window.properties.permissions"));
     }
 
     private void loadPOSIXPermissions() {
-        VBox root = new VBox();
-        Button backToProperties = getNavigateButton("window.properties", true);
-        backToProperties.setOnAction(e -> loadProperties());
-        VBox buttonWrapper = new VBox(backToProperties);
-        buttonWrapper.setAlignment(Pos.TOP_LEFT);
-
-        loadPermissionsGrid();
-        HBox container = new HBox(permissions);
-        container.setAlignment(Pos.TOP_CENTER);
-        container.setPadding(new Insets(45, 0, 0, 0));
+        POSIXPermissions permissions = new POSIXPermissions(file);
+        GridPane permissionsGrid = loadPOSIXPermissionsGrid(permissions.loadPermissions());
+        permissionsGrid.setAlignment(Pos.CENTER);
 
         CheckBox applyToSubdirectories = new CheckBox(Translator.translate("window.properties.permissions.apply-to-subdirectories"));
-        applyToSubdirectories.setPadding(new Insets(25, 0, 0, 30));
+        applyToSubdirectories.setPadding(new Insets(35, 10, 15, 10));
         applyToSubdirectories.setDisable(file.isFile());
 
         Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
-        updatePermissions.setOnAction(e -> applyPermissions(applyToSubdirectories.isSelected()));
-        HBox.setMargin(updatePermissions, new Insets(25));
-        HBox bottomButtonWrapper = new HBox(WindowComponents.getSpacer(), updatePermissions);
-        VBox content = new VBox(container, applyToSubdirectories, bottomButtonWrapper);
-        content.setAlignment(Pos.TOP_LEFT);
-        content.setMinWidth(330);
-        content.setMaxWidth(330);
-
-        root.getChildren().addAll(buttonWrapper, content);
-        root.setAlignment(Pos.TOP_CENTER);
-        this.setScene(new Scene(root, 330, height));
-    }
-
-    private void loadWindowsPermissions() {
-        VBox root = new VBox();
-        Button backToProperties = getNavigateButton("window.properties", true);
-        backToProperties.setOnAction(e -> loadProperties());
-        VBox buttonWrapper = new VBox(backToProperties);
-        buttonWrapper.setAlignment(Pos.TOP_LEFT);
-
-        usersListView.setItems(usersList);
-        usersListView.setMaxHeight(120);
-        usersListView.setMinWidth(100);
-        usersListView.setPrefWidth(200);
-        usersListView.setMaxWidth(400);
-
-        usersListView.getSelectionModel().selectedItemProperty().addListener((obs, oldUser, newUser) -> {
-            if (newUser != null) {
-                loadWindowsPermissionsGrid(newUser);
-            }
-        });
-
-        Label choseUserLabel = new Label(Translator.translate("window.properties.permissions.chose-user"));
-        Label modifyPermissionsLabel = new Label(Translator.translate("window.properties.permissions.modify-permissions"));
-
-        Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
         updatePermissions.setOnAction(e -> {
-            applyWindowsPermissions();
+            permissions.setRecursively(applyToSubdirectories.isSelected());
+            permissions.savePermissions(getSelectedPermissions());
         });
-        HBox.setMargin(updatePermissions, new Insets(25));
-        HBox bottomButtonWrapper = new HBox(WindowComponents.getSpacer(), updatePermissions);
 
-        AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
-        List<String> users = new ArrayList<>();
-        try {
-            for (AclEntry entry : view.getAcl()) {
-                users.add(entry.principal().getName());
-                Collections.sort(users);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        loadWindowsPermissionsGrid(users.getFirst());
+        VBox content = new VBox(permissionsGrid, applyToSubdirectories, updatePermissions);
+        content.setAlignment(Pos.TOP_CENTER);
+        content.setMinWidth(330);
 
-        permissionsPane.setMinWidth(150);
-        permissionsPane.setPrefWidth(200);
-        permissionsPane.setMaxWidth(400);
-        permissionsPane.setPrefHeight(200);
-        permissionsPane.setMaxHeight(400);
-
-        root.getChildren().addAll(buttonWrapper, choseUserLabel, usersListView, modifyPermissionsLabel, permissionsPane, bottomButtonWrapper);
-        root.setAlignment(Pos.TOP_CENTER);
-        this.setScene(new Scene(root, 330, height));
-        loadUsers();
+        root.getChildren().set(1, content);
     }
 
-    private ScrollPane permissionsPane = new ScrollPane();
+    private GridPane loadPOSIXPermissionsGrid(List<Boolean> permissionsList) {
+        GridPane permissionsGrid = new GridPane();
+        permissionsGrid.setAlignment(Pos.CENTER);
+        permissionsGrid.setPadding(new Insets(25, 0, 0, 0));
 
-    private void loadWindowsPermissionsGrid(String userName) {
-        GridPane permissions = new GridPane();
-        AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
-        if (view == null) {
-            return;
-        }
+        List<String> title = List.of(Translator.translate("window.properties.permissions.owner"), Translator.translate("window.properties.permissions.group"), Translator.translate("window.properties.permissions.other"));
 
-        List<AclEntry> aclEntries;
-        try {
-            aclEntries = view.getAcl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Label read = getLabel(Translator.translate("window.properties.permissions.read"));
+        Label write = getLabel(Translator.translate("window.properties.permissions.write"));
+        Label execute = getLabel(Translator.translate("window.properties.permissions.execute"));
 
-        for (AclEntry entry : aclEntries) {
-            if (entry.principal().getName().equals(userName)) {
-                byte i = 0;
-                for (AclEntryPermission perm : AclEntryPermission.values()) {
-                    String permName = perm.toString().toLowerCase().replace("_", "-");
-                    permissions.add(getLabel(Translator.translate("window.properties.permissions.acl." + permName)), 0, i);
-                    permissions.add(getCheckBox(entry.permissions().contains(perm)), 1, i);
-                    i++;
-                }
+        permissionsGrid.addRow(0, new Label(), read, write, execute);
+        addRowSeparator(1, permissionsGrid);
+
+        for (int i = 0; i < 3; i++) {
+            Label roleLabel = getLabel(title.get(i));
+            CheckBox readBox = getCheckBox(permissionsList.get(i * 3));
+            CheckBox writeBox = getCheckBox(permissionsList.get(i * 3 + 1));
+            CheckBox executeBox = getCheckBox(permissionsList.get(i * 3 + 2));
+
+            permissionsGrid.addRow(i * 2 + 2, roleLabel, readBox, writeBox, executeBox);
+            if (i < 2) {
+                addRowSeparator(i * 2 + 3, permissionsGrid);
             }
         }
-        permissionsPane.setContent(permissions);
-        permissionsPane.setVvalue(0);
+        return permissionsGrid;
     }
 
-    private List<Boolean> getSelectedWindowsPermissions() {
+    private void addRowSeparator(int row, GridPane grid) {
+        Line line = new Line(0, 0, 290, 0);
+        grid.add(line, 0, row);
+        GridPane.setColumnSpan(line, 4);
+    }
+
+    private GridPane getPermissionsGrid(VBox parent) {
+        for (Node node : parent.getChildrenUnmodifiable()) {
+            if (node instanceof GridPane) {
+                return (GridPane) node;
+            }
+        }
+        return null;
+    }
+
+    private List<Boolean> getSelectedPermissions() {
         List<Boolean> permissions = new ArrayList<>();
-        GridPane permissionsGrid = (GridPane) permissionsPane.getContent();
+        GridPane permissionsGrid = getPermissionsGrid((VBox) root.getChildren().get(1));
 
         for (Node node : permissionsGrid.getChildren()) {
             if (node instanceof CheckBox checkBox) {
                 permissions.add(checkBox.isSelected());
             }
         }
-
-        return permissions;
-    }
-
-    private void applyWindowsPermissions() {
-        String userName = usersListView.getSelectionModel().getSelectedItem();
-        List<Boolean> permissionsList = getSelectedWindowsPermissions();
-
-        try {
-            UserPrincipal user = FileSystems.getDefault()
-                    .getUserPrincipalLookupService()
-                    .lookupPrincipalByName(userName);
-
-            AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
-            List<AclEntry> aclList = view.getAcl();
-            aclList.removeIf(entry -> entry.principal().equals(userName));
-
-            Set<AclEntryPermission> permissions = new HashSet<>();
-            if (permissionsList.get(0)) permissions.add(AclEntryPermission.READ_DATA);
-            if (permissionsList.get(1)) permissions.add(AclEntryPermission.WRITE_DATA);
-            if (permissionsList.get(2)) permissions.add(AclEntryPermission.APPEND_DATA);
-            if (permissionsList.get(3)) permissions.add(AclEntryPermission.READ_NAMED_ATTRS);
-            if (permissionsList.get(4)) permissions.add(AclEntryPermission.WRITE_NAMED_ATTRS);
-            if (permissionsList.get(5)) permissions.add(AclEntryPermission.EXECUTE);
-            if (permissionsList.get(6)) permissions.add(AclEntryPermission.DELETE_CHILD);
-            if (permissionsList.get(7)) permissions.add(AclEntryPermission.READ_ATTRIBUTES);
-            if (permissionsList.get(8)) permissions.add(AclEntryPermission.WRITE_ATTRIBUTES);
-            if (permissionsList.get(9)) permissions.add(AclEntryPermission.DELETE);
-            if (permissionsList.get(10)) permissions.add(AclEntryPermission.READ_ACL);
-            if (permissionsList.get(11)) permissions.add(AclEntryPermission.WRITE_ACL);
-            if (permissionsList.get(12)) permissions.add(AclEntryPermission.WRITE_OWNER);
-            if (permissionsList.get(13)) permissions.add(AclEntryPermission.SYNCHRONIZE);
-
-            AclEntry entry = AclEntry.newBuilder()
-                    .setType(AclEntryType.ALLOW)
-                    .setPrincipal(user)
-                    .setPermissions(permissions)
-                    .build();
-
-            aclList.add(entry);
-            view.setAcl(aclList);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void loadUsers() {
-        try {
-            AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
-            if (view == null) {
-                return;
-            }
-            usersList.clear();
-            for (AclEntry entry : view.getAcl()) {
-                usersList.add(entry.principal().getName());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static class PermissionEntry {
-        private final AclEntryPermission permission;
-        private final SimpleBooleanProperty allow;
-
-        public PermissionEntry(AclEntryPermission permission, boolean allowed) {
-            this.permission = permission;
-            this.allow = new SimpleBooleanProperty(allowed);
-        }
-
-        public SimpleBooleanProperty allowProperty() {
-            return allow;
-        }
-
-        public AclEntryPermission getPermission() {
-            return permission;
-        }
-    }
-
-    private void loadPermissionsGrid() {
-        try {
-            Set<PosixFilePermission> perms = Files.getPosixFilePermissions(file.toPath());
-            permissions = new GridPane();
-
-            Label read = getLabel(Translator.translate("window.properties.permissions.read")),
-                    write = getLabel(Translator.translate("window.properties.permissions.write")),
-                    execute = getLabel(Translator.translate("window.properties.permissions.execute")),
-                    owner = getLabel(Translator.translate("window.properties.permissions.owner")),
-                    group = getLabel(Translator.translate("window.properties.permissions.group")),
-                    others = getLabel(Translator.translate("window.properties.permissions.other"));
-
-            CheckBox ownerRead = getCheckBox(perms.contains(PosixFilePermission.OWNER_READ)),
-                    ownerWrite = getCheckBox(perms.contains(PosixFilePermission.OWNER_WRITE)),
-                    ownerExecute = getCheckBox(perms.contains(PosixFilePermission.OWNER_EXECUTE)),
-                    groupRead = getCheckBox(perms.contains(PosixFilePermission.GROUP_READ)),
-                    groupWrite = getCheckBox(perms.contains(PosixFilePermission.GROUP_WRITE)),
-                    groupExecute = getCheckBox(perms.contains(PosixFilePermission.GROUP_EXECUTE)),
-                    othersRead = getCheckBox(perms.contains(PosixFilePermission.OTHERS_READ)),
-                    othersWrite = getCheckBox(perms.contains(PosixFilePermission.OTHERS_WRITE)),
-                    othersExecute = getCheckBox(perms.contains(PosixFilePermission.OTHERS_EXECUTE));
-
-            permissions.add(new Label(), 0, 0);
-            permissions.add(read, 1, 0);
-            permissions.add(write, 2, 0);
-            permissions.add(execute, 3, 0);
-
-            Line lineHeader = new Line(0, 0, 280, 0);
-            permissions.add(lineHeader, 0, 1);
-            GridPane.setColumnSpan(lineHeader, 4);
-
-            permissions.add(owner, 0, 2);
-            permissions.add(ownerRead, 1, 2);
-            permissions.add(ownerWrite, 2, 2);
-            permissions.add(ownerExecute, 3, 2);
-
-            Line line1 = new Line(0, 0, 280, 0);
-            permissions.add(line1, 0, 3);
-            GridPane.setColumnSpan(line1, 4);
-
-            permissions.add(group, 0, 4);
-            permissions.add(groupRead, 1, 4);
-            permissions.add(groupWrite, 2, 4);
-            permissions.add(groupExecute, 3, 4);
-
-            Line line2 = new Line(0, 0, 280, 0);
-            permissions.add(line2, 0, 5);
-            GridPane.setColumnSpan(line2, 4);
-
-            permissions.add(others, 0, 6);
-            permissions.add(othersRead, 1, 6);
-            permissions.add(othersWrite, 2, 6);
-            permissions.add(othersExecute, 3, 6);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return permissions; 
     }
 
     private CheckBox getCheckBox(boolean isSelected) {
@@ -593,63 +347,105 @@ public class PropertiesWindow extends Stage {
         return label;
     }
 
-    private boolean[][] readPermissions() {
-        boolean[][] perms = new boolean[3][3];
-        for (Node node : permissions.getChildren()) {
-            if (node instanceof CheckBox checkBox) {
-                Integer col = GridPane.getColumnIndex(node);
-                Integer row = GridPane.getRowIndex(node);
-                if (col != null && row != null) {
-                    int mappedRow = (row - 2) / 2;
-                    int mappedCol = col - 1;
-                    if (mappedRow >= 0 && mappedRow < 3 && mappedCol >= 0 && mappedCol < 3) {
-                        perms[mappedRow][mappedCol] = checkBox.isSelected();
-                    }
-                }
+    private void loadACLPermissions() {
+        VBox content = new VBox();
+        content.setAlignment(Pos.TOP_CENTER);
+        ListView<String> usersListView = new ListView<>();
+        ACLPermissions permissions = new ACLPermissions(this.file);
+
+        usersListView.setItems(getUsersList());
+        usersListView.setMinWidth(100);
+        usersListView.setPrefWidth(200);
+        usersListView.setMaxHeight(75);
+
+        usersListView.getSelectionModel().selectedItemProperty().addListener((obs, oldUser, newUser) -> {
+            if (newUser != null) {
+                permissions.setUserName(newUser);
+                loadACLPermissionsPane(permissions.getPermissionsList(), permissions.loadPermissions());
             }
-        }
-        return perms;
-    }
+        });
 
-    private void applyPermissions(boolean applyToSubdirectories) {
+        Label choseUserLabel = new Label(Translator.translate("window.properties.permissions.chose-user"));
+        Label modifyPermissionsLabel = new Label(Translator.translate("window.properties.permissions.modify-permissions"));
+
+        Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
+        updatePermissions.setOnAction(e -> {
+            permissions.savePermissions(readACLPermissions());
+        });
+        HBox.setMargin(updatePermissions, new Insets(10, 25, 10, 25));
+        HBox bottomButtonWrapper = new HBox(WindowComponents.getSpacer(), updatePermissions);
+
+        AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
+        List<String> users = new ArrayList<>();
         try {
-            boolean[][] permissions = readPermissions();
-            Set<PosixFilePermission> permissionsSet = new HashSet<>();
-
-            if (permissions[0][0]) permissionsSet.add(PosixFilePermission.OWNER_READ);
-            if (permissions[0][1]) permissionsSet.add(PosixFilePermission.OWNER_WRITE);
-            if (permissions[0][2]) permissionsSet.add(PosixFilePermission.OWNER_EXECUTE);
-            if (permissions[1][0]) permissionsSet.add(PosixFilePermission.GROUP_READ);
-            if (permissions[1][1]) permissionsSet.add(PosixFilePermission.GROUP_WRITE);
-            if (permissions[1][2]) permissionsSet.add(PosixFilePermission.GROUP_EXECUTE);
-            if (permissions[2][0]) permissionsSet.add(PosixFilePermission.OTHERS_READ);
-            if (permissions[2][1]) permissionsSet.add(PosixFilePermission.OTHERS_WRITE);
-            if (permissions[2][2]) permissionsSet.add(PosixFilePermission.OTHERS_EXECUTE);
-
-            Files.setPosixFilePermissions(file.toPath(), permissionsSet);
-
-            if (applyToSubdirectories && file.isDirectory()) {
-                updatePermissionsRecursively(file, permissionsSet);
+            for (AclEntry entry : view.getAcl()) {
+                users.add(entry.principal().getName());
+                Collections.sort(users);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        ScrollPane permissionsPane = new ScrollPane();
+        VBox.setVgrow(permissionsPane, Priority.ALWAYS);
+        permissionsPane.setPrefHeight(200);
+        permissionsPane.setMaxHeight(600);
+
+        VBox container = new VBox(choseUserLabel, usersListView, modifyPermissionsLabel, permissionsPane, bottomButtonWrapper);
+        container.setMaxWidth(400);
+        content.getChildren().addAll(container);
+        this.root.getChildren().set(1, content);
+        usersListView.getSelectionModel().selectFirst();
     }
 
-    private void updatePermissionsRecursively(File dir, Set<PosixFilePermission> permissionsSet) {
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File child : files) {
-                try {
-                    Files.setPosixFilePermissions(child.toPath(), permissionsSet);
-                    if (child.isDirectory()) {
-                        updatePermissionsRecursively(child, permissionsSet);
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+    private ObservableList<String> getUsersList() {
+        ObservableList<String> usersList = FXCollections.observableArrayList();
+        try {
+            AclFileAttributeView view = Files.getFileAttributeView(this.file.toPath(), AclFileAttributeView.class);
+            if (view == null) {
+                return FXCollections.observableArrayList();
+            }
+            usersList.clear();
+            for (AclEntry entry : view.getAcl()) {
+                usersList.add(entry.principal().getName());
+            }
+            usersList.sorted();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        FXCollections.sort(usersList);
+        return usersList;
+    }
+
+    private ScrollPane getScrollPane() {
+        return (ScrollPane) ((VBox)((VBox)(root.getChildren().get(1))).getChildren().get(0)).getChildren().get(3);
+    }
+
+    private void loadACLPermissionsPane(List<String> permissionsList, List<Boolean> permissions) {
+        ScrollPane pane = getScrollPane();
+        GridPane permissionsGrid = new GridPane();
+
+        System.out.println(permissions.size());
+        for(byte i = 0; i < permissions.size(); i++) {
+            permissionsGrid.addRow(i, getLabel(Translator.translate("window.properties.permissions.acl." + permissionsList.get(i).toLowerCase().replace('_', '-'))), getCheckBox(permissions.get(i)));
+        }
+
+        pane.setVvalue(0);
+        pane.setContent(permissionsGrid);
+    }
+
+    private List<Boolean> readACLPermissions() {
+        List<Boolean> permissions = new ArrayList<>();
+        GridPane permissionsGrid = (GridPane) getScrollPane().getContent();
+
+        for (Node node : permissionsGrid.getChildren()) {
+            if (node instanceof CheckBox checkBox) {
+                permissions.add(checkBox.isSelected());
             }
         }
+
+        return permissions;
     }
 
     @Override

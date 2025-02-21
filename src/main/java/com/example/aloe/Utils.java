@@ -14,7 +14,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class Utils {
-    public static int getKeyIndex(Map<String, ? extends Object> map, String key) {
+    public static int getKeyIndex(Map<String, ?> map, String key) {
         int index = 0;
         for (String k : map.keySet()) {
             if (k.equals(key)) {
@@ -68,7 +68,7 @@ public class Utils {
 
     private static String convertBytesToGiB(long size) {
         if (size < 1024) {
-            return "";
+            return size + " B";
         } else if (size < 1024 * 1024) {
             return String.format("%.1f KiB ", size / 1024.0);
         } else if (size < 1024 * 1024 * 1024) {
@@ -84,7 +84,7 @@ public class Utils {
 
     private static String convertBytesToGB(long size) {
         if (size < 1000) {
-            return "";
+            return size + " B";
         } else if (size < 1000 * 1000) {
             return String.format("%.1f KB ", size / 1000.0);
         } else if (size < 1000 * 1000 * 1000) {
