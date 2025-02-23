@@ -568,6 +568,11 @@ public class Main extends Application {
         copy.setOnAction(event -> {
             FilesOperations.copyFile(thisFile);
         });
+        MenuItem cut = new MenuItem(Translator.translate("context-menu.cut"));
+        cut.setOnAction(event -> {
+            FilesOperations.cutFile(thisFile);
+            refreshCurrentDirectory();
+        });
         MenuItem rename = new MenuItem(Translator.translate("context-menu.rename"));
         rename.setOnAction(event -> {
             renameFile(thisFile);
@@ -616,7 +621,7 @@ public class Main extends Application {
         properties.setOnAction(event -> {
             new PropertiesWindow(thisFile);
         });
-        fileMenu.getItems().addAll(open, copy, rename, duplicate, moveTo, moveToParent, archive, moveToTrash, delete, properties);
+        fileMenu.getItems().addAll(open, copy, cut, rename, duplicate, moveTo, moveToParent, archive, moveToTrash, delete, properties);
         if (thisFile.isDirectory()) {
             MenuItem addToMenu = new MenuItem(Translator.translate("context-menu.add-to-menu"));
             addToMenu.setOnAction(event -> {

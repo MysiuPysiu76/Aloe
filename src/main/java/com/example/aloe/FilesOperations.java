@@ -17,6 +17,7 @@ import java.util.Objects;
 public class FilesOperations {
 
     private static File currentDirectory = null;
+    private static boolean isCut;
 
     public static void copyFile(File file) {
         if (file.exists()) {
@@ -24,7 +25,13 @@ public class FilesOperations {
             ClipboardContent content = new ClipboardContent();
             content.putFiles(java.util.Collections.singletonList(file));
             clipboard.setContent(content);
+            isCut = false;
         }
+    }
+
+    public static void cutFile(File file) {
+        copyFile(file);
+        isCut = true;
     }
 
     public static File getCurrentDirectory() {
@@ -56,14 +63,14 @@ public class FilesOperations {
     }
 
     static void copyDirectoryToDestination(File source, File destination, boolean replaceExisting, boolean combine) throws IOException {
-        if(destination.exists()) {
+        if (destination.exists()) {
             if (replaceExisting) {
                 FilesOperations.deleteFile(destination);
                 destination.mkdir();
-                pasteFiles(source, destination);
+                pasteFile(source, destination);
             } else {
                 if (combine) {
-                    pasteFiles(source, destination);
+                    pasteFile(source, destination);
                 } else {
                     FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination);
                     if (FileOperation.addOperationToQueue(operation)) {
@@ -73,11 +80,11 @@ public class FilesOperations {
             }
         } else {
             destination.mkdir();
-            pasteFiles(source, destination);
+            pasteFile(source, destination);
         }
     }
 
-    private static void pasteFiles(File source, File destination) throws IOException {
+    private static void pasteFile(File source, File destination) throws IOException {
         for (String file : Objects.requireNonNull(source.list())) {
             File sourceFile = new File(source, file);
             File destinationFile = new File(destination, file);
@@ -90,7 +97,7 @@ public class FilesOperations {
     }
 
     public static void deleteFile(File file) {
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {
                 for (File f : files) {
@@ -150,6 +157,9 @@ public class FilesOperations {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                if (isCut) {
+                    deleteFile(fileFromClipboard);
+                }
             }
         }
     }
@@ -202,7 +212,7 @@ public class FilesOperations {
 
     public static void moveFileTo(List<File> files, File destination) {
         try {
-            if(destination != null) {
+            if (destination != null) {
                 for (File file : files) {
                     Files.move(file.toPath(), destination.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -281,6 +291,7 @@ public class FilesOperations {
             }
         }
     }
+
     private static void duplicateSingleFile(File file) throws IOException {
         String name = file.getName();
         String extension = "";
