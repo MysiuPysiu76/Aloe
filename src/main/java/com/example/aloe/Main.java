@@ -774,6 +774,10 @@ public class Main extends Application {
         copy.setOnAction(event -> {
             copySelectedFiles();
         });
+        MenuItem cut = new MenuItem(Translator.translate("context-menu.cut"));
+        cut.setOnAction(event -> {
+            cutSelectedFiles();
+        });
         MenuItem duplicate = new MenuItem(Translator.translate("context-menu.duplicate"));
         duplicate.setOnAction(event -> {
             FilesOperations.duplicateFiles(getSelectedFiles());
@@ -804,7 +808,7 @@ public class Main extends Application {
             deleteSelectedFiles();
             refreshCurrentDirectory();
         });
-        multiSelectionFilesContextMenu.getItems().addAll(copy, duplicate, moveTo, moveToParent, moveToTrash, compress, delete);
+        multiSelectionFilesContextMenu.getItems().addAll(copy, cut, duplicate, moveTo, moveToParent, moveToTrash, compress, delete);
     }
 
     public void deleteSelectedFiles() {
@@ -828,6 +832,11 @@ public class Main extends Application {
             filesToCopy.add(file);
         }
         FilesOperations.copyFilesToClipboard(filesToCopy);
+    }
+
+    private void cutSelectedFiles() {
+        copySelectedFiles();
+        FilesOperations.setIsCut(true);
     }
 
     private void openFileInOptions(File file) {

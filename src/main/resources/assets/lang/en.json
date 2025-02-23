@@ -193,5 +193,6 @@
   "window.properties.image.camera-mode.action-mode": "Action Mode",
   "window.properties.image.camera-mode.portrait": "Portrait",
   "window.properties.image.camera-mode.landscape": "Landscape",
-  "window.properties.image.camera-mode.other": "Other"
+  "window.properties.image.camera-mode.other": "Other",
+  "context-menu.cut": "Cut"
 }

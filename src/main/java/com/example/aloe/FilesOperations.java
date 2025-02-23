@@ -17,6 +17,11 @@ import java.util.Objects;
 public class FilesOperations {
 
     private static File currentDirectory = null;
+
+    public static void setIsCut(boolean isCut) {
+        FilesOperations.isCut = isCut;
+    }
+
     private static boolean isCut;
 
     public static void copyFile(File file) {
