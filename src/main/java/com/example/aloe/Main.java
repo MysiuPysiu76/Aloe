@@ -73,7 +73,7 @@ public class Main extends Application {
 
         filesPanel.getItems().add(filesPane);
 
-        if (SettingsManager.getSetting("menu", "use-menu")) {
+        if (Boolean.TRUE.equals(SettingsManager.getSetting("menu", "use-menu"))) {
             loadMenu();
             if (SettingsManager.getSetting("menu", "position").equals("right")) {
                 filesPanel.getItems().addLast(filesMenu);
@@ -177,7 +177,7 @@ public class Main extends Application {
         container.setAlignment(Pos.CENTER);
         CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
         VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
-        showHiddenFiles.setSelected(SettingsManager.getSetting("files", "show-hidden"));
+        showHiddenFiles.setSelected(Boolean.TRUE.equals(SettingsManager.getSetting("files", "show-hidden")));
         showHiddenFiles.setOnAction(event -> {
             SettingsManager.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
             refreshCurrentDirectory();
@@ -253,7 +253,6 @@ public class Main extends Application {
         checkParentDirectory();
         createMultiSelectionFilesContextMenu();
 
-
         grid = new FlowPane();
         grid.setPadding(new Insets(5));
         grid.getStyleClass().add("files-grid");
@@ -275,7 +274,7 @@ public class Main extends Application {
             List<String> filesList = new ArrayList<>();
             List<String> directories = new ArrayList<>();
             List<String> normalFiles = new ArrayList<>();
-            boolean displayDirectoriesBeforeFiles = SettingsManager.getSetting("files", "display-directories-before-files");
+            boolean displayDirectoriesBeforeFiles = Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-directories-before-files"));
             for (File file : files) {
                 if (!(boolean) SettingsManager.getSetting("files", "show-hidden")) {
                     if (file.getName().startsWith(".")) {
@@ -366,7 +365,7 @@ public class Main extends Application {
                 filesListView.getItems().addAll(directories);
                 filesListView.getItems().addAll(normalFiles);
                 filesBox.getChildren().add(filesListView);
-                filesPane.setContent(filesBox);
+                filesPane.setContent(filesListView);
 
                 filesListView.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
@@ -423,7 +422,7 @@ public class Main extends Application {
         } else {
             switch (FilesOperations.getExtension(name).toLowerCase()) {
                 case "jpg", "jpeg", "png", "gif" -> {
-                    if (SettingsManager.getSetting("files", "display-thumbnails")) {
+                    if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails"))) {
                         icon.setImage(new Image(new File(FilesOperations.getCurrentDirectory(), name).toURI().toString()));
                     } else {
                         icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
