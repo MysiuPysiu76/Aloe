@@ -14,7 +14,7 @@ public class InfoBox extends VBox {
 
     public void setContent(ObjectProperties object) {
         this.getChildren().clear();
-        for (Map.Entry<String, String> entry : object.getProperties().entrySet()) {
+        for (Map.Entry<String, String> entry : object.getObjectPropertiesView().entrySet()) {
             this.getChildren().add(new HBox(new Label(entry.getKey()), WindowComponents.getSpacer(), new Label(entry.getValue())));
         }
     }

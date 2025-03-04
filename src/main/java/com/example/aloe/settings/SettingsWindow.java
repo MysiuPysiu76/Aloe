@@ -1,7 +1,6 @@
 package com.example.aloe.settings;
 
-import com.example.aloe.Translator;
-import com.example.aloe.WindowComponents;
+import com.example.aloe.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -94,8 +93,24 @@ public final class SettingsWindow extends Stage {
         VBox.setVgrow(line, Priority.ALWAYS);
         VBox.setMargin(line, new Insets(0, 0, 0, 18));
         line.setStroke(Color.rgb(185, 185, 185));
+        box.setMaxWidth(1000);
         line.endXProperty().bind(box.widthProperty().subtract(36));
         box.getChildren().addAll(getSettingBox(key, control), line, getSettingBox(key1, control1));
+        return box;
+    }
+
+    private static HBox getSettingBox(String key, String key1, Node control, Node control1) {
+        Label label1 = getSettingLabel(key);
+        label1.setPadding(new Insets(5, 0, 10, 5));
+        Label label2 = getSettingLabel(key1);
+        label2.setPadding(new Insets(5, 0, 10, 5));
+
+        HBox box = new HBox(new VBox(label1, control), new VBox(label2, control1));
+        box.setPadding(new Insets(10, 30, 20 , 20));
+        box.setSpacing(20);
+        box.setMinHeight(50);
+        box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
+        box.setMaxWidth(1000);
         return box;
     }
 
@@ -124,13 +139,16 @@ public final class SettingsWindow extends Stage {
     private static void loadMenuSettings() {
         SettingsManager.setCategory("menu");
 
+        DraggablePane pane = SettingsControls.getDraggablePane("items");
+
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),
                 getSettingBox("window.settings.menu.use-menu", SettingsControls.getToggleSwitch("use-menu")),
                 getSettingBox("window.settings.menu.menu-position", SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
                 getSettingBox("window.settings.menu.use-icon", SettingsControls.getToggleSwitch("use-icon")),
                 getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text")),
-                getSettingBox("window.settings.menu.icons-page", SettingsControls.getChoiceBox("icon-position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right")))));
+                getSettingBox("window.settings.menu.icons-page", SettingsControls.getChoiceBox("icon-position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
+                getSettingBox("window.settings.menu.edit-order", "window.settings.menu.item-info", pane, pane.getInfoBox())));
     }
 
     private static void loadFilesSettings() {

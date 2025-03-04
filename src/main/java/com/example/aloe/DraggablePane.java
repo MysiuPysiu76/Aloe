@@ -21,7 +21,6 @@ public class DraggablePane extends Pane {
         this.setMinWidth(width);
         this.setPrefWidth(width);
         this.setMaxWidth(width);
-        this.setStyle("-fx-background-color: red");
     }
 
     public double getSpacing() {
@@ -32,11 +31,16 @@ public class DraggablePane extends Pane {
         this.spacing = spacing;
     }
 
+    public void add(DraggableItem... items) {
+        for (DraggableItem item : items) {
+            add(item);
+        }
+    }
+
     public void add(DraggableItem item) {
         item.setLayoutX(0);
         item.setLayoutY(items.size() * (item.getHeight() + spacing));
         item.setMinWidth(this.getMinWidth());
-//        item.setPrefWidth(this.getWidth());
         item.setMaxWidth(this.getMinWidth());
         this.getChildren().add(item);
 
@@ -53,6 +57,7 @@ public class DraggablePane extends Pane {
 
         item.setOnMouseDragged(event -> {
             if (draggableItem != null) {
+                this.setMinHeight(this.getHeight());
                 double offset = event.getSceneY() - pressY;
                 double newY = initialY + offset;
                 double minY = 0;
@@ -68,6 +73,7 @@ public class DraggablePane extends Pane {
                 swapItemsIfNeeded();
                 sortItems();
                 draggableItem = null;
+                executeChangeListener();
             }
         });
 
@@ -104,8 +110,6 @@ public class DraggablePane extends Pane {
 
     private void swapItemsIfNeeded() {
         if (draggableItem == null) return;
-        executeChangeListener();
-
         if (draggableItem.getLayoutY() <= 0) {
             items.remove(draggableItem);
             items.addFirst(draggableItem);

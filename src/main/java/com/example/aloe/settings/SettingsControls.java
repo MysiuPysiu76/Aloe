@@ -1,8 +1,6 @@
 package com.example.aloe.settings;
 
-import com.example.aloe.Translator;
-import com.example.aloe.Utils;
-import com.example.aloe.WindowComponents;
+import com.example.aloe.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -11,10 +9,12 @@ import org.controlsfx.control.ToggleSwitch;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("rawtypes")
 class SettingsControls {
 
     static HBox getMenuButton(FontIcon icon, String titleKey, String descriptionKey) {
@@ -22,7 +22,7 @@ class SettingsControls {
         VBox iconPane = new VBox(icon);
         iconPane.setPadding(new Insets(25, 20, 25, 30));
         Label title = new Label(Translator.translate(titleKey));
-        VBox.setMargin(title, new Insets(0, 0, -4, -1));
+        VBox.setMargin(title, new Insets(0, 0, 0, -1));
         title.setStyle("-fx-font-size: 17px");
         Label description = new Label(Translator.translate(descriptionKey));
         description.setStyle("-fx-font-size: 12px");
@@ -129,5 +129,43 @@ class SettingsControls {
         HBox.setMargin(slider, new Insets(0, 7, 0, 7));
         HBox.setMargin(box, new Insets(0, 20, 0, 20));
         return box;
+    }
+
+    static DraggablePane getDraggablePane(String key) {
+        List<Map<String, Object>> items = SettingsManager.getSetting(SettingsManager.getCategory(), key);
+        DraggablePane pane = new DraggablePane(400);
+        InfoBox infoBox = new InfoBox();
+        pane.setInfoBox(infoBox);
+        infoBox.setMinWidth(200);
+        infoBox.setPrefWidth(350);
+        infoBox.setMaxWidth(500);
+        infoBox.setContent(new ObjectProperties() {
+            @Override
+            public Map<String, String> getObjectProperties() {
+                return Map.of();
+            }
+
+            @Override
+            public Map<String, String> getObjectPropertiesView() {
+                return Map.of(Translator.translate("window.settings.menu.select-item"), "");
+            }
+        });
+
+        pane.setOnUserChange(() -> {
+            List<DraggableItem> draggableItems = pane.getItems();
+            List<Map<String, String>> values = new ArrayList<>();
+
+            for (DraggableItem item : draggableItems) {
+                values.add(item.getObject().getObjectProperties());
+            }
+            SettingsManager.setSetting(SettingsManager.getCategory(), key, values);
+        });
+
+        if (!(items == null || items.isEmpty())) {
+            for (Map<String, Object> item : items) {
+                pane.add(new DraggableItem(new com.example.aloe.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")), (String) item.get("name")));
+            }
+        }
+        return pane;
     }
 }
