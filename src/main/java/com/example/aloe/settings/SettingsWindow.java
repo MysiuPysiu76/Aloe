@@ -1,6 +1,7 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.*;
+import com.example.aloe.components.DraggablePane;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -140,6 +141,7 @@ public final class SettingsWindow extends Stage {
         SettingsManager.setCategory("menu");
 
         DraggablePane pane = SettingsControls.getDraggablePane("items");
+        pane.add(SettingsControls.getMenuItems("items"));
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),

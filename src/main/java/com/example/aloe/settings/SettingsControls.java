@@ -1,6 +1,9 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.*;
+import com.example.aloe.components.DraggableItem;
+import com.example.aloe.components.DraggablePane;
+import com.example.aloe.components.InfoBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -132,24 +135,13 @@ class SettingsControls {
     }
 
     static DraggablePane getDraggablePane(String key) {
-        List<Map<String, Object>> items = SettingsManager.getSetting(SettingsManager.getCategory(), key);
-        DraggablePane pane = new DraggablePane(400);
+        DraggablePane pane = new DraggablePane(330);
         InfoBox infoBox = new InfoBox();
         pane.setInfoBox(infoBox);
         infoBox.setMinWidth(200);
-        infoBox.setPrefWidth(350);
-        infoBox.setMaxWidth(500);
-        infoBox.setContent(new ObjectProperties() {
-            @Override
-            public Map<String, String> getObjectProperties() {
-                return Map.of();
-            }
-
-            @Override
-            public Map<String, String> getObjectPropertiesView() {
-                return Map.of(Translator.translate("window.settings.menu.select-item"), "");
-            }
-        });
+        infoBox.setPrefWidth(300);
+        infoBox.setMaxWidth(300);
+        infoBox.setContent(new Label(Translator.translate("window.settings.menu.select-item")));
 
         pane.setOnUserChange(() -> {
             List<DraggableItem> draggableItems = pane.getItems();
@@ -161,11 +153,17 @@ class SettingsControls {
             SettingsManager.setSetting(SettingsManager.getCategory(), key, values);
         });
 
+        return pane;
+    }
+
+    static List<DraggableItem> getMenuItems(String key) {
+        List<Map<String, Object>> items = SettingsManager.getSetting(SettingsManager.getCategory(), key);
+        List<DraggableItem> menuItems = new ArrayList<>();
         if (!(items == null || items.isEmpty())) {
             for (Map<String, Object> item : items) {
-                pane.add(new DraggableItem(new com.example.aloe.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")), (String) item.get("name")));
+                menuItems.add(new DraggableItem(new com.example.aloe.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")), (String) item.get("name")));
             }
         }
-        return pane;
+        return menuItems;
     }
 }

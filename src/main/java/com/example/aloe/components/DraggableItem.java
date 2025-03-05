@@ -1,27 +1,21 @@
-package com.example.aloe;
+package com.example.aloe.components;
 
+import com.example.aloe.ObjectProperties;
 import javafx.scene.control.Button;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-public class DraggableItem<T> extends Button {
-
+public class DraggableItem extends Button {
     private ObjectProperties object;
 
     public DraggableItem(ObjectProperties object, String text) {
-        init(object);
-        setText(text);
+        this(object, text, null);
     }
 
     public DraggableItem(ObjectProperties object, String text, FontIcon icon) {
-        init(object);
-        setText(text);
-        setGraphic(icon);
-    }
-
-    private void init(ObjectProperties object) {
-        setMinHeight(25);
-        setHeight(25);
         this.object = object;
+        setText(text);
+        if (icon != null) setGraphic(icon);
+        setMinHeight(25);
     }
 
     public ObjectProperties getObject() {
