@@ -200,5 +200,12 @@
   "menu.path": "Path: ",
   "menu.title": "Title: ",
   "window.settings.menu.edit-order": "Edit order",
-  "window.settings.menu.select-item": "Select item to show info"
+  "window.settings.menu.select-item": "Select item to show info",
+  "menu.home": "Home",
+  "menu.desktop": "Desktop",
+  "menu.downloads": "Downloads",
+  "menu.music": "Music",
+  "menu.videos": "Videos",
+  "menu.documents": "Documents",
+  "menu.pictures": "Pictures"
 }

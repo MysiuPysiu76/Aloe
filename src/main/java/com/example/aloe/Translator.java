@@ -11,6 +11,14 @@ public class Translator {
     private static JsonNode jsonNode;
 
     static {
+        init();
+    }
+
+    public static void reload() {
+        init();
+    }
+
+    private static void init() {
         loadLanguageFile(SettingsManager.getSetting("language", "lang"));
     }
 

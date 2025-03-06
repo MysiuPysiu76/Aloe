@@ -1,5 +1,6 @@
 package com.example.aloe.settings;
 
+import com.example.aloe.Translator;
 import com.example.aloe.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +38,8 @@ public final class SettingsManager {
             initializeSettings();
         }
         try {
-            cachedSettings = objectMapper.readValue(settingsFile, new TypeReference<>() {});
+            cachedSettings = objectMapper.readValue(settingsFile, new TypeReference<>() {
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,13 +59,13 @@ public final class SettingsManager {
 
     private static void initializeItemsInMenu() {
         SettingsManager.setSetting("menu", "items", Arrays.asList(
-                Map.of("path", System.getProperty("user.home"), "name", "Home", "icon", "HOME"),
-                Map.of("path", System.getProperty("user.home") + "/Desktop", "name", "Desktop", "icon", "DESKTOP"),
-                Map.of("path", System.getProperty("user.home") + "/Documents", "name", "Documents", "icon", "FILE_TEXT"),
-                Map.of("path", System.getProperty("user.home") + "/Downloads", "name", "Downloads", "icon", "ARROW_DOWN"),
-                Map.of("path", System.getProperty("user.home") + "/Music", "name", "Music", "icon", "MUSIC"),
-                Map.of("path", System.getProperty("user.home") + "/Pictures", "name", "Pictures", "icon", "PICTURE_O"),
-                Map.of("path", System.getProperty("user.home") + "/Videos", "name", "Videos", "icon", "VIDEO_CAMERA")
+                Map.of("path", System.getProperty("user.home"), "name", Translator.translate("menu.home"), "icon", "HOME"),
+                Map.of("path", System.getProperty("user.home") + "/Desktop", "name", Translator.translate("menu.desktop"), "icon", "DESKTOP"),
+                Map.of("path", System.getProperty("user.home") + "/Documents", "name", Translator.translate("menu.documents"), "icon", "FILE_TEXT"),
+                Map.of("path", System.getProperty("user.home") + "/Downloads", "name", Translator.translate("menu.downloads"), "icon", "ARROW_DOWN"),
+                Map.of("path", System.getProperty("user.home") + "/Music", "name", Translator.translate("menu.music"), "icon", "MUSIC"),
+                Map.of("path", System.getProperty("user.home") + "/Pictures", "name", Translator.translate("menu.pictures"), "icon", "PICTURE_O"),
+                Map.of("path", System.getProperty("user.home") + "/Videos", "name", Translator.translate("menu.videos"), "icon", "VIDEO_CAMERA")
         ));
     }
 
@@ -72,10 +74,12 @@ public final class SettingsManager {
         if (Utils.isFileExistsInResources("assets/lang/", lang + ".json")) {
             SettingsManager.setSetting("language", "lang", lang);
         }
+        Translator.reload();
     }
 
     private static Map<String, Object> loadDefaultSettings() throws IOException {
-        return objectMapper.readValue(SettingsManager.class.getResourceAsStream(DEFAULT_SETTINGS_PATH), new TypeReference<>() {});
+        return objectMapper.readValue(SettingsManager.class.getResourceAsStream(DEFAULT_SETTINGS_PATH), new TypeReference<>() {
+        });
     }
 
     private static void saveSettingsToFile(Map<String, Object> settings) {
