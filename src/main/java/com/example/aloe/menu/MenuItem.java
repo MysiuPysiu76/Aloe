@@ -1,14 +1,10 @@
 package com.example.aloe.menu;
 
-import com.example.aloe.Main;
-import com.example.aloe.ObjectProperties;
-import com.example.aloe.PropertiesWindow;
-import com.example.aloe.Translator;
+import com.example.aloe.*;
 import com.example.aloe.settings.SettingsManager;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -54,7 +50,10 @@ public class MenuItem extends Button implements ObjectProperties {
         }
         HBox.setHgrow(this, Priority.ALWAYS);
         this.setMaxWidth(Double.MAX_VALUE);
-        setMenuItemOptions(this, path, title, FontAwesome.valueOf(icon));
+        MenuItemContextMenu menu = new MenuItemContextMenu(this);
+        this.setContextMenu(menu);
+        this.setOnContextMenuRequested(e -> MenuManager.hideOptions());
+
         this.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 new Main().loadDirectoryContents(new File(path), true);
@@ -62,30 +61,16 @@ public class MenuItem extends Button implements ObjectProperties {
         });
     }
 
-    private static void setMenuItemOptions(Button button, String path, String name, FontAwesome icon) {
-        ContextMenu contextMenu = new ContextMenu();
-        javafx.scene.control.MenuItem open = new javafx.scene.control.MenuItem(Translator.translate("context-menu.open"));
-        open.setOnAction(event -> {
-            new Main().loadDirectoryContents(new File(path), true);
-        });
-        javafx.scene.control.MenuItem edit = new javafx.scene.control.MenuItem(Translator.translate("context-menu.edit"));
-        edit.setOnAction(event -> {
-            MenuWindowManager.openEditItemInMenuWindow(path, name, icon);
-        });
-        javafx.scene.control.MenuItem remove = new javafx.scene.control.MenuItem(Translator.translate("context-menu.remove"));
-        remove.setOnAction(event -> {
-            MenuManager.removeItemFromMenu(path);
-        });
-        javafx.scene.control.MenuItem properties = new javafx.scene.control.MenuItem(Translator.translate("context-menu.properties"));
-        properties.setOnAction(event -> {
-            new PropertiesWindow(new File(path));
-        });
-        contextMenu.getItems().addAll(open, edit, remove, properties);
-        button.setOnContextMenuRequested(event -> {
-            contextMenu.show(button, event.getScreenX(), event.getScreenY());
-            MenuManager.hideOptions();
-            event.consume();
-        });
+    public String getIcon() {
+        return icon;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     @Override

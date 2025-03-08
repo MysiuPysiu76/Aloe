@@ -93,7 +93,7 @@ class MenuWindowManager {
         window.showAndWait();
     }
 
-    public static void openEditItemInMenuWindow(String key, String name, FontAwesome icon) {
+    public static void openEditItemInMenuWindow(String key, String name, String icon) {
         Stage window = WindowComponents.getInternalStage(380, 230);
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
@@ -104,7 +104,7 @@ class MenuWindowManager {
 
         ObservableList<FontAwesome> icons = FXCollections.observableArrayList(FontAwesome.values());
         ComboBox<FontAwesome> iconComboBox = new ComboBox<>(icons);
-        iconComboBox.setValue(icon);
+        iconComboBox.setValue(FontAwesome.valueOf(icon));
         iconComboBox.setVisibleRowCount(12);
         iconComboBox.setMaxWidth(300);
         VBox.setMargin(iconComboBox, new Insets(10, 10, 7, 10));

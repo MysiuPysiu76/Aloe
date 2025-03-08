@@ -838,9 +838,9 @@ public class Main extends Application {
         FilesOperations.setIsCut(true);
     }
 
-    private void openFileInOptions(File file) {
+    public static  void openFileInOptions(File file) {
         if (file.isDirectory()) {
-            loadDirectoryContents(file, true);
+            new Main().loadDirectoryContents(file, true);
         } else {
             FilesOperations.openFileInBackground(file);
         }

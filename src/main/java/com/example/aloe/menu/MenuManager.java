@@ -1,11 +1,8 @@
 package com.example.aloe.menu;
 
 import com.example.aloe.Main;
-import com.example.aloe.Translator;
 import com.example.aloe.settings.SettingsManager;
 import javafx.geometry.Pos;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -15,10 +12,9 @@ import java.util.Map;
 
 public class MenuManager {
     private static VBox menu;
-    private static ContextMenu menuOptions;
+    private static MenuContextMenu contextMenu;
 
     static {
-        menuOptions = new ContextMenu();
         loadMenu();
     }
 
@@ -40,18 +36,14 @@ public class MenuManager {
     }
 
      static void setMenuOptions() {
-        menuOptions = new ContextMenu();
-        MenuItem add = new MenuItem(Translator.translate("context-menu.add"));
-        add.setOnAction(event -> {
-            MenuWindowManager.openAddItemToMenuWindow();
-        });
-        menuOptions.getItems().add(add);
+        contextMenu = new MenuContextMenu();
+
         menu.setOnContextMenuRequested(event -> {
-            menuOptions.show(menu, event.getScreenX(), event.getScreenY());
+            contextMenu.show(menu, event.getScreenX(), event.getScreenY());
         });
         menu.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                menuOptions.hide();
+                contextMenu.hide();
             }
         });
     }
@@ -89,6 +81,6 @@ public class MenuManager {
     }
 
     static void hideOptions() {
-        menuOptions.hide();
+        contextMenu.hide();
     }
 }
