@@ -175,6 +175,7 @@ public class FilesOperations {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        new Main().refreshCurrentDirectory();
     }
 
     public static void moveFileToParent(List<File> files) {
@@ -185,6 +186,7 @@ public class FilesOperations {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        new Main().refreshCurrentDirectory();
     }
 
     public static String getExtension(File file) {
@@ -227,6 +229,7 @@ public class FilesOperations {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        new Main().refreshCurrentDirectory();
     }
 
     public static void moveFileToTrash(File file) {
@@ -246,6 +249,7 @@ public class FilesOperations {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        new Main().refreshCurrentDirectory();
     }
 
     public static void moveFileToTrash(List<File> files) {
@@ -268,6 +272,7 @@ public class FilesOperations {
                 throw new RuntimeException(e);
             }
         }
+        new Main().refreshCurrentDirectory();
     }
 
     public static String getUniqueName(String name, int suffix) {
@@ -295,6 +300,7 @@ public class FilesOperations {
                 e.printStackTrace();
             }
         }
+        new Main().refreshCurrentDirectory();
     }
 
     private static void duplicateSingleFile(File file) throws IOException {

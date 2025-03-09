@@ -103,4 +103,8 @@ public class Utils {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, null);
     }
+
+    public static boolean isFileArchive(File file) {
+        return true;
+    }
 }
