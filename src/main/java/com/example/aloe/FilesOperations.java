@@ -167,6 +167,7 @@ public class FilesOperations {
                 }
             }
         }
+        new Main().refreshCurrentDirectory();
     }
 
     public static void moveFileToParent(File file) {

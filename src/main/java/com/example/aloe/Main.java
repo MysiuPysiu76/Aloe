@@ -63,7 +63,6 @@ public class Main extends Application {
         filesPanel.getStyleClass().add("files-panel");
         filesMenu.getStyleClass().add("files-menu");
 
-        getDirectoryOptions();
         filesPanel.setMinHeight(root.getHeight() - navigationPanel.getHeight());
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
@@ -130,6 +129,13 @@ public class Main extends Application {
             if (Objects.equals(SettingsManager.getSetting("files", "start-folder"), "last")) {
                 SettingsManager.setSetting("files", "start-folder-location", FilesOperations.getCurrentDirectory().getAbsolutePath());
             }
+        });
+
+        filesPane.setOnContextMenuRequested(event -> {
+            removeSelectionFromFiles();
+            directoryMenu.getItems().get(2).setDisable(FilesOperations.isClipboardEmpty());
+            directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
+            event.consume();
         });
     }
 
@@ -251,7 +257,6 @@ public class Main extends Application {
         FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);
         checkParentDirectory();
-//        createMultiSelectionFilesContextMenu();
 
         grid = new FlowPane();
         grid.setPadding(new Insets(5));
@@ -527,43 +532,9 @@ public class Main extends Application {
         loadDirectoryContents(FilesOperations.getCurrentDirectory(), false);
     }
 
-    ContextMenu directoryMenu = new ContextMenu();
+    DirectoryContextMenu directoryMenu = new DirectoryContextMenu();
 
-    private void getDirectoryOptions() {
-        directoryMenu.getItems().clear();
-        MenuItem newDirectory = new MenuItem(Translator.translate("context-menu.new-folder"));
-        newDirectory.setOnAction(event -> {
-            createDirectory();
-            refreshCurrentDirectory();
-        });
-        MenuItem newFile = new MenuItem(Translator.translate("context-menu.new-file"));
-        newFile.setOnAction(event -> {
-            createFile();
-            refreshCurrentDirectory();
-        });
-        MenuItem paste = new MenuItem(Translator.translate("context-menu.paste"));
-        paste.setOnAction(event -> {
-            FilesOperations.pasteFilesFromClipboard();
-            refreshCurrentDirectory();
-        });
-        MenuItem selectAll = new MenuItem(Translator.translate("context-menu.select-all"));
-        selectAll.setOnAction(event -> {
-            selectAllFiles();
-        });
-        MenuItem properties = new MenuItem(Translator.translate("context-menu.properties"));
-        properties.setOnAction(event -> {
-            new PropertiesWindow(FilesOperations.getCurrentDirectory());
-        });
-        directoryMenu.getItems().addAll(newDirectory, newFile, paste, selectAll, properties);
-        filesPane.setOnContextMenuRequested(event -> {
-            removeSelectionFromFiles();
-            paste.setDisable(FilesOperations.isClipboardEmpty());
-            directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
-            event.consume();
-        });
-    }
-
-    private void selectAllFiles() {
+    public void selectAllFiles() {
         selectedFiles.clear();
         selectedFiles = grid.getChildren().stream()
                 .filter(node -> node instanceof VBox)
@@ -784,7 +755,7 @@ public class Main extends Application {
         dialog.showAndWait();
     }
 
-    private String validateFileName(String name) {
+    private static String validateFileName(String name) {
         if (name.isEmpty()) {
             return Translator.translate("validator.empty-name");
         }
@@ -797,7 +768,7 @@ public class Main extends Application {
         return null;
     }
 
-    private void createDirectory() {
+    public static void createDirectory() {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Create Folder");
 
@@ -830,11 +801,12 @@ public class Main extends Application {
             if (!newFile.exists()) {
                 newFile.mkdir();
             }
+            new Main().refreshCurrentDirectory();
         });
         dialog.showAndWait();
     }
 
-    private void createFile() {
+    public void createFile() {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Create File");
 
@@ -871,6 +843,7 @@ public class Main extends Application {
                     throw new RuntimeException(e);
                 }
             }
+            refreshCurrentDirectory();
         });
         dialog.showAndWait();
     }
