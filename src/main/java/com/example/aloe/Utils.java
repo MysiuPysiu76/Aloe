@@ -105,6 +105,7 @@ public class Utils {
     }
 
     public static boolean isFileArchive(File file) {
-        return true;
+        String fileName = file.getName();
+        return file.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar") || fileName.endsWith(".7z") || fileName.endsWith(".jar"));
     }
 }

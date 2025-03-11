@@ -43,7 +43,9 @@ public class Main extends Application {
     private Button parrentDir = getNavigateParentButton();
 
     private int directoryHistoryPosition = -1;
-    private VBox root = new VBox();
+    private VBox mainContainer = new VBox();
+    private StackPane root = new StackPane();
+    private Pane pane = new Pane();
     public static Stage stage;
     private static FlowPane grid;
 
@@ -53,9 +55,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        root.getStyleClass().add("root");
-        this.stage = stage;
-        scene = new Scene(root, 935, 500);
+        root.getChildren().addAll(mainContainer, pane);
+        mainContainer.getStyleClass().add("root");
+        Main.stage = stage;
+        scene = new Scene(root, 975, 550);
 
         navigationPanel.getStyleClass().add("navigation-panel");
         filesPanel.getStyleClass().add("navigation-panel");
@@ -63,12 +66,15 @@ public class Main extends Application {
         filesPanel.getStyleClass().add("files-panel");
         filesMenu.getStyleClass().add("files-menu");
 
-        filesPanel.setMinHeight(root.getHeight() - navigationPanel.getHeight());
+        filesPanel.setMinHeight(mainContainer.getHeight() - navigationPanel.getHeight());
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 directoryMenu.hide();
             }
         });
+
+        pane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        pane.setVisible(false);
 
         filesPanel.getItems().add(filesPane);
 
@@ -89,23 +95,10 @@ public class Main extends Application {
             removeSelectionFromFiles();
         });
 
-        CheckBox darkMode = new CheckBox(Translator.translate("navigate.dark-mode"));
-        darkMode.setOnAction(event -> {
-            if (darkMode.isSelected()) {
-                darkMode.setText(Translator.translate("navigate.light-mode"));
-                scene.getStylesheets().add(getClass().getResource("/assets/styles/style_dark.css").toExternalForm());
-            } else {
-                darkMode.setText(Translator.translate("navigate.dark-mode"));
-                scene.getStylesheets().remove(getClass().getResource("/assets/styles/style_dark.css").toExternalForm());
-            }
-        });
-
         filesMenu.setMinWidth(10);
         filesMenu.setPrefWidth(160);
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), spacer, getNavigateOptionsButton());
-        root.getChildren().addAll(navigationPanel, filesPanel);
+        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), WindowComponents.getSpacer(), getNavigateOptionsButton());
+        mainContainer.getChildren().addAll(navigationPanel, filesPanel);
 
         if (!Objects.equals(SettingsManager.getSetting("files", "start-folder"), "home")) {
             loadDirectoryContents(new File((String) Objects.requireNonNull(SettingsManager.getSetting("files", "start-folder-location"))), true);
@@ -113,7 +106,7 @@ public class Main extends Application {
             loadDirectoryContents(new File(System.getProperty("user.home")), true);
         }
 
-        root.heightProperty().addListener((observable, oldValue, newValue) -> {
+        mainContainer.heightProperty().addListener((observable, oldValue, newValue) -> {
             filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
         });
 
