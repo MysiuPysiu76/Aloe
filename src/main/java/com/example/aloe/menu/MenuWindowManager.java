@@ -34,7 +34,7 @@ class MenuWindowManager {
         iconComboBox.setMaxWidth(300);
         VBox.setMargin(iconComboBox, new Insets(10, 10, 7, 10));
 
-        Button cancel = WindowComponents.getCancelButton(Translator.translate("button.cancel"));
+        Button cancel = WindowComponents.getCancelButton();
         Button add = WindowComponents.getConfirmButton(Translator.translate("button.save"));
 
         HBox bottomHBox = new HBox(cancel, add);
@@ -109,7 +109,7 @@ class MenuWindowManager {
         iconComboBox.setMaxWidth(300);
         VBox.setMargin(iconComboBox, new Insets(10, 10, 7, 10));
 
-        Button cancel = WindowComponents.getCancelButton(Translator.translate("button.cancel"));
+        Button cancel = WindowComponents.getCancelButton();
         Button add = WindowComponents.getConfirmButton(Translator.translate("button.save"));
 
         HBox bottomHBox = new HBox(cancel, add);

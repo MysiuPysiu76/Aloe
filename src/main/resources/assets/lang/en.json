@@ -207,5 +207,10 @@
   "menu.music": "Music",
   "menu.videos": "Videos",
   "menu.documents": "Documents",
-  "menu.pictures": "Pictures"
+  "menu.pictures": "Pictures",
+  "window.interior.directory.create-folder": "Create Folder",
+  "window.interior.directory.name": "Folder name",
+  "window.interior.directory.placeholder": "New Folder",
+  "window.interior.directory.create": "Create",
+  "validator.blank-name": "Name cannot be blank"
 }

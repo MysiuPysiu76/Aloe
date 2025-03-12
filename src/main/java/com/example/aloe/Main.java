@@ -45,7 +45,7 @@ public class Main extends Application {
     private int directoryHistoryPosition = -1;
     private VBox mainContainer = new VBox();
     private StackPane root = new StackPane();
-    private Pane pane = new Pane();
+    public static Pane pane = new Pane();
     public static Stage stage;
     private static FlowPane grid;
 
@@ -73,7 +73,7 @@ public class Main extends Application {
             }
         });
 
-        pane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        pane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
         pane.setVisible(false);
 
         filesPanel.getItems().add(filesPane);
@@ -130,6 +130,11 @@ public class Main extends Application {
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
             event.consume();
         });
+    }
+
+    public static void hideDarkeningPlate() {
+        pane.setVisible(false);
+        pane.getChildren().clear();
     }
 
     public static void loadMenu() {
@@ -748,55 +753,41 @@ public class Main extends Application {
         dialog.showAndWait();
     }
 
-    private static String validateFileName(String name) {
+    public static String validateFileName(String name) {
         if (name.isEmpty()) {
             return Translator.translate("validator.empty-name");
         }
-        if (new File(FilesOperations.getCurrentDirectory(), name).exists()) {
-            return Translator.translate("validator.used-name");
+        if (name.isBlank()) {
+            return Translator.translate("validator.blank-name");
         }
         if (name.contains("/")) {
             return Translator.translate("validator.contains-slash");
         }
+        if (new File(FilesOperations.getCurrentDirectory(), name).exists()) {
+            return Translator.translate("validator.used-name");
+        }
         return null;
     }
 
+    public static void validateFileName(Label error, Button button, String text) {
+        if (text == null || text.isEmpty()) {
+            error.setText("");
+            button.setDisable(false);
+        } else {
+            error.setText(text);
+            button.setDisable(true);
+        }
+    }
+
     public static void createDirectory() {
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Create Folder");
+        pane.getChildren().add(new DirectoryWindow());
+        showDarkeningPlate();
 
-        VBox dialogContent = new VBox();
-        dialogContent.setPadding(new Insets(5));
-        TextField name = new TextField("New Folder");
-        Label error = new Label();
-        error.setStyle("-fx-text-fill: red;");
-        dialogContent.getChildren().addAll(name, error);
-        dialog.getDialogPane().setContent(dialogContent);
+    }
 
-        ButtonType createDirectoryButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(createDirectoryButtonType, ButtonType.CANCEL);
-        Button newDirectoryButton = (Button) dialog.getDialogPane().lookupButton(createDirectoryButtonType);
-
-        name.textProperty().addListener((observable, oldValue, newValue) -> {
-            String validationError = validateFileName(newValue);
-            if (validationError != null) {
-                error.setText(validationError);
-                newDirectoryButton.setDisable(true);
-            } else {
-                error.setText("");
-                newDirectoryButton.setDisable(false);
-            }
-        });
-
-        newDirectoryButton.addEventFilter(ActionEvent.ACTION, event -> {
-            String newName = name.getText().trim();
-            File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
-            if (!newFile.exists()) {
-                newFile.mkdir();
-            }
-            new Main().refreshCurrentDirectory();
-        });
-        dialog.showAndWait();
+    private static void showDarkeningPlate() {
+        pane.setVisible(true);
+        ((VBox) pane.getChildren().getFirst()).getChildren().get(2).requestFocus();
     }
 
     public void createFile() {
