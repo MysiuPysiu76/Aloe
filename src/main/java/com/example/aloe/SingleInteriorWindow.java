@@ -12,7 +12,7 @@ public class SingleInteriorWindow extends InteriorWindow {
     protected Button confirmButton;
 
     public SingleInteriorWindow(String title, String description, String placeholder, String confirmButtonText) {
-        input = getInput(Translator.translate(placeholder), Translator.translate(description));
+        input = getInput(placeholder, Translator.translate(description));
         Label error = getInfoLabel(null);
         confirmButton = getConfirmButton(Translator.translate(confirmButtonText));
 

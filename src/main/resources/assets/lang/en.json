@@ -216,5 +216,8 @@
   "window.interior.file.create": "Create",
   "window.interior.file.name": "File name",
   "window.interior.file.placeholder": "New File.txt",
-  "window.interior.file.create-file": "Create File"
+  "window.interior.file.create-file": "Create File",
+  "window.interior.rename.directory": "Rename folder",
+  "window.interior.rename.file": "Rename file",
+  "window.interior.rename": "Rename"
 }

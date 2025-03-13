@@ -14,7 +14,7 @@ class FileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem open = new ExtendedMenuItem(Translator.translate("context-menu.open"), e -> Main.openFileInOptions(file));
         ExtendedMenuItem cut = new ExtendedMenuItem(Translator.translate("context-menu.cut"), e -> FilesOperations.cutFile(file));
         ExtendedMenuItem copy = new ExtendedMenuItem(Translator.translate("context-menu.copy"), e -> FilesOperations.copyFile(file));
-        ExtendedMenuItem rename = new ExtendedMenuItem(Translator.translate("context-menu.rename"), e -> new Main().renameFile(file));
+        ExtendedMenuItem rename = new ExtendedMenuItem(Translator.translate("context-menu.rename"), e -> Main.renameFile(file));
         ExtendedMenuItem duplicate = new ExtendedMenuItem(Translator.translate("context-menu.duplicate"), e -> FilesOperations.duplicateFiles(new ArrayList<>(List.of(file))));
         ExtendedMenuItem moveTo = new ExtendedMenuItem(Translator.translate("context-menu.move-to"), e -> FilesOperations.moveFileTo(new ArrayList<>(List.of(file))));
         ExtendedMenuItem moveToParent = new ExtendedMenuItem(Translator.translate("context-menu.move-to-parent"), e -> FilesOperations.moveFileToParent(file));

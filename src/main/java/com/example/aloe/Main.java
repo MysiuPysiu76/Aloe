@@ -705,52 +705,9 @@ public class Main extends Application {
         }
     }
 
-    public void renameFile(File file) {
-        Dialog<String> dialog = new Dialog<>();
-        if (file.isDirectory()) {
-            dialog.setTitle("Rename Directory");
-        } else {
-            dialog.setTitle("Rename File");
-        }
-
-        VBox dialogContent = new VBox();
-        dialogContent.setPadding(new Insets(5));
-
-        TextField name = new TextField(file.getName());
-        Label error = new Label();
-        error.setStyle("-fx-text-fill: red;");
-
-        dialogContent.getChildren().addAll(name, error);
-        dialog.getDialogPane().setContent(dialogContent);
-
-        ButtonType renameButtonType = new ButtonType("Rename", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(renameButtonType, ButtonType.CANCEL);
-
-        Button renameButton = (Button) dialog.getDialogPane().lookupButton(renameButtonType);
-
-        name.textProperty().addListener((observable, oldValue, newValue) -> {
-            String validationError = validateFileName(newValue);
-            if (validationError != null) {
-                error.setText(validationError);
-                renameButton.setDisable(true);
-            } else {
-                error.setText("");
-                renameButton.setDisable(false);
-            }
-        });
-
-        renameButton.addEventFilter(ActionEvent.ACTION, event -> {
-            String newName = name.getText().trim();
-            File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
-
-            if (file.renameTo(newFile)) {
-                refreshCurrentDirectory();
-            } else {
-                error.setText("Could not rename: " + newName);
-                event.consume();
-            }
-        });
-        dialog.showAndWait();
+    public static void renameFile(File file) {
+        pane.getChildren().add(new RenameWindow(file));
+        showDarkeningPlate();
     }
 
     public static String validateFileName(String name) {
