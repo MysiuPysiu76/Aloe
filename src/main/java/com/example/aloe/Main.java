@@ -782,7 +782,6 @@ public class Main extends Application {
     public static void createDirectory() {
         pane.getChildren().add(new DirectoryWindow());
         showDarkeningPlate();
-
     }
 
     private static void showDarkeningPlate() {
@@ -790,46 +789,9 @@ public class Main extends Application {
         ((VBox) pane.getChildren().getFirst()).getChildren().get(2).requestFocus();
     }
 
-    public void createFile() {
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Create File");
-
-        VBox dialogContent = new VBox();
-        dialogContent.setPadding(new Insets(5));
-        TextField name = new TextField("New File.txt");
-        Label error = new Label();
-        error.setStyle("-fx-text-fill: red;");
-        dialogContent.getChildren().addAll(name, error);
-        dialog.getDialogPane().setContent(dialogContent);
-
-        ButtonType createFileButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(createFileButtonType, ButtonType.CANCEL);
-        Button newFileButton = (Button) dialog.getDialogPane().lookupButton(createFileButtonType);
-
-        name.textProperty().addListener((observable, oldValue, newValue) -> {
-            String validationError = validateFileName(newValue);
-            if (validationError != null) {
-                error.setText(validationError);
-                newFileButton.setDisable(true);
-            } else {
-                error.setText("");
-                newFileButton.setDisable(false);
-            }
-        });
-
-        newFileButton.addEventFilter(ActionEvent.ACTION, event -> {
-            String newName = name.getText().trim();
-            File newFile = new File(FilesOperations.getCurrentDirectory(), newName);
-            if (!newFile.exists()) {
-                try {
-                    newFile.createNewFile();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            refreshCurrentDirectory();
-        });
-        dialog.showAndWait();
+    public static void createFile() {
+        pane.getChildren().add(new FileWindow());
+        showDarkeningPlate();
     }
 
     private void getParentDirectory() {

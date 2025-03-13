@@ -12,7 +12,6 @@ import javafx.scene.layout.VBox;
 public class InteriorWindow extends VBox {
 
     public InteriorWindow() {
-
         this.setPadding(new Insets(25, 25, 23, 25));
         this.setMinWidth(500);
         this.setStyle("-fx-background-color: #f0f1f0; -fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-color: #acacac;");
@@ -61,5 +60,10 @@ public class InteriorWindow extends VBox {
         box.setSpacing(10);
         box.setPadding(new Insets(13, 0, 0, 0));
         return box;
+    }
+
+    protected void hideOverlay() {
+        new Main().refreshCurrentDirectory();
+        Main.hideDarkeningPlate();
     }
 }

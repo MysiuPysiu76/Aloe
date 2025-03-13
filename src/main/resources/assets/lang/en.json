@@ -212,5 +212,9 @@
   "window.interior.directory.name": "Folder name",
   "window.interior.directory.placeholder": "New Folder",
   "window.interior.directory.create": "Create",
-  "validator.blank-name": "Name cannot be blank"
+  "validator.blank-name": "Name cannot be blank",
+  "window.interior.file.create": "Create",
+  "window.interior.file.name": "File name",
+  "window.interior.file.placeholder": "New File.txt",
+  "window.interior.file.create-file": "Create File"
 }

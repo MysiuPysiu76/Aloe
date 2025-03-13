@@ -1,31 +1,18 @@
 package com.example.aloe;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-
 import java.io.File;
 
-public class DirectoryWindow extends InteriorWindow {
+public class DirectoryWindow extends SingleInteriorWindow {
     public DirectoryWindow() {
-        TextField input = getInput(Translator.translate("window.interior.directory.placeholder"), Translator.translate("window.interior.directory.name"));
-        Label error = getInfoLabel(null);
-        Button confirm = getConfirmButton(Translator.translate("window.interior.directory.create"));
+        super("window.interior.directory.create-folder", "window.interior.directory.name",
+                "window.interior.directory.placeholder", "window.interior.directory.create");
 
-        confirm.setOnMouseClicked(event -> {
+        this.setOnConfirm(e -> {
             File newFile = new File(FilesOperations.getCurrentDirectory(), input.getText().trim());
             if (!newFile.exists()) {
                 newFile.mkdir();
             }
-            new Main().refreshCurrentDirectory();
-            Main.hideDarkeningPlate();
+            hideOverlay();
         });
-
-        input.textProperty().addListener(observable -> Main.validateFileName(error, confirm, Main.validateFileName(input.getText())));
-
-        this.getChildren().addAll(getTitleLabel(Translator.translate("window.interior.directory.create-folder")),
-                getInfoLabel(Translator.translate("window.interior.directory.name")),
-                input,
-                getBottomPanel(error, WindowComponents.getSpacer(), getCancelButton(), confirm));
     }
 }
