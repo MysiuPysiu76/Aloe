@@ -15,7 +15,7 @@ import java.util.Objects;
  * <h2>Example usage:</h2>
  * <pre>{@code
  * List<File> files = List.of(new File("file1.txt"), new File("file2.txt"));
- * ArchiveParameters params = new ArchiveParameters(files, ArchiveType.ZIP, "output.zip", true, "securePassword");
+ * ArchiveParameters params = new ArchiveParameters(files, ArchiveType.ZIP, "output.zip", "securePassword");
  * }</pre>
  *
  * @since 0.9.5
@@ -25,7 +25,6 @@ public class ArchiveParameters {
     private List<File> files;
     private ArchiveType archiveType;
     private String fileName;
-    private boolean useCompress;
     private String password;
 
     /**
@@ -34,12 +33,10 @@ public class ArchiveParameters {
      * @param files       the list of files to include in the archive. May be {@code null} for decompression.
      * @param type        the type of archive (e.g., ZIP, TAR).
      * @param fileName    the name of the output archive file.
-     * @param useCompress {@code true} if compression should be used; {@code false} otherwise.
      * @param password    an optional password for securing the archive. May be {@code null}.
      */
-    public ArchiveParameters(List<File> files, ArchiveType type, String fileName, boolean useCompress, String password) {
+    public ArchiveParameters(List<File> files, ArchiveType type, String fileName, String password) {
         this.fileName = fileName;
-        this.useCompress = useCompress;
         this.password = password;
         this.files = files;
         this.archiveType = type;
@@ -55,7 +52,6 @@ public class ArchiveParameters {
      */
     public ArchiveParameters(List<File> files, ArchiveType type, String fileName, boolean useCompress) {
         this.fileName = fileName;
-        this.useCompress = useCompress;
         this.password = null;
         this.files = files;
         this.archiveType = type;
@@ -116,24 +112,6 @@ public class ArchiveParameters {
     }
 
     /**
-     * Returns whether compression is enabled.
-     *
-     * @return {@code true} if compression is enabled; {@code false} otherwise.
-     */
-    public boolean isUseCompress() {
-        return useCompress;
-    }
-
-    /**
-     * Sets whether compression is enabled.
-     *
-     * @param useCompress {@code true} to enable compression; {@code false} otherwise.
-     */
-    public void setUseCompress(boolean useCompress) {
-        this.useCompress = useCompress;
-    }
-
-    /**
      * Returns the password for securing the archive, if applicable.
      *
      * @return the password, or {@code null} if no password is set.
@@ -158,7 +136,7 @@ public class ArchiveParameters {
      */
     @Override
     public String toString() {
-        return "ArchiveParameters{" + "files=" + files + ", archiveType=" + archiveType + ", fileName='" + fileName + '\'' + ", useCompress=" + useCompress + ", password='" + password + '\'' + '}';
+        return "ArchiveParameters{" + "files=" + files + ", archiveType=" + archiveType + ", fileName='" + fileName + '\'' + ", password='" + password + '\'' + '}';
     }
 
     /**
@@ -171,7 +149,7 @@ public class ArchiveParameters {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ArchiveParameters that = (ArchiveParameters) o;
-        return useCompress == that.useCompress && Objects.equals(files, that.files) && Objects.equals(fileName, that.fileName) && Objects.equals(password, that.password);
+        return Objects.equals(files, that.files) && Objects.equals(fileName, that.fileName) && Objects.equals(password, that.password);
     }
 
     /**
@@ -181,6 +159,6 @@ public class ArchiveParameters {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(files, fileName, useCompress, password);
+        return Objects.hash(files, fileName, password);
     }
 }

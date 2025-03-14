@@ -1,15 +1,19 @@
 package com.example.aloe;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class InteriorWindow extends VBox {
+
+    protected Button confirmButton;
 
     public InteriorWindow() {
         this.setPadding(new Insets(25, 25, 23, 25));
@@ -65,5 +69,9 @@ public class InteriorWindow extends VBox {
     protected void hideOverlay() {
         new Main().refreshCurrentDirectory();
         Main.hideDarkeningPlate();
+    }
+
+    protected void setOnConfirm(EventHandler<? super MouseEvent> eventHandler) {
+        confirmButton.setOnMouseClicked(eventHandler);
     }
 }

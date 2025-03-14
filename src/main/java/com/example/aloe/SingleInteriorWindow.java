@@ -1,17 +1,14 @@
 package com.example.aloe;
 
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 
 public class SingleInteriorWindow extends InteriorWindow {
 
     protected TextField input;
-    protected Button confirmButton;
 
     public SingleInteriorWindow(String title, String description, String placeholder, String confirmButtonText) {
+        super();
         input = getInput(placeholder, Translator.translate(description));
         Label error = getInfoLabel(null);
         confirmButton = getConfirmButton(Translator.translate(confirmButtonText));
@@ -22,9 +19,5 @@ public class SingleInteriorWindow extends InteriorWindow {
                 getInfoLabel(Translator.translate(description)),
                 input,
                 getBottomPanel(error, WindowComponents.getSpacer(), getCancelButton(), confirmButton));
-    }
-
-    protected void setOnConfirm(EventHandler<? super MouseEvent> eventHandler) {
-        confirmButton.setOnMouseClicked(eventHandler);
     }
 }

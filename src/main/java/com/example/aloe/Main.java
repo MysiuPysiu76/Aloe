@@ -1,16 +1,11 @@
 package com.example.aloe;
 
-import com.example.aloe.archive.ArchiveHandler;
-import com.example.aloe.archive.ArchiveParameters;
-import com.example.aloe.archive.ArchiveType;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,13 +18,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.*;
 import org.controlsfx.control.PopOver;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.example.aloe.archive.ArchiveType.*;
 
 public class Main extends Application {
 
@@ -65,6 +58,8 @@ public class Main extends Application {
         filesPane.getStyleClass().add("files-pane");
         filesPanel.getStyleClass().add("files-panel");
         filesMenu.getStyleClass().add("files-menu");
+
+        VBox.setVgrow(filesPanel, Priority.ALWAYS);
 
         filesPanel.setMinHeight(mainContainer.getHeight() - navigationPanel.getHeight());
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
@@ -353,6 +348,7 @@ public class Main extends Application {
                     }
                 }
                 filesPane.setFitToWidth(true);
+
                 filesPane.setContent(grid);
                 filesPane.getStyleClass().add("files-pane");
                 heightListener = new ChangeListener<Number>() {
@@ -387,7 +383,7 @@ public class Main extends Application {
         }
     }
 
-    private void selectFile(VBox fileBox, MouseEvent event) {
+    private void selectFile(VBox fileBox, @NotNull MouseEvent event) {
         if (!event.isControlDown() && event.getButton() == MouseButton.PRIMARY) {
             removeSelectionFromFiles();
         }
@@ -545,127 +541,10 @@ public class Main extends Application {
         return selectedFiles.contains(fileBox);
     }
 
-    public void openCreateArchiveWindow(List<File> files) {
-        Stage window = new Stage();
-        VBox root = new VBox();
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setMinWidth(450);
-        window.setMinHeight(206);
-        window.setMinWidth(460);
-        window.initModality(Modality.WINDOW_MODAL);
-        window.initStyle(StageStyle.TRANSPARENT);
-
-        Label title = new Label(Translator.translate("window.archive.title"));
-        title.setPadding(new Insets(15, 10, 10, 10));
-        title.setStyle("-fx-font-size: 20px");
-
-        Label name = new Label(Translator.translate("window.archive.file-name"));
-        name.setPadding(new Insets(1, 345, 7, 0));
-        name.setStyle("-fx-font-size: 14px");
-
-        TextField fileName = new TextField();
-        fileName.setStyle("-fx-font-size: 15px");
-        fileName.setMinWidth(330);
-        fileName.setPadding(new Insets(7, 10, 7, 10));
-
-        ComboBox<ArchiveType> archiveType = new ComboBox<>();
-        archiveType.setValue(ZIP);
-        List<ArchiveType> filteredList = Arrays.stream(ArchiveType.values()).filter(type -> type != ArchiveType.RAR).toList();
-        archiveType.setItems(FXCollections.observableArrayList(filteredList));
-        Label error = new Label();
-        error.setMinWidth(210);
-        error.setStyle("-fx-font-size: 14px; -fx-text-alignment: start");
-        error.setStyle("-fx-text-fill: red");
-        error.setPadding(new Insets(-2, 0, 0, 0));
-
-        CheckBox compress = new CheckBox(Translator.translate("window.archive.compress"));
-        CheckBox password = new CheckBox(Translator.translate("window.archive.password"));
-        TextField passwordText = new TextField();
-        passwordText.setPadding(new Insets(5, 7, 5, 7));
-        passwordText.setMaxWidth(250);
-
-        compress.setSelected(true);
-        Button cancel = new Button(Translator.translate("button.cancel"));
-        cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
-        Button create = new Button(Translator.translate("button.create"));
-        create.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
-
-        HBox nameHBox = new HBox(fileName, archiveType);
-        nameHBox.setSpacing(10);
-        nameHBox.setAlignment(Pos.CENTER);
-        HBox optionsHBox = new HBox(password, compress);
-        optionsHBox.setPadding(new Insets(10));
-        optionsHBox.setSpacing(10);
-        optionsHBox.setAlignment(Pos.CENTER);
-        HBox bottomHBox = new HBox(error, cancel, create);
-        bottomHBox.setAlignment(Pos.CENTER_RIGHT);
-        bottomHBox.setSpacing(10);
-        bottomHBox.setPadding(new Insets(12, 15, 5, 10));
-        root.getChildren().addAll(title, name, nameHBox, optionsHBox, bottomHBox);
-
-        fileName.textProperty().addListener((observable, oldValue, newValue) -> {
-            String validationError = validateFileName(fileName.getText() + archiveType.getValue().toString());
-            if (validationError != null) {
-                error.setText(validationError);
-                create.setDisable(true);
-            } else {
-                error.setText("");
-                create.setDisable(false);
-            }
-        });
-        archiveType.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == ZIP) {
-                if (!root.getChildren().contains(optionsHBox)) {
-                    root.getChildren().add(3, optionsHBox);
-                    window.setMaxHeight(206);
-                    window.setMinHeight(206);
-                }
-            } else {
-                if (password.isSelected()) {
-                    root.getChildren().remove(passwordText);
-                    password.setSelected(false);
-                }
-                root.getChildren().remove(optionsHBox);
-                window.setMaxHeight(166);
-                window.setMinHeight(166);
-            }
-            String validationError = validateFileName(fileName.getText() + archiveType.getValue().toString());
-            if (validationError != null) {
-                error.setText(validationError);
-                create.setDisable(true);
-            } else {
-                error.setText("");
-                create.setDisable(false);
-            }
-        });
-        password.setOnAction(event -> {
-            if (password.isSelected()) {
-                root.getChildren().add(4, passwordText);
-                window.setMaxHeight(230);
-                window.setMinHeight(230);
-            } else {
-                root.getChildren().remove(4);
-                window.setMaxHeight(206);
-                window.setMinHeight(206);
-            }
-        });
-        cancel.setOnAction(event -> {
-            window.close();
-        });
-        create.setOnAction(event -> {
-            window.close();
-            if (password.isSelected()) {
-                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText() + archiveType.getValue().getExtension(), compress.isSelected(), passwordText.getText()));
-            } else {
-                ArchiveHandler.compress(new ArchiveParameters(files, archiveType.getValue(), fileName.getText() + archiveType.getValue().getExtension(), compress.isSelected()));
-            }
-            refreshCurrentDirectory();
-        });
-
-        Scene scene = new Scene(root, 350, 140);
-        window.setScene(scene);
-        window.initOwner(stage);
-        window.show();
+    public static void openCreateArchiveWindow(List<File> files) {
+        pane.getChildren().add(new CompressWindow(files));
+        showDarkeningPlate();
+        ((HBox) ((VBox) pane.getChildren().getFirst()).getChildren().get(2)).getChildren().getFirst().requestFocus();
     }
 
     public void deleteSelectedFiles() {

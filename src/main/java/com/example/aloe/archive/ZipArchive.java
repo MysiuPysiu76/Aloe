@@ -18,7 +18,7 @@ import java.nio.file.Path;
  * <p>
  * <h2>Example usage:</h2>
  * <pre>
- *     ArchiveParameters parameters = new ArchiveParameters(files, "output", true, "password123");
+ *     ArchiveParameters parameters = new ArchiveParameters(files, "output", "password123");
  *     new ZipArchive().compress(parameters);
  *
  *     File archive = new File("output.zip");
@@ -40,7 +40,7 @@ class ZipArchive implements Archive {
     public void compress(ArchiveParameters parameters) {
         try {
             ZipFile zipFile = createZipFileInstance(parameters);
-            ZipParameters zipParameters = createZipParameters(parameters.isUseCompress(), parameters.getPassword() != null);
+            ZipParameters zipParameters = createZipParameters(parameters.getPassword() != null);
 
             for (File file : parameters.getFiles()) {
                 if (file.isDirectory()) {
@@ -95,15 +95,12 @@ class ZipArchive implements Archive {
     /**
      * Configures and returns ZIP parameters for the archive.
      *
-     * @param useCompress whether to apply compression.
      * @param encrypt     whether to enable encryption.
      * @return a configured {@link ZipParameters} object.
      */
-    private ZipParameters createZipParameters(boolean useCompress, boolean encrypt) {
+    private ZipParameters createZipParameters(boolean encrypt) {
         ZipParameters parameters = new ZipParameters();
-        if (!useCompress) {
-            parameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
-        }
+        parameters.setCompressionLevel(CompressionLevel.NO_COMPRESSION);
         if (encrypt) {
             parameters.setEncryptFiles(true);
             parameters.setEncryptionMethod(EncryptionMethod.ZIP_STANDARD);

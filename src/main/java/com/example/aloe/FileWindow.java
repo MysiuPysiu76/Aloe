@@ -8,8 +8,7 @@ import java.util.List;
 public class FileWindow extends SingleInteriorWindow {
 
     public FileWindow() {
-        super("window.interior.file.create-file", "window.interior.file.name",
-                Translator.translate("window.interior.file.placeholder"), "window.interior.file.create");
+        super("window.interior.file.create-file", "window.interior.file.name", Translator.translate("window.interior.file.placeholder"), "window.interior.file.create");
 
         this.setOnConfirm(event -> {
             File newFile = new File(FilesOperations.getCurrentDirectory(), this.input.getText().trim());
