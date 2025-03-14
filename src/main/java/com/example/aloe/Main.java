@@ -431,6 +431,7 @@ public class Main extends Application {
                 case "mp3", "ogg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/music.png")));
                 case "epub", "mobi" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/book.png")));
                 case "pdf" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/pdf.png")));
+                case "torrent" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/torrent.png")));
                 case "iso" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/cd.png")));
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
             }
