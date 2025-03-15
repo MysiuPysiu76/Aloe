@@ -48,6 +48,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        ExtendedContextMenu.setStage(stage);
         root.getChildren().addAll(mainContainer, pane);
         mainContainer.getStyleClass().add("root");
         Main.stage = stage;
