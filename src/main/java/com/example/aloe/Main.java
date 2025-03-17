@@ -646,4 +646,9 @@ public class Main extends Application {
         }
         return files;
     }
+
+    public static void openAddMenuItem() {
+        pane.getChildren().add(new AddMenuItemWindow());
+        showDarkeningPlate();
+    }
 }

@@ -5,7 +5,6 @@
   "button.create": "Create",
   "button.exit": "Exit",
   "button.extract": "Extract",
-  "button.save": "Save",
   "button.copy": "Copy",
   "confirm.skip.copy": "Confirm skipping pending operations",
   "context-menu.add": "Add",
@@ -27,9 +26,6 @@
   "context-menu.remove": "Remove",
   "context-menu.rename": "Rename",
   "context-menu.select-all": "Select All",
-  "files-menu.example-path": "/path/to/directory",
-  "files-menu.title.add": "Add Directory to Menu",
-  "files-menu.title.edit": "Edit Directory in Menu",
   "navigate.about-button": "About Files",
   "navigate.dark-mode": "Dark Mode",
   "navigate.hidden-files": "Hidden files",
@@ -219,5 +215,11 @@
   "window.interior.file.create-file": "Create File",
   "window.interior.rename.directory": "Rename folder",
   "window.interior.rename.file": "Rename file",
-  "window.interior.rename": "Rename"
+  "window.interior.rename": "Rename",
+  "window.interior.menu.title": "Title",
+  "window.interior.menu.add": "Add Directory to Menu",
+  "window.interior.menu.example-path": "/path/to/directory",
+  "window.interior.menu.path": "Path",
+  "window.interior.menu.save": "Save",
+  "window.interior.menu.icon": "Icon"
 }

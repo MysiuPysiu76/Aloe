@@ -1,14 +1,17 @@
 package com.example.aloe;
 
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class InteriorWindow extends VBox {
@@ -73,5 +76,13 @@ public class InteriorWindow extends VBox {
 
     protected void setOnConfirm(EventHandler<? super MouseEvent> eventHandler) {
         confirmButton.setOnMouseClicked(eventHandler);
+    }
+
+    protected ComboBox getComboBox(ObservableList observableList) {
+        ComboBox comboBox = new ComboBox(observableList);
+        comboBox.setMaxWidth(Double.MAX_VALUE);
+        comboBox.setPadding(new Insets(3, 4, 3, 4));
+        HBox.setHgrow(comboBox, Priority.ALWAYS);
+        return comboBox;
     }
 }
