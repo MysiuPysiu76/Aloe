@@ -55,7 +55,7 @@ public class MenuManager {
         loadMenu();
     }
 
-    static void editItemInMenu(String oldPath, String newPath, String name, String icon) {
+    public static void editItemInMenu(String oldPath, String newPath, String name, String icon) {
         List<Map<String, Object>> items = SettingsManager.getSetting("menu", "items");
         for (Map<String, Object> item : items) {
             if (item.get("path").equals(oldPath)) {

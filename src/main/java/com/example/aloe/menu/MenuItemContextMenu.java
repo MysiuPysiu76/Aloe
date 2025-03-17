@@ -9,7 +9,7 @@ class MenuItemContextMenu extends ExtendedContextMenu {
         super();
 
         ExtendedMenuItem open = new ExtendedMenuItem(Translator.translate("context-menu.open"), e -> Main.openFileInOptions(new File(item.getPath())));
-        ExtendedMenuItem edit = new ExtendedMenuItem(Translator.translate("context-menu.edit"), e -> MenuWindowManager.openEditItemInMenuWindow(item.getPath(), item.getTitle(), item.getIcon()));
+        ExtendedMenuItem edit = new ExtendedMenuItem(Translator.translate("context-menu.edit"), e -> Main.editEditMenuItem(item.getTitle(), item.getPath(), item.getIcon()));
         ExtendedMenuItem remove = new ExtendedMenuItem(Translator.translate("context-menu.remove"), e -> MenuManager.removeItemFromMenu(item.getPath()));
         ExtendedMenuItem properties = new ExtendedMenuItem(Translator.translate("context-menu.properties"), e -> new PropertiesWindow(new File(item.getPath())));
 

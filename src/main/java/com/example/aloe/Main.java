@@ -651,4 +651,9 @@ public class Main extends Application {
         pane.getChildren().add(new AddMenuItemWindow());
         showDarkeningPlate();
     }
+
+    public static void editEditMenuItem(String title, String path, String icon) {
+        pane.getChildren().add(new EditMenuItemWindow(title, path, icon));
+        showDarkeningPlate();
+    }
 }
