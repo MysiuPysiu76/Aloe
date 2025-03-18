@@ -1,5 +1,7 @@
-package com.example.aloe;
+package com.example.aloe.window.interior;
 
+import com.example.aloe.Main;
+import com.example.aloe.WindowComponents;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

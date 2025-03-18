@@ -1,4 +1,7 @@
-package com.example.aloe;
+package com.example.aloe.window.interior;
+
+import com.example.aloe.FilesOperations;
+import com.example.aloe.Translator;
 
 import java.io.File;
 import java.nio.file.Files;

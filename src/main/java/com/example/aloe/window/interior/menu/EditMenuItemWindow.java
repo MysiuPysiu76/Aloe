@@ -1,5 +1,6 @@
-package com.example.aloe;
+package com.example.aloe.window.interior.menu;
 
+import com.example.aloe.Translator;
 import com.example.aloe.menu.MenuManager;
 
 public class EditMenuItemWindow extends MenuItemWindow {

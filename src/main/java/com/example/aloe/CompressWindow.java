@@ -3,6 +3,7 @@ package com.example.aloe;
 import com.example.aloe.archive.ArchiveHandler;
 import com.example.aloe.archive.ArchiveParameters;
 import com.example.aloe.archive.ArchiveType;
+import com.example.aloe.window.interior.InteriorWindow;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;

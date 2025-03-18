@@ -1,8 +1,9 @@
-package com.example.aloe;
+package com.example.aloe.window.interior.menu;
 
+import com.example.aloe.Translator;
 import com.example.aloe.menu.MenuManager;
 
-class AddMenuItemWindow extends MenuItemWindow {
+public class AddMenuItemWindow extends MenuItemWindow {
     public AddMenuItemWindow() {
         super(Translator.translate("window.interior.menu.add"), "", "", "FOLDER_OPEN_O");
 

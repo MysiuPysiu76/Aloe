@@ -1,6 +1,7 @@
 package com.example.aloe.menu;
 
 import com.example.aloe.*;
+import com.example.aloe.window.PropertiesWindow;
 
 import java.io.File;
 

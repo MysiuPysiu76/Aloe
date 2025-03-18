@@ -2,6 +2,7 @@ package com.example.aloe;
 
 import com.example.aloe.archive.ArchiveHandler;
 import com.example.aloe.menu.MenuManager;
+import com.example.aloe.window.PropertiesWindow;
 
 import java.io.File;
 import java.util.ArrayList;

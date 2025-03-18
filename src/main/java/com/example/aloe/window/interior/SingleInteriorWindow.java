@@ -1,5 +1,8 @@
-package com.example.aloe;
+package com.example.aloe.window.interior;
 
+import com.example.aloe.Main;
+import com.example.aloe.Translator;
+import com.example.aloe.WindowComponents;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 

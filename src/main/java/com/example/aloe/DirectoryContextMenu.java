@@ -1,5 +1,7 @@
 package com.example.aloe;
 
+import com.example.aloe.window.PropertiesWindow;
+
 class DirectoryContextMenu extends ExtendedContextMenu {
     public DirectoryContextMenu() {
         super();

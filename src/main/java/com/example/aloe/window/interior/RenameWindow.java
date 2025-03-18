@@ -1,4 +1,6 @@
-package com.example.aloe;
+package com.example.aloe.window.interior;
+
+import com.example.aloe.FilesOperations;
 
 import java.io.File;
 

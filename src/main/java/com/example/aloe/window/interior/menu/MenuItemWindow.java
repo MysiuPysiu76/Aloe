@@ -1,5 +1,8 @@
-package com.example.aloe;
+package com.example.aloe.window.interior.menu;
 
+import com.example.aloe.Translator;
+import com.example.aloe.WindowComponents;
+import com.example.aloe.window.interior.InteriorWindow;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;

@@ -1,5 +1,6 @@
-package com.example.aloe;
+package com.example.aloe.window;
 
+import com.example.aloe.*;
 import com.example.aloe.permissions.ACLPermissions;
 import com.example.aloe.permissions.POSIXPermissions;
 import com.example.aloe.settings.SettingsManager;
