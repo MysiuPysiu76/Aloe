@@ -34,6 +34,15 @@ public class FilesOperations {
         }
     }
 
+    public static String getFileName(File file) {
+        if (file.isDirectory()) return file.getName();
+        int lastDotIndex = file.getName().lastIndexOf(".");
+        if (lastDotIndex == -1) {
+            return file.getName();
+        }
+        return file.getName().substring(0, lastDotIndex);
+    }
+
     public static void cutFile(File file) {
         copyFile(file);
         isCut = true;
@@ -60,7 +69,7 @@ public class FilesOperations {
         if (destination.exists() && !replaceExisting) {
             FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination);
             if (FileOperation.addOperationToQueue(operation)) {
-                WindowService.addFileDecisionAskToExistFileWindow(operation);
+                System.out.println(WindowService.addFileDecisionAskToExistFileWindow(operation));
             }
         } else {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -150,24 +159,9 @@ public class FilesOperations {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         List<File> filesFromClipboard = clipboard.getFiles();
 
-        if (filesFromClipboard != null && !filesFromClipboard.isEmpty()) {
-            for (File fileFromClipboard : filesFromClipboard) {
-                File destinationFile = new File(getCurrentDirectory(), fileFromClipboard.getName());
-                try {
-                    if (fileFromClipboard.isDirectory()) {
-                        copyDirectoryToDestination(fileFromClipboard, destinationFile, false, false);
-                    } else {
-                        copyFileToDestination(fileFromClipboard, destinationFile, false);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (isCut) {
-                    deleteFile(fileFromClipboard);
-                }
-            }
-        }
-        new Main().refreshCurrentDirectory();
+        Thread thread = new Thread(new FileCopyTask(filesFromClipboard));
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public static void moveFileToParent(File file) {

@@ -221,5 +221,6 @@
   "window.interior.menu.example-path": "/path/to/directory",
   "window.interior.menu.path": "Path",
   "window.interior.menu.save": "Save",
-  "window.interior.menu.icon": "Icon"
+  "window.interior.menu.icon": "Icon",
+  "utils.copy": "Copy"
 }

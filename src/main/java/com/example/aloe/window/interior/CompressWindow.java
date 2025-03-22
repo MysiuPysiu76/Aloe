@@ -1,9 +1,11 @@
-package com.example.aloe;
+package com.example.aloe.window.interior;
 
+import com.example.aloe.Main;
+import com.example.aloe.Translator;
+import com.example.aloe.WindowComponents;
 import com.example.aloe.archive.ArchiveHandler;
 import com.example.aloe.archive.ArchiveParameters;
 import com.example.aloe.archive.ArchiveType;
-import com.example.aloe.window.interior.InteriorWindow;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;

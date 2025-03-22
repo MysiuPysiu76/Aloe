@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 public class WindowService {
     public static String openPasswordPromptWindow() {
@@ -106,7 +105,6 @@ public class WindowService {
         decisionWindow.setMinWidth(430);
         decisionWindow.setMaxWidth(430);
         decisionWindow.initModality(Modality.WINDOW_MODAL);
-
         if (filesDecisionsView == null) {
             filesDecisionsView = new VBox();
             filesDecisionsView.setAlignment(Pos.CENTER);
@@ -119,74 +117,67 @@ public class WindowService {
         decisionWindow.setScene(scene);
         decisionWindow.setTitle(Translator.translate("window.decision.title"));
         filesDecisionsView.setAlignment(Pos.CENTER);
-        decisionWindow.setOnCloseRequest(event -> {
-            if (WindowService.openConfirmWindow("confirm.skip.copy")) {
-                filesDecisionsView.getChildren().clear();
-                FileOperation.clearOperationFromQueue();
-            } else {
-                decisionWindow.showAndWait();
-            }
-        });
+//        decisionWindow.setOnCloseRequest(event -> {
+//            if (WindowService.openConfirmWindow("confirm.skip.copy")) {
+//                filesDecisionsView.getChildren().clear();
+//                FileOperation.clearOperationFromQueue();
+//            } else {
+//                decisionWindow.showAndWait();
+//            }
+//        });
     }
 
     private static VBox filesDecisionsView;
 
-    public static void addFileDecisionAskToExistFileWindow(FileOperation operation) {
-        if (decisionWindow == null) {
+    public static FileDecision addFileDecisionAskToExistFileWindow(FileOperation operation) {
+//        if (decisionWindow == null) {
             openDecisionWindowFileExists();
-        }
+//        }
+        System.out.println("d 2");
         decisionWindow.setHeight(220.0);
         VBox content = new VBox();
         content.setMinWidth(425);
-        Label destinationHasFile = new Label(Translator.translate("window.decision.destination-has-file") + operation.getDestination().getName());
+        Label destinationHasFile = new Label(Translator.translate("window.decision.destination-has-file") + operation.getSource().getName());
         destinationHasFile.getStyleClass().add("title-label");
         VBox.setMargin(destinationHasFile, new Insets(10, 10, 5, 10));
 
         Button replaceButton = getReplaceButton("file");
         Button copyNextToButton = getCopyNextToButton();
         Button skipButton = getSkipButton("file");
+        final FileDecision[] decisions = {FileDecision.NEXT_TO};
 
         replaceButton.setOnAction(event -> {
-            updateDecisionAskForExistingFiles(content, operation);
-            try {
-                FilesOperations.copyFileToDestination(operation.getSource(), operation.getDestination(), true);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            decisions[0] = FileDecision.REPLACE;
+            decisionWindow.close();
+//            updateDecisionAskForExistingFiles(content, operation);
+
+
         });
 
         copyNextToButton.setOnAction(event -> {
-            updateDecisionAskForExistingFiles(content, operation);
-            try {
-                Path path = operation.getDestination().toPath();
-                int i = 1;
-                while (Files.exists(path)) {
-                    String fileName = FilesOperations.getUniqueName(operation.getSource().getName(), i);
-                    File destination = new File(operation.getDestination().toPath().toString());
-                    File parent = new File(destination.getParent());
-                    path = parent.toPath().resolve(fileName);
-                    i++;
-                }
-                Files.copy(operation.getSource().toPath(), path, StandardCopyOption.REPLACE_EXISTING);
-                FilesOperations.copyFileToDestination(operation.getSource(), operation.getDestination(), true);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            decisions[0] = FileDecision.NEXT_TO;
+            decisionWindow.close();
+
         });
 
         skipButton.setOnAction(event -> {
-            updateDecisionAskForExistingFiles(content, operation);
+            decisions[0] = FileDecision.SKIP;
+            decisionWindow.close();
+
         });
 
         content.setAlignment(Pos.TOP_CENTER);
         content.getChildren().addAll(destinationHasFile, replaceButton, copyNextToButton, skipButton);
         filesDecisionsView.getChildren().add(content);
-        if (!decisionWindow.isShowing()) {
-            decisionWindow.showAndWait();
-        }
+//        if (!decisionWindow.isShowing()) {
+//            decisionWindow.showAndWait();
+//        }
+        decisionWindow.showAndWait();
+//        updateDecisionAskForExistingFiles(content, operation);
+        return decisions[0];
     }
 
-    public static void addDirectoryDecisionAskToExistFileWindow(FileOperation operation) {
+    public static FileDecision addDirectoryDecisionAskToExistFileWindow(FileOperation operation) {
         if (decisionWindow == null) {
             openDecisionWindowFileExists();
         }
@@ -201,51 +192,40 @@ public class WindowService {
         Button combineButton = getCombineButton();
         Button copyNextToButton = getCopyNextToButton();
         Button skipButton = getSkipButton("directory");
+        final FileDecision[] decisions = {FileDecision.NEXT_TO};
 
         replaceButton.setOnAction(event -> {
-            updateDecisionAskForExistingFiles(content, operation);
-            try {
-                FilesOperations.copyDirectoryToDestination(operation.getSource(), operation.getDestination(), true, false);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+
+            decisions[0] = FileDecision.REPLACE;
+            decisionWindow.close();
+
         });
 
         combineButton.setOnAction(event -> {
-            updateDecisionAskForExistingFiles(content, operation);
-            try {
-                FilesOperations.copyDirectoryToDestination(operation.getSource(), operation.getDestination(), false, true);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            decisions[0] = FileDecision.COMBINE;
+            decisionWindow.close();
+
         });
 
         copyNextToButton.setOnAction(event -> {
-            updateDecisionAskForExistingFiles(content, operation);
-            try {
-                Path path = operation.getDestination().toPath();
-                Path clear = path;
-                int i = 1;
-                while (Files.exists(path)) {
-                    path = new File(clear.toString() + "_" + i).toPath();
-                    i++;
-                }
-                FilesOperations.copyDirectoryToDestination(operation.getSource(), path.toFile(), false, false);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            decisions[0] = FileDecision.NEXT_TO;
+            decisionWindow.close();
+
         });
 
         skipButton.setOnAction(event -> {
-            updateDecisionAskForExistingFiles(content, operation);
+            decisions[0] = FileDecision.SKIP;
+            decisionWindow.close();
+
         });
 
         content.setAlignment(Pos.TOP_CENTER);
         content.getChildren().addAll(destinationHasDirectory, replaceButton, combineButton, copyNextToButton, skipButton);
         filesDecisionsView.getChildren().add(content);
-        if (!decisionWindow.isShowing()) {
-            decisionWindow.showAndWait();
-        }
+
+        decisionWindow.showAndWait();
+        updateDecisionAskForExistingFiles(content, operation);
+        return decisions[0];
     }
 
     private static void updateDecisionAskForExistingFiles(VBox content, FileOperation operation) {

@@ -3,6 +3,7 @@ package com.example.aloe;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
+import com.example.aloe.window.interior.CompressWindow;
 import com.example.aloe.window.interior.FileWindow;
 import com.example.aloe.window.interior.RenameWindow;
 import com.example.aloe.window.interior.menu.AddMenuItemWindow;
