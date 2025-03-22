@@ -1,5 +1,6 @@
 package com.example.aloe;
 
+import com.example.aloe.files.FileCopyTask;
 import javafx.concurrent.Task;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -79,7 +80,6 @@ public class FilesOperations {
     static void copyDirectoryToDestination(File source, File destination, boolean replaceExisting, boolean combine) throws IOException {
         if (destination.exists()) {
             if (replaceExisting) {
-                FilesOperations.deleteFile(destination);
                 destination.mkdir();
                 pasteFile(source, destination);
             } else {
@@ -108,18 +108,6 @@ public class FilesOperations {
                 copyFileToDestination(sourceFile, destinationFile, true);
             }
         }
-    }
-
-    public static void deleteFile(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    deleteFile(f);
-                }
-            }
-        }
-        file.delete();
     }
 
     public static void openFileInBackground(File file) {

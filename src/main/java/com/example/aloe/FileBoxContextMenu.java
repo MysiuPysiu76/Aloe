@@ -1,6 +1,7 @@
 package com.example.aloe;
 
 import com.example.aloe.archive.ArchiveHandler;
+import com.example.aloe.files.FileDeleteTask;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.window.PropertiesWindow;
 
@@ -23,8 +24,8 @@ class FileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem archive = Utils.isFileArchive(file) ?
                 new ExtendedMenuItem(Translator.translate("context-menu.extract"),e -> { ArchiveHandler.extract(file); new Main().refreshCurrentDirectory(); }) :
                 new ExtendedMenuItem(Translator.translate("context-menu.compress"), e -> { Main.openCreateArchiveWindow(new ArrayList<>(List.of(file))); new Main().refreshCurrentDirectory(); });
-        ExtendedMenuItem delete = new ExtendedMenuItem(Translator.translate("context-menu.delete"), e -> FilesOperations.deleteFile(file));
-        ExtendedMenuItem properties =   new ExtendedMenuItem(Translator.translate("context-menu.properties"), e -> new PropertiesWindow(file));
+        ExtendedMenuItem delete = new ExtendedMenuItem(Translator.translate("context-menu.delete"), e -> FileDeleteTask.delete(file));
+        ExtendedMenuItem properties = new ExtendedMenuItem(Translator.translate("context-menu.properties"), e -> new PropertiesWindow(file));
 
         this.getItems().addAll(open, cut, copy, rename, duplicate, moveTo, moveToParent, moveToTrash, archive, delete, properties);
 

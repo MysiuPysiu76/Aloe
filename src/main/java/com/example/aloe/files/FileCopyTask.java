@@ -1,5 +1,6 @@
-package com.example.aloe;
+package com.example.aloe.files;
 
+import com.example.aloe.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
@@ -51,7 +52,7 @@ public class FileCopyTask extends Task<Void> {
                     case NEXT_TO -> copyNextTo(source.toPath(), target);
                     case REPLACE -> copyReplace(source.toPath(), target);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
@@ -97,8 +98,8 @@ public class FileCopyTask extends Task<Void> {
         copyRecursive(source, newDestination);
     }
 
-    private void copyReplace(Path source, Path destination) throws IOException {
-        FilesOperations.deleteFile(destination.toFile());
+    private void copyReplace(Path source, Path destination) throws IOException, Exception {
+        FileDeleteTask.deleteInCurrentThread(destination);
         copyRecursive(source, destination);
     }
 }

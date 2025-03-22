@@ -472,6 +472,7 @@ public class Main extends Application {
             if (isSelected(fileBox) && selectedFiles.size() == 1) {
                 fileBoxContextMenu.show(fileBox, event.getScreenX(), event.getScreenY());
             } else if (isSelected(fileBox)) {
+                multiFileBoxContextMenu = new MultiFileBoxContextMenu(getSelectedFiles());
                 multiFileBoxContextMenu.show(fileBox, event.getScreenX(), event.getScreenY());
             } else {
                 fileBoxContextMenu.show(fileBox, event.getScreenX(), event.getScreenY());
@@ -529,7 +530,7 @@ public class Main extends Application {
         return fileBox;
     }
 
-    MultiFileBoxContextMenu multiFileBoxContextMenu = new MultiFileBoxContextMenu();
+    MultiFileBoxContextMenu multiFileBoxContextMenu;
 
     public void refreshCurrentDirectory() {
         loadDirectoryContents(FilesOperations.getCurrentDirectory(), false);
@@ -554,14 +555,6 @@ public class Main extends Application {
         pane.getChildren().add(new CompressWindow(files));
         showDarkeningPlate();
         ((HBox) ((VBox) pane.getChildren().getFirst()).getChildren().get(2)).getChildren().getFirst().requestFocus();
-    }
-
-    public void deleteSelectedFiles() {
-        for (VBox fileBox : selectedFiles) {
-            Label fileName = (Label) fileBox.getChildren().get(1);
-            FilesOperations.deleteFile(new File(FilesOperations.getCurrentDirectory(), fileName.getText()));
-        }
-        refreshCurrentDirectory();
     }
 
     public void copySelectedFiles() {

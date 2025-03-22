@@ -2,6 +2,7 @@ package com.example.aloe.archive;
 
 import com.example.aloe.FilesOperations;
 import com.example.aloe.WindowService;
+import com.example.aloe.files.FileDeleteTask;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
@@ -132,7 +133,7 @@ class ZipArchive implements Archive {
             WindowService.openArchiveInfoWindow("window.archive.extract.wrong-password");
         }
         String extractionPath = FilesOperations.getCurrentDirectory().toPath() + "/" + file.getName().replace(".zip", "");
-        FilesOperations.deleteFile(new File(extractionPath));
+        FileDeleteTask.delete(new File(extractionPath));
         WindowService.openArchiveInfoWindow("window.archive.extract.error");
         e.printStackTrace();
     }

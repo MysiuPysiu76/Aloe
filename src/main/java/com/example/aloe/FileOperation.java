@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
-class FileOperation {
-    enum OperationType {
+public class FileOperation {
+    public enum OperationType {
         COPY, MOVE;
     }
 
