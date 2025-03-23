@@ -25,6 +25,9 @@ public class InteriorWindow extends VBox {
         this.setMinWidth(500);
         this.setStyle("-fx-background-color: #f0f1f0; -fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-color: #acacac;");
 
+        Main.pane.getChildren().add(this);
+        Main.showDarkeningPlate();
+
         this.layoutXProperty().bind(Main.pane.widthProperty().subtract(this.widthProperty()).divide(2));
         this.layoutYProperty().bind(Main.pane.heightProperty().subtract(this.heightProperty()).divide(2));
     }

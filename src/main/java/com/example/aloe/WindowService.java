@@ -1,5 +1,6 @@
 package com.example.aloe;
 
+import com.example.aloe.files.FileDecision;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,11 +13,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class WindowService {
     public static String openPasswordPromptWindow() {
@@ -117,23 +113,12 @@ public class WindowService {
         decisionWindow.setScene(scene);
         decisionWindow.setTitle(Translator.translate("window.decision.title"));
         filesDecisionsView.setAlignment(Pos.CENTER);
-//        decisionWindow.setOnCloseRequest(event -> {
-//            if (WindowService.openConfirmWindow("confirm.skip.copy")) {
-//                filesDecisionsView.getChildren().clear();
-//                FileOperation.clearOperationFromQueue();
-//            } else {
-//                decisionWindow.showAndWait();
-//            }
-//        });
     }
 
     private static VBox filesDecisionsView;
 
     public static FileDecision addFileDecisionAskToExistFileWindow(FileOperation operation) {
-//        if (decisionWindow == null) {
-            openDecisionWindowFileExists();
-//        }
-        System.out.println("d 2");
+        openDecisionWindowFileExists();
         decisionWindow.setHeight(220.0);
         VBox content = new VBox();
         content.setMinWidth(425);
@@ -149,31 +134,22 @@ public class WindowService {
         replaceButton.setOnAction(event -> {
             decisions[0] = FileDecision.REPLACE;
             decisionWindow.close();
-//            updateDecisionAskForExistingFiles(content, operation);
-
-
         });
 
         copyNextToButton.setOnAction(event -> {
             decisions[0] = FileDecision.NEXT_TO;
             decisionWindow.close();
-
         });
 
         skipButton.setOnAction(event -> {
             decisions[0] = FileDecision.SKIP;
             decisionWindow.close();
-
         });
 
         content.setAlignment(Pos.TOP_CENTER);
         content.getChildren().addAll(destinationHasFile, replaceButton, copyNextToButton, skipButton);
         filesDecisionsView.getChildren().add(content);
-//        if (!decisionWindow.isShowing()) {
-//            decisionWindow.showAndWait();
-//        }
         decisionWindow.showAndWait();
-//        updateDecisionAskForExistingFiles(content, operation);
         return decisions[0];
     }
 
@@ -195,28 +171,23 @@ public class WindowService {
         final FileDecision[] decisions = {FileDecision.NEXT_TO};
 
         replaceButton.setOnAction(event -> {
-
             decisions[0] = FileDecision.REPLACE;
             decisionWindow.close();
-
         });
 
         combineButton.setOnAction(event -> {
             decisions[0] = FileDecision.COMBINE;
             decisionWindow.close();
-
         });
 
         copyNextToButton.setOnAction(event -> {
             decisions[0] = FileDecision.NEXT_TO;
             decisionWindow.close();
-
         });
 
         skipButton.setOnAction(event -> {
             decisions[0] = FileDecision.SKIP;
             decisionWindow.close();
-
         });
 
         content.setAlignment(Pos.TOP_CENTER);

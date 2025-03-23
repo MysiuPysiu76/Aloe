@@ -1,10 +1,12 @@
-package com.example.aloe;
+package com.example.aloe.files.properties;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.example.aloe.Translator;
+import com.example.aloe.files.FilesUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -17,7 +19,7 @@ import java.util.*;
 public record ImageProperties(@NotNull File file) {
 
     public String getType() {
-        return FilesOperations.getExtension(file).toUpperCase();
+        return FilesUtils.getExtension(file).toUpperCase();
     }
 
     public String getWidth() {

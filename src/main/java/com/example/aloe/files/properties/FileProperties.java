@@ -1,5 +1,8 @@
-package com.example.aloe;
+package com.example.aloe.files.properties;
 
+import com.example.aloe.Translator;
+import com.example.aloe.Utils;
+import com.example.aloe.files.FilesUtils;
 import org.apache.tika.Tika;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +43,7 @@ public record FileProperties(@NotNull File file) {
 
     public String getSize() {
         if (this.file.isDirectory()) {
-            long directorySize = FilesOperations.calculateDirectorySize(this.file);
+            long directorySize = FilesUtils.calculateDirectorySize(this.file);
             return Utils.convertBytesByUnit(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")";
         } else {
             return Utils.convertBytesByUnit(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")";

@@ -1,4 +1,4 @@
-package com.example.aloe;
+package com.example.aloe.files;
 
 public enum FileDecision {
     COMBINE,

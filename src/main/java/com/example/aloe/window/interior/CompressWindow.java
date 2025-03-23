@@ -6,6 +6,7 @@ import com.example.aloe.WindowComponents;
 import com.example.aloe.archive.ArchiveHandler;
 import com.example.aloe.archive.ArchiveParameters;
 import com.example.aloe.archive.ArchiveType;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
@@ -45,6 +46,8 @@ public class CompressWindow extends InteriorWindow {
             password.setDisable(newValue != ArchiveType.ZIP);
             Main.validateFileName(error, confirmButton, Main.validateFileName(fileName.getText() + archiveType.getValue().getExtension()));
         });
+
+        Platform.runLater(fileName::requestFocus);
 
         this.getChildren().addAll(getTitleLabel(Translator.translate("window.interior.archive.title")),
                 getInfoLabel(Translator.translate("window.interior.archive.name")),

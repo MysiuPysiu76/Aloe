@@ -1,7 +1,7 @@
 package com.example.aloe.archive;
 
-import com.example.aloe.FilesOperations;
 import com.example.aloe.files.FileDeleteTask;
+import com.example.aloe.files.FilesUtils;
 import com.example.aloe.settings.SettingsManager;
 
 import java.io.File;
@@ -83,13 +83,13 @@ public class ArchiveHandler {
      *
      * @param file The archive file to extract. The file type is determined by its extension.
      * @throws IllegalArgumentException if the file does not exist or if its format is unsupported.
-     * @see FilesOperations#getExtension(File)
+     * @see com.example.aloe.files.FilesUtils#getExtension(File)
      */
     public static void extract(File file) {
         if (!file.exists()) {
             throw new IllegalArgumentException("File does not exist");
         }
-        switch (ArchiveType.fromString(FilesOperations.getExtensionWithDot(file).toLowerCase())) {
+        switch (ArchiveType.fromString(FilesUtils.getExtensionWithDot(file).toLowerCase())) {
             case ZIP -> new ZipArchive().decompress(file);
             case SEVEN_ZIP -> new SevenZipArchive().decompress(file);
             case JAR -> new JarArchive().decompress(file);

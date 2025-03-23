@@ -85,12 +85,12 @@ public class FileCopyTask extends Task<Void> {
 
     private void copyNextTo(Path source, Path destination) throws IOException {
         int index = 1;
-        String extension = FilesOperations.getExtensionWithDot(destination.toFile());
+        String extension = FilesUtils.getExtensionWithDot(destination.toFile());
         Path parent = destination.getParent();
         Path newDestination = destination;
 
         while (Files.exists(newDestination)) {
-            String newFileName = FilesOperations.getFileName(destination.toFile()) + " (" + Translator.translate("utils.copy") + " " + index + ")" + extension;
+            String newFileName = FilesUtils.getFileName(destination.toFile()) + " (" + Translator.translate("utils.copy") + " " + index + ")" + extension;
             newDestination = parent.resolve(newFileName);
             index++;
         }

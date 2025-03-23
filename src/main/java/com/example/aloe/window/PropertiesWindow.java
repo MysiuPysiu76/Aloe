@@ -1,6 +1,9 @@
 package com.example.aloe.window;
 
 import com.example.aloe.*;
+import com.example.aloe.files.FilesUtils;
+import com.example.aloe.files.properties.FileProperties;
+import com.example.aloe.files.properties.ImageProperties;
 import com.example.aloe.permissions.ACLPermissions;
 import com.example.aloe.permissions.POSIXPermissions;
 import com.example.aloe.settings.SettingsManager;
@@ -144,7 +147,7 @@ public class PropertiesWindow extends Stage {
 
     private void calculateFilesSizes() {
         GridPane pane = (GridPane) ((VBox) (root.getChildren().get(1))).getChildren().get(1);
-        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.isFile() ? file.length() : FilesOperations.calculateDirectorySize(this.file)), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(7)).setText(result)));
+        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.isFile() ? file.length() : FilesUtils.calculateDirectorySize(this.file)), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(7)).setText(result)));
         CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(file.isFile() ? 15 : 17)).setText(result)));
     }
 
@@ -163,7 +166,7 @@ public class PropertiesWindow extends Stage {
     }
 
     private Image loadIconForFile(File file, boolean useThumbnails) {
-        return switch (FilesOperations.getExtension(file).toLowerCase()) {
+        return switch (FilesUtils.getExtension(file).toLowerCase()) {
             case "jpg", "jpeg", "png", "gif" ->
                     useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
             case "mp4" -> loadIcon("/assets/icons/video.png");

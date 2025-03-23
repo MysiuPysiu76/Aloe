@@ -35,15 +35,6 @@ public class FilesOperations {
         }
     }
 
-    public static String getFileName(File file) {
-        if (file.isDirectory()) return file.getName();
-        int lastDotIndex = file.getName().lastIndexOf(".");
-        if (lastDotIndex == -1) {
-            return file.getName();
-        }
-        return file.getName().substring(0, lastDotIndex);
-    }
-
     public static void cutFile(File file) {
         copyFile(file);
         isCut = true;
@@ -170,23 +161,6 @@ public class FilesOperations {
             e.printStackTrace();
         }
         new Main().refreshCurrentDirectory();
-    }
-
-    public static String getExtension(File file) {
-        return FilesOperations.getExtension(file.getName());
-    }
-
-    public static String getExtensionWithDot(File file) {
-        return "." + getExtension(file.getName());
-    }
-
-    public static String getExtension(String fileName) {
-        int lastDotIndex = fileName.lastIndexOf(".");
-        if (lastDotIndex == -1 || lastDotIndex == fileName.length() - 1) {
-            return "";
-        }
-        if (fileName.endsWith(".tar.gz")) return "tar.gz";
-        return fileName.substring(lastDotIndex + 1);
     }
 
     public static File chooseDirectory() {
@@ -346,20 +320,5 @@ public class FilesOperations {
                 }
             }
         }
-    }
-
-    public static long calculateDirectorySize(File file) {
-        long size = 0;
-        File[] files = file.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (f.isFile()) {
-                    size += f.length();
-                } else {
-                    size += calculateDirectorySize(f);
-                }
-            }
-        }
-        return size;
     }
 }

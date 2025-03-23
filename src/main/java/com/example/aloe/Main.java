@@ -1,5 +1,6 @@
 package com.example.aloe;
 
+import com.example.aloe.files.FilesUtils;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
@@ -426,7 +427,7 @@ public class Main extends Application {
         if (isDirectory) {
             icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         } else {
-            switch (FilesOperations.getExtension(name).toLowerCase()) {
+            switch (FilesUtils.getExtension(name).toLowerCase()) {
                 case "jpg", "jpeg", "png", "gif" -> {
                     if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails"))) {
                         icon.setImage(new Image(new File(FilesOperations.getCurrentDirectory(), name).toURI().toString()));
@@ -586,11 +587,6 @@ public class Main extends Application {
         }
     }
 
-    public static void renameFile(File file) {
-        pane.getChildren().add(new RenameWindow(file));
-        showDarkeningPlate();
-    }
-
     public static String validateFileName(String name) {
         if (name.isEmpty()) {
             return Translator.translate("validator.empty-name");
@@ -617,19 +613,8 @@ public class Main extends Application {
         }
     }
 
-    public static void createDirectory() {
-        pane.getChildren().add(new DirectoryWindow());
-        showDarkeningPlate();
-    }
-
-    private static void showDarkeningPlate() {
+    public static void showDarkeningPlate() {
         pane.setVisible(true);
-        ((VBox) pane.getChildren().getFirst()).getChildren().get(2).requestFocus();
-    }
-
-    public static void createFile() {
-        pane.getChildren().add(new FileWindow());
-        showDarkeningPlate();
     }
 
     private void getParentDirectory() {
