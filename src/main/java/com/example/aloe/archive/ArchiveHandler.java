@@ -1,6 +1,6 @@
 package com.example.aloe.archive;
 
-import com.example.aloe.files.FileDeleteTask;
+import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.settings.SettingsManager;
 
@@ -98,7 +98,7 @@ public class ArchiveHandler {
             case TAR_GZ -> new TarGzArchive().decompress(file);
         }
         if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "delete-archive-after-extract"))) {
-            FileDeleteTask.delete(file);
+            new FileDeleteTask(file, true);
         }
     }
 }

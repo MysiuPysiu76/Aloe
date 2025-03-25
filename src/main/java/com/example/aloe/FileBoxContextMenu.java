@@ -1,7 +1,9 @@
 package com.example.aloe;
 
 import com.example.aloe.archive.ArchiveHandler;
-import com.example.aloe.files.FileDeleteTask;
+import com.example.aloe.files.tasks.FileCopyTask;
+import com.example.aloe.files.tasks.FileDeleteTask;
+import com.example.aloe.files.tasks.FileDuplicateTask;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.window.PropertiesWindow;
 import com.example.aloe.window.interior.CompressWindow;
@@ -19,14 +21,14 @@ class FileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem cut = new ExtendedMenuItem(Translator.translate("context-menu.cut"), e -> FilesOperations.cutFile(file));
         ExtendedMenuItem copy = new ExtendedMenuItem(Translator.translate("context-menu.copy"), e -> FilesOperations.copyFile(file));
         ExtendedMenuItem rename = new ExtendedMenuItem(Translator.translate("context-menu.rename"), e -> new RenameWindow(file));
-        ExtendedMenuItem duplicate = new ExtendedMenuItem(Translator.translate("context-menu.duplicate"), e -> FilesOperations.duplicateFiles(new ArrayList<>(List.of(file))));
+        ExtendedMenuItem duplicate = new ExtendedMenuItem(Translator.translate("context-menu.duplicate"), e -> new FileDuplicateTask(file, true));
         ExtendedMenuItem moveTo = new ExtendedMenuItem(Translator.translate("context-menu.move-to"), e -> FilesOperations.moveFileTo(new ArrayList<>(List.of(file))));
         ExtendedMenuItem moveToParent = new ExtendedMenuItem(Translator.translate("context-menu.move-to-parent"), e -> FilesOperations.moveFileToParent(file));
         ExtendedMenuItem moveToTrash = new ExtendedMenuItem(Translator.translate("context-menu.move-to-trash"), e -> FilesOperations.moveFileToTrash(file));
         ExtendedMenuItem archive = Utils.isFileArchive(file) ?
                 new ExtendedMenuItem(Translator.translate("context-menu.extract"),e -> { ArchiveHandler.extract(file); new Main().refreshCurrentDirectory(); }) :
                 new ExtendedMenuItem(Translator.translate("context-menu.compress"), e -> new CompressWindow(List.of(file)));
-        ExtendedMenuItem delete = new ExtendedMenuItem(Translator.translate("context-menu.delete"), e -> FileDeleteTask.delete(file));
+        ExtendedMenuItem delete = new ExtendedMenuItem(Translator.translate("context-menu.delete"), e -> new FileDeleteTask(file, true));
         ExtendedMenuItem properties = new ExtendedMenuItem(Translator.translate("context-menu.properties"), e -> new PropertiesWindow(file));
 
         this.getItems().addAll(open, cut, copy, rename, duplicate, moveTo, moveToParent, moveToTrash, archive, delete, properties);

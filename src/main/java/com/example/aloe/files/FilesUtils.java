@@ -4,7 +4,7 @@ import java.io.File;
 
 public class FilesUtils {
 
-    public static long calculateDirectorySize(File file) {
+    public static long calculateFileSize(File file) {
         if (!file.exists()) {
             return 0;
         }
@@ -16,7 +16,7 @@ public class FilesUtils {
         File[] files = file.listFiles();
         if (files != null) {
             for (File f : files) {
-                totalSize += calculateDirectorySize(f);
+                totalSize += calculateFileSize(f);
             }
         }
         return totalSize;

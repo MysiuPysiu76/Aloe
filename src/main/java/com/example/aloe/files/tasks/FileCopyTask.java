@@ -1,25 +1,35 @@
-package com.example.aloe.files;
+package com.example.aloe.files.tasks;
 
 import com.example.aloe.*;
+import com.example.aloe.files.FileDecision;
+import com.example.aloe.files.FilesUtils;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
 
-public class FileCopyTask extends Task<Void> {
+public class FileCopyTask extends FilesTask {
     private final List<File> files;
     private final Path destination;
 
-    public FileCopyTask(List<File> files) {
-        this.files = files;
-        this.destination = FilesOperations.getCurrentDirectory().toPath();
+     FileCopyTask() {
+        this.files = null;
+        this.destination = null;
     }
 
-    public FileCopyTask(File file) {
+    public FileCopyTask(List<File> files, boolean autoStart) {
+        this.files = files;
+        this.destination = FilesOperations.getCurrentDirectory().toPath();
+
+        if (autoStart) runTask();
+    }
+
+    public FileCopyTask(File file, boolean autoStart) {
         this.files = List.of(file);
         this.destination = FilesOperations.getCurrentDirectory().toPath();
+
+        if (autoStart) runTask();
     }
 
     @Override
@@ -83,7 +93,7 @@ public class FileCopyTask extends Task<Void> {
         }
     }
 
-    private void copyNextTo(Path source, Path destination) throws IOException {
+    protected void copyNextTo(Path source, Path destination) throws IOException {
         int index = 1;
         String extension = FilesUtils.getExtensionWithDot(destination.toFile());
         Path parent = destination.getParent();
@@ -98,7 +108,7 @@ public class FileCopyTask extends Task<Void> {
         copyRecursive(source, newDestination);
     }
 
-    private void copyReplace(Path source, Path destination) throws IOException, Exception {
+    private void copyReplace(Path source, Path destination) throws Exception {
         FileDeleteTask.deleteInCurrentThread(destination);
         copyRecursive(source, destination);
     }

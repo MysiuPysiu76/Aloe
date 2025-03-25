@@ -1,23 +1,26 @@
-package com.example.aloe.files;
+package com.example.aloe.files.tasks;
 
 import com.example.aloe.Main;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class FileDeleteTask extends Task<Void> {
+public class FileDeleteTask extends FilesTask {
     private final List<File> files;
 
-    public FileDeleteTask(List<File> files) {
+    public FileDeleteTask(List<File> files, boolean autoStart) {
         this.files = files;
+
+        if (autoStart) runTask();
     }
 
-    public FileDeleteTask(File file) {
+    public FileDeleteTask(File file, boolean autoStart) {
         this.files = List.of(file);
+
+        if (autoStart) runTask();
     }
 
     @Override
@@ -32,24 +35,12 @@ public class FileDeleteTask extends Task<Void> {
         return null;
     }
 
-    public static void delete(File file) {
-        Thread thread = new Thread(new FileDeleteTask(file));
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public static void delete(List<File> files) {
-        Thread thread = new Thread(new FileDeleteTask(files));
-        thread.setDaemon(true);
-        thread.start();
-    }
-
     public static void deleteInCurrentThread(Path path) throws Exception {
-        new FileDeleteTask(List.of()).deleteRecursive(path);
+        new FileDeleteTask(List.of(), false).deleteRecursive(path);
     }
 
     public static void deleteInCurrentThread(File file) throws Exception {
-        new FileDeleteTask(List.of()).deleteRecursive(file.toPath());
+        new FileDeleteTask(List.of(), false).deleteRecursive(file.toPath());
     }
 
     public static void deleteInCurrentThread(List<File> files) throws Exception {

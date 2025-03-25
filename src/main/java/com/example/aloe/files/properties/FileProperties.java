@@ -43,7 +43,7 @@ public record FileProperties(@NotNull File file) {
 
     public String getSize() {
         if (this.file.isDirectory()) {
-            long directorySize = FilesUtils.calculateDirectorySize(this.file);
+            long directorySize = FilesUtils.calculateFileSize(this.file);
             return Utils.convertBytesByUnit(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")";
         } else {
             return Utils.convertBytesByUnit(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")";

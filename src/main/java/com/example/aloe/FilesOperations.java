@@ -1,6 +1,6 @@
 package com.example.aloe;
 
-import com.example.aloe.files.FileCopyTask;
+import com.example.aloe.files.tasks.FileCopyTask;
 import javafx.concurrent.Task;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -138,9 +138,7 @@ public class FilesOperations {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         List<File> filesFromClipboard = clipboard.getFiles();
 
-        Thread thread = new Thread(new FileCopyTask(filesFromClipboard));
-        thread.setDaemon(true);
-        thread.start();
+        new FileCopyTask(filesFromClipboard, true);
     }
 
     public static void moveFileToParent(File file) {
@@ -245,80 +243,4 @@ public class FilesOperations {
         return fileName + "_" + suffix + extension;
     }
 
-    public static void duplicateFiles(List<File> files) {
-        for (File file : files) {
-            try {
-                if (file.isDirectory()) {
-                    duplicateDirectory(file);
-                } else {
-                    duplicateSingleFile(file);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        new Main().refreshCurrentDirectory();
-    }
-
-    private static void duplicateSingleFile(File file) throws IOException {
-        String name = file.getName();
-        String extension = "";
-        int dotIndex = name.lastIndexOf('.');
-
-        if (dotIndex != -1) {
-            extension = name.substring(dotIndex);
-            name = name.substring(0, dotIndex);
-        }
-
-        Path target = file.toPath().getParent().resolve(name + "_duplicate" + extension);
-        int counter = 1;
-
-        while (Files.exists(target)) {
-            target = file.toPath().getParent().resolve(name + "_duplicate_" + counter + extension);
-            counter++;
-        }
-        Files.copy(file.toPath(), target);
-    }
-
-
-    private static void duplicateDirectory(File directory) throws IOException {
-        Path sourcePath = directory.toPath();
-        Path parentPath = sourcePath.getParent();
-        String dirName = directory.getName();
-        Path targetPath = parentPath.resolve(dirName + "_duplicate");
-        int counter = 1;
-
-        while (Files.exists(targetPath)) {
-            targetPath = parentPath.resolve(dirName + "_duplicate_" + counter);
-            counter++;
-        }
-
-        Files.createDirectories(targetPath);
-        File[] contents = directory.listFiles();
-        if (contents != null) {
-            for (File content : contents) {
-                Path targetContentPath = targetPath.resolve(content.getName());
-                if (content.isDirectory()) {
-                    duplicateDirectory(content, targetContentPath);
-                } else {
-                    Files.copy(content.toPath(), targetContentPath, StandardCopyOption.REPLACE_EXISTING);
-                }
-            }
-        }
-    }
-
-    private static void duplicateDirectory(File directory, Path targetPath) throws IOException {
-        Files.createDirectories(targetPath);
-        File[] contents = directory.listFiles();
-        if (contents != null) {
-            for (File content : contents) {
-                Path targetContentPath = targetPath.resolve(content.getName());
-                if (content.isDirectory()) {
-                    duplicateDirectory(content, targetContentPath);
-                } else {
-                    Files.copy(content.toPath(), targetContentPath, StandardCopyOption.REPLACE_EXISTING);
-                }
-            }
-        }
-    }
 }
