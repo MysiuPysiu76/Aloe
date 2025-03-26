@@ -19,26 +19,15 @@ public class FilesOperations {
 
     private static File currentDirectory = null;
 
-    public static void setIsCut(boolean isCut) {
-        FilesOperations.isCut = isCut;
-    }
-
-    private static boolean isCut;
-
     public static void copyFile(File file) {
         if (file.exists()) {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent content = new ClipboardContent();
             content.putFiles(java.util.Collections.singletonList(file));
             clipboard.setContent(content);
-            isCut = false;
         }
     }
 
-    public static void cutFile(File file) {
-        copyFile(file);
-        isCut = true;
-    }
 
     public static File getCurrentDirectory() {
         if (currentDirectory == null) {
@@ -132,13 +121,6 @@ public class FilesOperations {
         ClipboardContent content = new ClipboardContent();
         content.putFiles(files);
         clipboard.setContent(content);
-    }
-
-    public static void pasteFilesFromClipboard() {
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        List<File> filesFromClipboard = clipboard.getFiles();
-
-        new FileCopyTask(filesFromClipboard, true);
     }
 
     public static void moveFileToParent(File file) {

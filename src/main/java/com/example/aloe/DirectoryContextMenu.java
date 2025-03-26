@@ -1,8 +1,10 @@
 package com.example.aloe;
 
+import com.example.aloe.files.tasks.FileCopyTask;
 import com.example.aloe.window.PropertiesWindow;
 import com.example.aloe.window.interior.DirectoryWindow;
 import com.example.aloe.window.interior.FileWindow;
+import javafx.scene.input.Clipboard;
 
 class DirectoryContextMenu extends ExtendedContextMenu {
     public DirectoryContextMenu() {
@@ -10,7 +12,7 @@ class DirectoryContextMenu extends ExtendedContextMenu {
 
         ExtendedMenuItem newDirectory = new ExtendedMenuItem(Translator.translate("context-menu.new-folder"), e -> new DirectoryWindow());
         ExtendedMenuItem newFile = new ExtendedMenuItem(Translator.translate("context-menu.new-file"), e -> new FileWindow());
-        ExtendedMenuItem paste = new ExtendedMenuItem(Translator.translate("context-menu.paste"), e -> FilesOperations.pasteFilesFromClipboard());
+        ExtendedMenuItem paste = new ExtendedMenuItem(Translator.translate("context-menu.paste"), e -> new FileCopyTask(Clipboard.getSystemClipboard().getFiles(), true));
         ExtendedMenuItem selectAll = new ExtendedMenuItem(Translator.translate("context-menu.select-all"), e -> new Main().selectAllFiles());
         ExtendedMenuItem properties = new ExtendedMenuItem(Translator.translate("context-menu.properties"), e -> new PropertiesWindow(FilesOperations.getCurrentDirectory()));
 

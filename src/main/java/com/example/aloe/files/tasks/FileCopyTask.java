@@ -10,8 +10,10 @@ import java.nio.file.*;
 import java.util.List;
 
 public class FileCopyTask extends FilesTask {
-    private final List<File> files;
-    private final Path destination;
+    private List<File> files;
+    private Path destination;
+
+    private static boolean isCut = false;
 
      FileCopyTask() {
         this.files = null;
@@ -19,6 +21,11 @@ public class FileCopyTask extends FilesTask {
     }
 
     public FileCopyTask(List<File> files, boolean autoStart) {
+        if (isCut) {
+            new FileCutTask(files, autoStart);
+            return;
+        }
+
         this.files = files;
         this.destination = FilesOperations.getCurrentDirectory().toPath();
 
@@ -26,6 +33,11 @@ public class FileCopyTask extends FilesTask {
     }
 
     public FileCopyTask(File file, boolean autoStart) {
+        if (isCut) {
+            new FileCutTask(file, autoStart);
+            return;
+        }
+
         this.files = List.of(file);
         this.destination = FilesOperations.getCurrentDirectory().toPath();
 
@@ -68,7 +80,7 @@ public class FileCopyTask extends FilesTask {
         });
     }
 
-    private void copyRecursive(Path source, Path destination) throws IOException {
+    protected void copyRecursive(Path source, Path destination) throws IOException {
         if (Files.isDirectory(source)) {
             Files.createDirectories(destination);
 
@@ -82,7 +94,7 @@ public class FileCopyTask extends FilesTask {
         }
     }
 
-    private void copyFile(Path source, Path destination) throws IOException {
+    protected void copyFile(Path source, Path destination) throws IOException {
         try (InputStream in = Files.newInputStream(source);
              OutputStream out = Files.newOutputStream(destination)) {
             byte[] buffer = new byte[1048576];
@@ -108,8 +120,16 @@ public class FileCopyTask extends FilesTask {
         copyRecursive(source, newDestination);
     }
 
-    private void copyReplace(Path source, Path destination) throws Exception {
+    protected void copyReplace(Path source, Path destination) throws Exception {
         FileDeleteTask.deleteInCurrentThread(destination);
         copyRecursive(source, destination);
+    }
+
+    public static void setCut(boolean cut) {
+         isCut = cut;
+    }
+
+    public static boolean isCut() {
+         return isCut;
     }
 }

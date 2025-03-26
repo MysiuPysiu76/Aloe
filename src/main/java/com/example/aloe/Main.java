@@ -558,27 +558,6 @@ public class Main extends Application {
         ((HBox) ((VBox) pane.getChildren().getFirst()).getChildren().get(2)).getChildren().getFirst().requestFocus();
     }
 
-    public void copySelectedFiles() {
-        if (selectedFiles.isEmpty()) {
-            return;
-        }
-
-        List<File> filesToCopy = new ArrayList<>();
-        for (VBox fileBox : selectedFiles) {
-            Label fileNameLabel = (Label) fileBox.getChildren().get(1);
-            String fileName = fileNameLabel.getText();
-
-            File file = new File(FilesOperations.getCurrentDirectory(), fileName);
-            filesToCopy.add(file);
-        }
-        FilesOperations.copyFilesToClipboard(filesToCopy);
-    }
-
-    public void cutSelectedFiles() {
-        copySelectedFiles();
-        FilesOperations.setIsCut(true);
-    }
-
     public static  void openFileInOptions(File file) {
         if (file.isDirectory()) {
             new Main().loadDirectoryContents(file, true);

@@ -10,8 +10,8 @@ class MultiFileBoxContextMenu extends ExtendedContextMenu {
     public MultiFileBoxContextMenu(List<File> files) {
         super();
 
-        ExtendedMenuItem copy = new ExtendedMenuItem(Translator.translate("context-menu.copy"), e -> new Main().copySelectedFiles());
-        ExtendedMenuItem cut = new ExtendedMenuItem(Translator.translate("context-menu.cut"), e -> new Main().cutSelectedFiles());
+        ExtendedMenuItem copy = new ExtendedMenuItem(Translator.translate("context-menu.copy"), e -> ClipboardManager.copyFilesToClipboard(files));
+        ExtendedMenuItem cut = new ExtendedMenuItem(Translator.translate("context-menu.cut"), e -> ClipboardManager.cutFilesToClipboard(files));
         ExtendedMenuItem duplicate = new ExtendedMenuItem(Translator.translate("context-menu.duplicate"), e -> new FileDuplicateTask(files, true));
         ExtendedMenuItem moveTo = new ExtendedMenuItem(Translator.translate("context-menu.move-to"), e -> FilesOperations.moveFileTo(files));
         ExtendedMenuItem moveToParent = new ExtendedMenuItem(Translator.translate("context-menu.move-to-parent"), e -> FilesOperations.moveFileToParent(files));
