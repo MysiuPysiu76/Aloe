@@ -1,15 +1,10 @@
 package com.example.aloe;
 
 import com.example.aloe.files.FilesUtils;
+import com.example.aloe.files.tasks.FileOpenerTask;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
-import com.example.aloe.window.interior.CompressWindow;
-import com.example.aloe.window.interior.FileWindow;
-import com.example.aloe.window.interior.RenameWindow;
-import com.example.aloe.window.interior.menu.AddMenuItemWindow;
-import com.example.aloe.window.interior.DirectoryWindow;
-import com.example.aloe.window.interior.menu.EditMenuItemWindow;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -319,7 +314,7 @@ public class Main extends Application {
                         VBox box = createFileBox(fileName, false);
                         box.setOnMouseClicked(event -> {
                             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                                FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
+                                new FileOpenerTask(new File(FilesOperations.getCurrentDirectory(), fileName), true);
                             } else {
                                 selectFile(box, event);
                                 event.consume();
@@ -345,7 +340,7 @@ public class Main extends Application {
                             box = createFileBox(fileName, false);
                             box.setOnMouseClicked(event -> {
                                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                                    FilesOperations.openFileInBackground(new File(FilesOperations.getCurrentDirectory(), fileName));
+                                    new FileOpenerTask(new File(FilesOperations.getCurrentDirectory(), fileName), true);
                                 } else {
                                     selectFile(box, event);
                                     event.consume();
@@ -382,7 +377,7 @@ public class Main extends Application {
                             if (selectedFile.isDirectory()) {
                                 loadDirectoryContents(selectedFile, true);
                             } else {
-                                FilesOperations.openFileInBackground(selectedFile);
+                                new FileOpenerTask(selectedFile, true);
                             }
                         }
                     }
@@ -552,17 +547,11 @@ public class Main extends Application {
         return selectedFiles.contains(fileBox);
     }
 
-    public static void openCreateArchiveWindow(List<File> files) {
-        pane.getChildren().add(new CompressWindow(files));
-        showDarkeningPlate();
-        ((HBox) ((VBox) pane.getChildren().getFirst()).getChildren().get(2)).getChildren().getFirst().requestFocus();
-    }
-
     public static  void openFileInOptions(File file) {
         if (file.isDirectory()) {
             new Main().loadDirectoryContents(file, true);
         } else {
-            FilesOperations.openFileInBackground(file);
+            new FileOpenerTask(file, true);
         }
     }
 
@@ -608,15 +597,5 @@ public class Main extends Application {
             files.add(new File(FilesOperations.getCurrentDirectory().getPath(), ((Label) selectedFile.getChildren().get(1)).getText()));
         }
         return files;
-    }
-
-    public static void openAddMenuItem() {
-        pane.getChildren().add(new AddMenuItemWindow());
-        showDarkeningPlate();
-    }
-
-    public static void editEditMenuItem(String title, String path, String icon) {
-        pane.getChildren().add(new EditMenuItemWindow(title, path, icon));
-        showDarkeningPlate();
     }
 }

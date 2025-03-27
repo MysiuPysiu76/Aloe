@@ -1,12 +1,8 @@
 package com.example.aloe;
 
-import com.example.aloe.files.tasks.FileCopyTask;
-import javafx.concurrent.Task;
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.stage.DirectoryChooser;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,16 +14,6 @@ import java.util.Objects;
 public class FilesOperations {
 
     private static File currentDirectory = null;
-
-    public static void copyFile(File file) {
-        if (file.exists()) {
-            Clipboard clipboard = Clipboard.getSystemClipboard();
-            ClipboardContent content = new ClipboardContent();
-            content.putFiles(java.util.Collections.singletonList(file));
-            clipboard.setContent(content);
-        }
-    }
-
 
     public static File getCurrentDirectory() {
         if (currentDirectory == null) {
@@ -90,38 +76,7 @@ public class FilesOperations {
         }
     }
 
-    public static void openFileInBackground(File file) {
-        Task<Void> task = new Task<>() {
-            @Override
-            protected Void call() {
-                openFile(file);
-                return null;
-            }
-        };
-        new Thread(task).start();
-    }
 
-    private static void openFile(File file) {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().open(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Desktop is not supported on this system.");
-        }
-    }
-
-    public static void copyFilesToClipboard(List<File> files) {
-        if (files == null || files.isEmpty()) {
-            return;
-        }
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        ClipboardContent content = new ClipboardContent();
-        content.putFiles(files);
-        clipboard.setContent(content);
-    }
 
     public static void moveFileToParent(File file) {
         try {

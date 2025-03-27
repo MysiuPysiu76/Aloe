@@ -2,6 +2,7 @@ package com.example.aloe.menu;
 
 import com.example.aloe.*;
 import com.example.aloe.window.PropertiesWindow;
+import com.example.aloe.window.interior.menu.EditMenuItemWindow;
 
 import java.io.File;
 
@@ -10,7 +11,7 @@ class MenuItemContextMenu extends ExtendedContextMenu {
         super();
 
         ExtendedMenuItem open = new ExtendedMenuItem(Translator.translate("context-menu.open"), e -> Main.openFileInOptions(new File(item.getPath())));
-        ExtendedMenuItem edit = new ExtendedMenuItem(Translator.translate("context-menu.edit"), e -> Main.editEditMenuItem(item.getTitle(), item.getPath(), item.getIcon()));
+        ExtendedMenuItem edit = new ExtendedMenuItem(Translator.translate("context-menu.edit"), e -> new EditMenuItemWindow(item.getTitle(), item.getPath(), item.getIcon()));
         ExtendedMenuItem remove = new ExtendedMenuItem(Translator.translate("context-menu.remove"), e -> MenuManager.removeItemFromMenu(item.getPath()));
         ExtendedMenuItem properties = new ExtendedMenuItem(Translator.translate("context-menu.properties"), e -> new PropertiesWindow(new File(item.getPath())));
 
