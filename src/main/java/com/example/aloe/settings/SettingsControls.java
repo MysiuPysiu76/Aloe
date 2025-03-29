@@ -103,13 +103,15 @@ class SettingsControls {
         return label;
     }
 
-    static TextField getTextField(String key) {
+    static TextField getTextField(String key, String text) {
         TextField textField = new TextField(SettingsManager.getSetting(SettingsManager.getCategory(), key));
         textField.setPadding(new Insets(5, 7, 5, 7));
         textField.setOnKeyReleased(event -> {
             SettingsManager.setSetting(SettingsManager.getCategory(), key, textField.getText());
         });
-        textField.setPromptText(Translator.translate("files-menu.example-path"));
+        textField.setPromptText(text);
+        textField.setMinWidth(100);
+        textField.setMaxWidth(300);
         HBox.setMargin(textField, new Insets(0, 20, 0, 20));
         return textField;
     }

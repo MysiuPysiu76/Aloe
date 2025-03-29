@@ -157,7 +157,8 @@ public final class SettingsWindow extends Stage {
         SettingsManager.setCategory("files");
 
         ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", "home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
-        TextField pathInput = SettingsControls.getTextField("start-folder-location");
+        TextField pathInput = SettingsControls.getTextField("start-folder-location", Translator.translate("utils.example-path"));
+        pathInput.setPromptText(Translator.translate("utils.example-path"));
         pathInput.setEditable(startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom"));
         startFolder.setOnAction(event -> {
             if (startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom")) {
@@ -176,6 +177,7 @@ public final class SettingsWindow extends Stage {
                 getSettingBox("window.settings.files.delete-archive-after-extract", SettingsControls.getToggleSwitch("delete-archive-after-extract")),
                 getSettingBox("window.settings.files.display-directories-before-files", SettingsControls.getToggleSwitch("display-directories-before-files")),
                 getSettingBox("window.settings.files.file-box-size", SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()))),
+                getSettingBox("window.settings.files.trash-location", SettingsControls.getTextField("trash", Translator.translate("utils.example-path"))),
                 getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails"))));
     }
 

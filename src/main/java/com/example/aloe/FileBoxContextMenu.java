@@ -6,6 +6,7 @@ import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.tasks.FileDuplicateTask;
 import com.example.aloe.files.tasks.FileMoveTask;
 import com.example.aloe.menu.MenuManager;
+import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.window.PropertiesWindow;
 import com.example.aloe.window.interior.CompressWindow;
 import com.example.aloe.window.interior.RenameWindow;
@@ -24,7 +25,7 @@ class FileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem duplicate = new ExtendedMenuItem("context-menu.duplicate", e -> new FileDuplicateTask(file, true));
         ExtendedMenuItem moveTo = new ExtendedMenuItem("context-menu.move-to", e -> new FileMoveTask(file, FileChooser.chooseDirectory(), true));
         ExtendedMenuItem moveToParent = new ExtendedMenuItem("context-menu.move-to-parent", e -> new FileMoveTask(file, file.getParentFile().getParentFile(), true));
-        ExtendedMenuItem moveToTrash = new ExtendedMenuItem("context-menu.move-to-trash", e -> new FileMoveTask(file, new File(System.getProperty("user.home"), ".trash"), true));
+        ExtendedMenuItem moveToTrash = new ExtendedMenuItem("context-menu.move-to-trash", e -> new FileMoveTask(file, SettingsManager.getSetting("files", "trash"), true));
         ExtendedMenuItem archive = Utils.isFileArchive(file) ?
                 new ExtendedMenuItem("context-menu.extract",e -> { ArchiveHandler.extract(file); new Main().refreshCurrentDirectory(); }) :
                 new ExtendedMenuItem("context-menu.compress", e -> new CompressWindow(List.of(file)));

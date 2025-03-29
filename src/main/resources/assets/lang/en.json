@@ -224,5 +224,7 @@
   "window.interior.menu.icon": "Icon",
   "utils.copy": "Copy",
   "window.other.chose-directory": "Chose Folder",
-  "window.other.chose-file": "Chose File"
+  "window.other.chose-file": "Chose File",
+  "utils.example-path": "/example/path",
+  "window.settings.files.trash-location": "Trash location"
 }

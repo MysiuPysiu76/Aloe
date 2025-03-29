@@ -52,6 +52,7 @@ public final class SettingsManager {
             cachedSettings = defaultSettings;
             trySetLanguage();
             initializeItemsInMenu();
+            setTrashLocation();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,9 +78,12 @@ public final class SettingsManager {
         Translator.reload();
     }
 
+    private static void setTrashLocation() {
+        SettingsManager.setSetting("files", "trash", new File(System.getProperty("user.home"), ".trash"));
+    }
+
     private static Map<String, Object> loadDefaultSettings() throws IOException {
-        return objectMapper.readValue(SettingsManager.class.getResourceAsStream(DEFAULT_SETTINGS_PATH), new TypeReference<>() {
-        });
+        return objectMapper.readValue(SettingsManager.class.getResourceAsStream(DEFAULT_SETTINGS_PATH), new TypeReference<>() {});
     }
 
     private static void saveSettingsToFile(Map<String, Object> settings) {
