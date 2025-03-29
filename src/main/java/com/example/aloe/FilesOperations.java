@@ -24,12 +24,6 @@ public class FilesOperations {
         currentDirectory = directory;
     }
 
-    public static boolean isClipboardEmpty() {
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        List<File> filesFromClipboard = clipboard.getFiles();
-        return filesFromClipboard == null || filesFromClipboard.isEmpty();
-    }
-
     static void copyFileToDestination(File source, File destination, boolean replaceExisting) throws IOException {
         if (destination.exists() && !replaceExisting) {
             FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination);

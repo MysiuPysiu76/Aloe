@@ -5,6 +5,7 @@ import com.example.aloe.files.tasks.FileOpenerTask;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
+import com.example.aloe.window.AboutWindow;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -104,10 +105,6 @@ public class Main extends Application {
             loadDirectoryContents(new File(System.getProperty("user.home")), true);
         }
 
-        mainContainer.heightProperty().addListener((observable, oldValue, newValue) -> {
-            filesPanel.setMinHeight(stage.getHeight() - navigationPanel.getHeight());
-        });
-
         scene.getStylesheets().add(getClass().getResource("/assets/styles/style.css").toExternalForm());
 
         stage.setTitle(Translator.translate("root.title"));
@@ -124,7 +121,7 @@ public class Main extends Application {
 
         filesPane.setOnContextMenuRequested(event -> {
             removeSelectionFromFiles();
-            directoryMenu.getItems().get(2).setDisable(FilesOperations.isClipboardEmpty());
+            directoryMenu.getItems().get(2).setDisable(ClipboardManager.isClipboardEmpty());
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
             event.consume();
         });

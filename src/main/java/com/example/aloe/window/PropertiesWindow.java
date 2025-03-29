@@ -240,7 +240,7 @@ public class PropertiesWindow extends Stage {
         hash.setStyle("-fx-font-size: 13.5px; -fx-padding: 4px 10px 10px 10px");
 
         Button copy = WindowComponents.getButton(Translator.translate("button.copy"));
-        copy.setOnAction(e -> Utils.copyTextToClipboard(this.hash));
+        copy.setOnAction(e -> ClipboardManager.copyTextToClipboard(this.hash));
         Button generate = WindowComponents.getButton(Translator.translate("window.properties.checksum.generate-hash"));
         generate.setOnAction(e -> generateHash(hash, comboBox.getSelectionModel().getSelectedItem()));
         HBox buttonPanel = new HBox(copy, generate);

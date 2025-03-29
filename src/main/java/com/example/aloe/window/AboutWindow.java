@@ -1,5 +1,6 @@
-package com.example.aloe;
+package com.example.aloe.window;
 
+import com.example.aloe.Translator;
 import javafx.application.HostServices;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -71,7 +72,7 @@ public class AboutWindow extends Stage {
         name.getStyleClass().add("about-name");
         name.setPadding(new Insets(25, 10, 5, 10));
 
-        Label version = new Label("1.3.9");
+        Label version = new Label("1.4.0");
         version.getStyleClass().add("about-version");
 
         Label description = new Label(Translator.translate("window.about.description"));

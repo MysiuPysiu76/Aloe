@@ -9,7 +9,7 @@ class MenuContextMenu extends ExtendedContextMenu {
     public MenuContextMenu() {
         super();
 
-        ExtendedMenuItem add = new ExtendedMenuItem(Translator.translate("context-menu.add"), e -> new AddMenuItemWindow());
+        ExtendedMenuItem add = new ExtendedMenuItem("context-menu.add", e -> new AddMenuItemWindow());
 
         this.getItems().addAll(add);
     }
