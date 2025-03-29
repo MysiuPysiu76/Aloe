@@ -222,5 +222,7 @@
   "window.interior.menu.path": "Path",
   "window.interior.menu.save": "Save",
   "window.interior.menu.icon": "Icon",
-  "utils.copy": "Copy"
+  "utils.copy": "Copy",
+  "window.other.chose-directory": "Chose Folder",
+  "window.other.chose-file": "Chose File"
 }

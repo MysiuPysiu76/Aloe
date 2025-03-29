@@ -1,8 +1,10 @@
 package com.example.aloe;
 
 import com.example.aloe.archive.ArchiveHandler;
+import com.example.aloe.files.FileChooser;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.tasks.FileDuplicateTask;
+import com.example.aloe.files.tasks.FileMoveTask;
 import com.example.aloe.menu.MenuManager;
 import com.example.aloe.window.PropertiesWindow;
 import com.example.aloe.window.interior.CompressWindow;
@@ -21,9 +23,9 @@ class FileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem copy = new ExtendedMenuItem(Translator.translate("context-menu.copy"), e -> ClipboardManager.copyFilesToClipboard(List.of(file)));
         ExtendedMenuItem rename = new ExtendedMenuItem(Translator.translate("context-menu.rename"), e -> new RenameWindow(file));
         ExtendedMenuItem duplicate = new ExtendedMenuItem(Translator.translate("context-menu.duplicate"), e -> new FileDuplicateTask(file, true));
-        ExtendedMenuItem moveTo = new ExtendedMenuItem(Translator.translate("context-menu.move-to"), e -> FilesOperations.moveFileTo(new ArrayList<>(List.of(file))));
-        ExtendedMenuItem moveToParent = new ExtendedMenuItem(Translator.translate("context-menu.move-to-parent"), e -> FilesOperations.moveFileToParent(file));
-        ExtendedMenuItem moveToTrash = new ExtendedMenuItem(Translator.translate("context-menu.move-to-trash"), e -> FilesOperations.moveFileToTrash(file));
+        ExtendedMenuItem moveTo = new ExtendedMenuItem(Translator.translate("context-menu.move-to"), e -> new FileMoveTask(file, FileChooser.chooseDirectory(), true));
+        ExtendedMenuItem moveToParent = new ExtendedMenuItem(Translator.translate("context-menu.move-to-parent"), e -> new FileMoveTask(file, file.getParentFile().getParentFile(), true));
+        ExtendedMenuItem moveToTrash = new ExtendedMenuItem(Translator.translate("context-menu.move-to-trash"), e -> new FileMoveTask(file, new File(System.getProperty("user.home"), ".trash"), true));
         ExtendedMenuItem archive = Utils.isFileArchive(file) ?
                 new ExtendedMenuItem(Translator.translate("context-menu.extract"),e -> { ArchiveHandler.extract(file); new Main().refreshCurrentDirectory(); }) :
                 new ExtendedMenuItem(Translator.translate("context-menu.compress"), e -> new CompressWindow(List.of(file)));

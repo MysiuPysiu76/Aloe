@@ -430,6 +430,7 @@ public class Main extends Application {
                         icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
                     }
                 }
+                case "webp", "heif" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
                 case "mp4" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
                 case "mp3", "ogg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/music.png")));
                 case "epub", "mobi" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/book.png")));
@@ -547,7 +548,7 @@ public class Main extends Application {
         return selectedFiles.contains(fileBox);
     }
 
-    public static  void openFileInOptions(File file) {
+    public static void openFileInOptions(File file) {
         if (file.isDirectory()) {
             new Main().loadDirectoryContents(file, true);
         } else {

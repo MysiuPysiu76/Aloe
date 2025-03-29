@@ -1,12 +1,10 @@
 package com.example.aloe;
 
 import javafx.scene.input.Clipboard;
-import javafx.stage.DirectoryChooser;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
@@ -75,109 +73,4 @@ public class FilesOperations {
             }
         }
     }
-
-
-
-    public static void moveFileToParent(File file) {
-        try {
-            Files.move(file.toPath(), file.getParentFile().getParentFile().toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        new Main().refreshCurrentDirectory();
     }
-
-    public static void moveFileToParent(List<File> files) {
-        try {
-            for (File file : files) {
-                Files.move(file.toPath(), file.getParentFile().getParentFile().toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        new Main().refreshCurrentDirectory();
-    }
-
-    public static File chooseDirectory() {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle(Translator.translate("context-menu.move-to"));
-        directoryChooser.setInitialDirectory(FilesOperations.getCurrentDirectory());
-        return directoryChooser.showDialog(Main.scene.getWindow());
-    }
-
-    public static void moveFileTo(List<File> files) {
-        moveFileTo(files, chooseDirectory());
-    }
-
-    public static void moveFileTo(List<File> files, File destination) {
-        try {
-            if (destination != null) {
-                for (File file : files) {
-                    Files.move(file.toPath(), destination.toPath().resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
-                }
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        new Main().refreshCurrentDirectory();
-    }
-
-    public static void moveFileToTrash(File file) {
-        File trash = new File(System.getProperty("user.home"), ".trash");
-        if (!trash.exists() || trash.isFile()) {
-            trash.mkdir();
-        }
-        Path newPath = trash.toPath().resolve(file.getName());
-        int i = 0;
-        while (Files.exists(newPath)) {
-            String fileName = getUniqueName(file.getName(), i);
-            newPath = trash.toPath().resolve(fileName);
-            i++;
-        }
-        try {
-            Files.move(file.toPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        new Main().refreshCurrentDirectory();
-    }
-
-    public static void moveFileToTrash(List<File> files) {
-        File trash = new File(System.getProperty("user.home"), ".trash");
-        if (!trash.exists() || trash.isFile()) {
-            trash.mkdir();
-        }
-
-        for (File file : files) {
-            Path newPath = trash.toPath().resolve(file.getName());
-            short i = 1;
-            while (Files.exists(newPath)) {
-                String fileName = getUniqueName(file.getName(), i);
-                newPath = trash.toPath().resolve(fileName);
-                i++;
-            }
-            try {
-                Files.move(file.toPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        new Main().refreshCurrentDirectory();
-    }
-
-    public static String getUniqueName(String name, int suffix) {
-        String fileName;
-        String extension = "";
-        int dotIndex = name.lastIndexOf(".");
-        if (dotIndex > 0) {
-            fileName = name.substring(0, dotIndex);
-            extension = name.substring(dotIndex);
-        } else {
-            fileName = name;
-        }
-        return fileName + "_" + suffix + extension;
-    }
-
-}
