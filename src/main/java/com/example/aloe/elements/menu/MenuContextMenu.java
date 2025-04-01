@@ -1,8 +1,7 @@
-package com.example.aloe.menu;
+package com.example.aloe.elements.menu;
 
 import com.example.aloe.ExtendedContextMenu;
 import com.example.aloe.ExtendedMenuItem;
-import com.example.aloe.Translator;
 import com.example.aloe.window.interior.menu.AddMenuItemWindow;
 
 class MenuContextMenu extends ExtendedContextMenu {

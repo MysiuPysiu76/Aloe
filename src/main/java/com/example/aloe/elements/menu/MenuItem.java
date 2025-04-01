@@ -1,4 +1,4 @@
-package com.example.aloe.menu;
+package com.example.aloe.elements.menu;
 
 import com.example.aloe.*;
 import com.example.aloe.settings.SettingsManager;
@@ -33,6 +33,7 @@ public class MenuItem extends Button implements ObjectProperties {
         this.icon = icon;
         this.title = title;
         this.path = path;
+        this.setFocusTraversable(false);
         if (useIcon) {
             FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
             fontIcon.setIconSize(16);

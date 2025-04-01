@@ -39,6 +39,7 @@ public final class SettingsWindow extends Stage {
         this.initModality(Modality.APPLICATION_MODAL);
         this.setOnCloseRequest(event -> System.gc());
         this.setResizable(false);
+        this.show();
         loadMenu();
     }
 

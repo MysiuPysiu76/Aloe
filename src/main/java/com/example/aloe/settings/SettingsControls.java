@@ -163,7 +163,7 @@ class SettingsControls {
         List<DraggableItem> menuItems = new ArrayList<>();
         if (!(items == null || items.isEmpty())) {
             for (Map<String, Object> item : items) {
-                menuItems.add(new DraggableItem(new com.example.aloe.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")), (String) item.get("name")));
+                menuItems.add(new DraggableItem(new com.example.aloe.elements.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")), (String) item.get("name")));
             }
         }
         return menuItems;

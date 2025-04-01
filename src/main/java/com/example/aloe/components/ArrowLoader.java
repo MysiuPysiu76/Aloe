@@ -1,4 +1,4 @@
-package com.example.aloe;
+package com.example.aloe.components;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
@@ -8,7 +8,9 @@ public class ArrowLoader {
     public enum ArrowDirection {
         LEFT(new double[] {10, 5, 5, 10, 5, 10, 10, 15}),
         TOP(new double[] {5, 10, 10, 5, 10, 5, 15, 10}),
-        RIGHT(new double[] {5, 5, 10, 10, 10, 10, 5, 15});
+        RIGHT(new double[] {5, 5, 10, 10, 10, 10, 5, 15}),
+        BOTTOM(new double[] {5, 5, 10, 10, 10, 10, 15, 5});
+
 
         private double[] points;
 

@@ -5,7 +5,7 @@ import com.example.aloe.files.FileChooser;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.tasks.FileDuplicateTask;
 import com.example.aloe.files.tasks.FileMoveTask;
-import com.example.aloe.menu.MenuManager;
+import com.example.aloe.elements.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.window.PropertiesWindow;
 import com.example.aloe.window.interior.CompressWindow;

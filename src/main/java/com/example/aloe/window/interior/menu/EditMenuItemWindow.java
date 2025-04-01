@@ -1,7 +1,7 @@
 package com.example.aloe.window.interior.menu;
 
 import com.example.aloe.Translator;
-import com.example.aloe.menu.MenuManager;
+import com.example.aloe.elements.menu.MenuManager;
 
 public class EditMenuItemWindow extends MenuItemWindow {
     public EditMenuItemWindow(String titleText, String pathText, String iconText) {

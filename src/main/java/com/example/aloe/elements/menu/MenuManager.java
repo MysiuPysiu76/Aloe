@@ -1,4 +1,4 @@
-package com.example.aloe.menu;
+package com.example.aloe.elements.menu;
 
 import com.example.aloe.Main;
 import com.example.aloe.settings.SettingsManager;
@@ -28,7 +28,7 @@ public class MenuManager {
         menu.setAlignment(Pos.TOP_CENTER);
         if (!(items == null || items.isEmpty())) {
             for (Map<String, Object> item : items) {
-                menu.getChildren().add(new com.example.aloe.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")));
+                menu.getChildren().add(new com.example.aloe.elements.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")));
             }
         }
         Main.loadMenu();

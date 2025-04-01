@@ -1,4 +1,4 @@
-package com.example.aloe.menu;
+package com.example.aloe.elements.menu;
 
 import com.example.aloe.*;
 import com.example.aloe.window.PropertiesWindow;

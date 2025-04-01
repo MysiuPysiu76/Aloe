@@ -1,8 +1,9 @@
 package com.example.aloe;
 
+import com.example.aloe.elements.NavigationPanel;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.tasks.FileOpenerTask;
-import com.example.aloe.menu.MenuManager;
+import com.example.aloe.elements.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.window.AboutWindow;
@@ -29,16 +30,14 @@ import java.util.stream.Collectors;
 
 public class Main extends Application {
 
-    private List<File> directoryHistory = new ArrayList<>();
-    private HBox navigationPanel = new HBox();
+    private static List<File> directoryHistory = new ArrayList<>();
     private VBox filesBox = new VBox();
     private SplitPane filesPanel = new SplitPane();
     public static ScrollPane filesMenu = new ScrollPane();
     private static ScrollPane filesPane = new ScrollPane();
     public static Scene scene;
-    private Button parrentDir = getNavigateParentButton();
 
-    private int directoryHistoryPosition = -1;
+    private static int directoryHistoryPosition = -1;
     private VBox mainContainer = new VBox();
     private StackPane root = new StackPane();
     public static Pane pane = new Pane();
@@ -57,7 +56,6 @@ public class Main extends Application {
         Main.stage = stage;
         scene = new Scene(root, 975, 550);
 
-        navigationPanel.getStyleClass().add("navigation-panel");
         filesPanel.getStyleClass().add("navigation-panel");
         filesPane.getStyleClass().add("files-pane");
         filesPanel.getStyleClass().add("files-panel");
@@ -65,7 +63,6 @@ public class Main extends Application {
 
         VBox.setVgrow(filesPanel, Priority.ALWAYS);
 
-        filesPanel.setMinHeight(mainContainer.getHeight() - navigationPanel.getHeight());
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 directoryMenu.hide();
@@ -87,7 +84,6 @@ public class Main extends Application {
             filesPanel.setDividerPositions((double) SettingsManager.getSetting("menu", "divider-position"));
         }
 
-        navigationPanel.setPadding(new Insets(6));
         SplitPane.setResizableWithParent(filesMenu, false);
 
         filesPane.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -96,8 +92,8 @@ public class Main extends Application {
 
         filesMenu.setMinWidth(10);
         filesMenu.setPrefWidth(160);
-        navigationPanel.getChildren().addAll(getNavigatePrevButton(), parrentDir, getNavigateNextButton(), getReloadButton(), WindowComponents.getSpacer(), getNavigateOptionsButton());
-        mainContainer.getChildren().addAll(navigationPanel, filesPanel);
+        HBox navigationPanel1 = new NavigationPanel();
+        mainContainer.getChildren().addAll(navigationPanel1, filesPanel);
 
         if (!Objects.equals(SettingsManager.getSetting("files", "start-folder"), "home")) {
             loadDirectoryContents(new File((String) Objects.requireNonNull(SettingsManager.getSetting("files", "start-folder-location"))), true);
@@ -139,35 +135,14 @@ public class Main extends Application {
         filesMenu.setContent(menu);
     }
 
-    private Button getNavigateNextButton() {
-        Button button = new Button();
-        button.setFocusTraversable(false);
-        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-next")));
-        button.setAlignment(Pos.CENTER);
-        button.setGraphic(ArrowLoader.getArrow(ArrowLoader.ArrowDirection.RIGHT));
-        button.setPadding(new Insets(7, 13, 10, 10));
-        button.getStyleClass().addAll("next-directory", "navigate-button");
-        button.setOnMouseClicked(event -> {
-            if (directoryHistoryPosition < directoryHistory.size() - 1) {
-                directoryHistoryPosition++;
-                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-            }
-        });
-        return button;
+    public void getNavigateNextButton() {
+        if (directoryHistoryPosition < directoryHistory.size() - 1) {
+            directoryHistoryPosition++;
+            loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+        }
     }
 
-    private Button getReloadButton() {
-        Button reload = new Button(Translator.translate("navigate.reload"));
-        reload.getStyleClass().add("reload-button");
-        reload.setOnMouseClicked(event -> {
-            loadDirectoryContents(FilesOperations.getCurrentDirectory(), false);
-        });
-        reload.setPadding(new Insets(5, 10, 5, 10));
-        HBox.setMargin(reload, new Insets(5, 15, 5, 15));
-        return reload;
-    }
-
-    private Button getNavigateOptionsButton() {
+    public static void showOptions(Button button) {
         PopOver popOver = new PopOver();
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         popOver.setDetachable(false);
@@ -179,17 +154,14 @@ public class Main extends Application {
         showHiddenFiles.setSelected(Boolean.TRUE.equals(SettingsManager.getSetting("files", "show-hidden")));
         showHiddenFiles.setOnAction(event -> {
             SettingsManager.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
-            refreshCurrentDirectory();
+            new Main().refreshCurrentDirectory();
         });
         Button aboutButton = new Button(Translator.translate("navigate.about-button"));
-        aboutButton.setOnMouseClicked(e -> new AboutWindow(getHostServices()));
+        aboutButton.setOnMouseClicked(e -> new AboutWindow(new Main().getHostServices()));
         Button settingsButton = new Button(Translator.translate("navigate.settings"));
         settingsButton.setOnMouseClicked(e -> new SettingsWindow().show());
         container.getChildren().addAll(showHiddenFiles, aboutButton, settingsButton);
         popOver.setContentNode(container);
-        Button button = new Button("options");
-        HBox.setMargin(button, new Insets(5, 10, 5, 10));
-        button.setOnMouseClicked(event -> {
             if (popOver.isShowing()) {
                 popOver.hide();
             } else {
@@ -202,45 +174,13 @@ public class Main extends Application {
                 }).start();
                 popOver.show(button);
             }
-        });
-        return button;
     }
 
-    private Button getNavigatePrevButton() {
-        Button button = new Button();
-        button.setFocusTraversable(false);
-        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-prev")));
-        button.setAlignment(Pos.CENTER);
-        button.setGraphic(ArrowLoader.getArrow(ArrowLoader.ArrowDirection.LEFT));
-        button.setPadding(new Insets(7, 13, 10, 10));
-        button.getStyleClass().addAll("prev-directory", "navigate-button");
-
-        button.setOnMouseClicked(event -> {
-            if (directoryHistoryPosition > 0) {
-                directoryHistoryPosition--;
-                loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-            }
-        });
-        return button;
-    }
-
-    private Button getNavigateParentButton() {
-        Button button = new Button();
-        button.setFocusTraversable(false);
-        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate-parent")));
-        button.setAlignment(Pos.CENTER);
-        button.setGraphic(ArrowLoader.getArrow(ArrowLoader.ArrowDirection.TOP));
-        button.setPadding(new Insets(9, 11, 9, 8));
-        button.getStyleClass().addAll("parent-directory", "navigate-button");
-
-        button.setOnMouseClicked(event -> {
-            getParentDirectory();
-        });
-        return button;
-    }
-
-    private void checkParentDirectory() {
-        parrentDir.setDisable(FilesOperations.getCurrentDirectory().getPath().equals("/"));
+    public void getNavigatePrevButton() {
+        if (directoryHistoryPosition > 0) {
+            directoryHistoryPosition--;
+            loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
+        }
     }
 
     private static List<VBox> selectedFiles = new ArrayList<>();
@@ -249,7 +189,6 @@ public class Main extends Application {
         removeSelectionFromFiles();
         FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);
-        checkParentDirectory();
 
         grid = new FlowPane();
         grid.setPadding(new Insets(5));
@@ -265,6 +204,7 @@ public class Main extends Application {
             }
             directoryHistory.add(directory);
             directoryHistoryPosition++;
+            System.out.println("d " + directoryHistoryPosition);
         }
 
         File[] files = FilesOperations.getCurrentDirectory().listFiles();
@@ -583,7 +523,7 @@ public class Main extends Application {
         pane.setVisible(true);
     }
 
-    private void getParentDirectory() {
+    public void getParentDirectory() {
         if (!FilesOperations.getCurrentDirectory().getPath().equals("/")) {
             loadDirectoryContents(new File(FilesOperations.getCurrentDirectory().getParent()), true);
         }
