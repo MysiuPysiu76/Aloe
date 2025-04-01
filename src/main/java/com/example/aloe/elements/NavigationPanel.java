@@ -3,6 +3,7 @@ package com.example.aloe.elements;
 import com.example.aloe.Main;
 import com.example.aloe.Translator;
 import com.example.aloe.WindowComponents;
+import com.example.aloe.files.DirectoryHistory;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -31,7 +32,7 @@ public class NavigationPanel extends HBox {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.ANGLE_LEFT, 30));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.previous")));
-        button.setOnMouseClicked(e -> new Main().getNavigatePrevButton());
+        button.setOnMouseClicked(e -> DirectoryHistory.loadPreviousDirectory());
         return button;
     }
 
@@ -40,7 +41,7 @@ public class NavigationPanel extends HBox {
         button.setGraphic(getIcon(FontAwesome.ANGLE_RIGHT, 30));
         HBox.setMargin(button, new Insets(0, 5, 0, 5));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.next")));
-        button.setOnMouseClicked(e -> new Main().getNavigateNextButton());
+        button.setOnMouseClicked(e -> DirectoryHistory.loadNextDirectory());
         return button;
     }
 

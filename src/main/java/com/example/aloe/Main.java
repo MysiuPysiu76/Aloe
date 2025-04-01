@@ -1,6 +1,7 @@
 package com.example.aloe;
 
 import com.example.aloe.elements.NavigationPanel;
+import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.tasks.FileOpenerTask;
 import com.example.aloe.elements.menu.MenuManager;
@@ -30,14 +31,12 @@ import java.util.stream.Collectors;
 
 public class Main extends Application {
 
-    private static List<File> directoryHistory = new ArrayList<>();
     private VBox filesBox = new VBox();
     private SplitPane filesPanel = new SplitPane();
     public static ScrollPane filesMenu = new ScrollPane();
     private static ScrollPane filesPane = new ScrollPane();
     public static Scene scene;
 
-    private static int directoryHistoryPosition = -1;
     private VBox mainContainer = new VBox();
     private StackPane root = new StackPane();
     public static Pane pane = new Pane();
@@ -135,13 +134,6 @@ public class Main extends Application {
         filesMenu.setContent(menu);
     }
 
-    public void getNavigateNextButton() {
-        if (directoryHistoryPosition < directoryHistory.size() - 1) {
-            directoryHistoryPosition++;
-            loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-        }
-    }
-
     public static void showOptions(Button button) {
         PopOver popOver = new PopOver();
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
@@ -176,13 +168,6 @@ public class Main extends Application {
             }
     }
 
-    public void getNavigatePrevButton() {
-        if (directoryHistoryPosition > 0) {
-            directoryHistoryPosition--;
-            loadDirectoryContents(directoryHistory.get(directoryHistoryPosition), false);
-        }
-    }
-
     private static List<VBox> selectedFiles = new ArrayList<>();
 
     public void loadDirectoryContents(File directory, boolean addToHistory) {
@@ -198,14 +183,7 @@ public class Main extends Application {
         ListView<String> filesListView = new ListView<>();
         filesListView.getItems().clear();
 
-        if (addToHistory) {
-            if (directoryHistoryPosition != directoryHistory.size() - 1) {
-                directoryHistory = new ArrayList<>(directoryHistory.subList(0, directoryHistoryPosition + 1));
-            }
-            directoryHistory.add(directory);
-            directoryHistoryPosition++;
-            System.out.println("d " + directoryHistoryPosition);
-        }
+        if (addToHistory) DirectoryHistory.addDirectory(directory);
 
         File[] files = FilesOperations.getCurrentDirectory().listFiles();
         if (files != null) {
