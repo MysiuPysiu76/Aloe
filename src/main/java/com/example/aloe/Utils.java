@@ -94,9 +94,4 @@ public class Utils {
             return String.format("%.1f PB ", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000));
         }
     }
-
-    public static boolean isFileArchive(File file) {
-        String fileName = file.getName();
-        return file.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar") || fileName.endsWith(".7z") || fileName.endsWith(".jar"));
-    }
 }

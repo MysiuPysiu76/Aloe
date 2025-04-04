@@ -47,4 +47,9 @@ public class FilesUtils {
         }
         return file.getName().substring(0, lastDotIndex);
     }
+
+    public static boolean isFileArchive(File file) {
+        String fileName = file.getName();
+        return file.isFile() && (fileName.endsWith(".zip") || fileName.endsWith(".tar") || fileName.endsWith(".tar.gz") || fileName.endsWith(".rar") || fileName.endsWith(".7z") || fileName.endsWith(".jar"));
+    }
 }

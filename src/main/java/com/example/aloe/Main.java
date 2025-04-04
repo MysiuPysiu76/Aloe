@@ -8,7 +8,9 @@ import com.example.aloe.elements.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.window.AboutWindow;
+import com.example.aloe.window.ConfirmWindow;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -49,6 +51,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        root = new StackPane();
+        filesBox = new VBox();
+        filesMenu = new ScrollPane();
+        filesPanel = new SplitPane();
+        filesPane = new ScrollPane();
+        mainContainer = new VBox();
+        pane = new Pane();
+
         ExtendedContextMenu.setStage(stage);
         root.getChildren().addAll(mainContainer, pane);
         mainContainer.getStyleClass().add("root");

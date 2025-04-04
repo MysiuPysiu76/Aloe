@@ -48,17 +48,18 @@ class SettingsControls {
         return icon;
     }
 
-    static ToggleSwitch getToggleSwitch(String key) {
+    static ToggleSwitch getToggleSwitch(String key, boolean restartRequired) {
         ToggleSwitch toggleSwitch = new ToggleSwitch();
         toggleSwitch.setSelected(Boolean.TRUE.equals(SettingsManager.getSetting(SettingsManager.getCategory(), key)));
         toggleSwitch.setOnMouseClicked(event -> {
             SettingsManager.setSetting(SettingsManager.getCategory(), key, toggleSwitch.isSelected());
+            if (restartRequired) SettingsWindow.setRestartRequired();
         });
         HBox.setMargin(toggleSwitch, new Insets(0, 20, 0, 20));
         return toggleSwitch;
     }
 
-    static ChoiceBox<Map.Entry<String, String>> getChoiceBox(String key, String... values) {
+    static ChoiceBox<Map.Entry<String, String>> getChoiceBox(String key, boolean restartRequired, String... values) {
         ChoiceBox<Map.Entry<String, String>> choiceBox = new ChoiceBox<>();
         Map<String, String> items = getMapFromValues(values);
         HBox.setMargin(choiceBox, new Insets(0, 20, 0, 20));
@@ -79,6 +80,7 @@ class SettingsControls {
             if (newValue != null) {
                 SettingsManager.setSetting(SettingsManager.getCategory(), key, newValue.getKey());
             }
+            if (restartRequired) SettingsWindow.setRestartRequired();
         });
         return choiceBox;
     }
@@ -103,11 +105,12 @@ class SettingsControls {
         return label;
     }
 
-    static TextField getTextField(String key, String text) {
+    static TextField getTextField(String key, String text, boolean restartRequired) {
         TextField textField = new TextField(SettingsManager.getSetting(SettingsManager.getCategory(), key));
         textField.setPadding(new Insets(5, 7, 5, 7));
         textField.setOnKeyReleased(event -> {
             SettingsManager.setSetting(SettingsManager.getCategory(), key, textField.getText());
+            if (restartRequired) SettingsWindow.setRestartRequired();
         });
         textField.setPromptText(text);
         textField.setMinWidth(100);
@@ -116,7 +119,7 @@ class SettingsControls {
         return textField;
     }
 
-    static HBox getSlider(String key, double min, double max, double tickUnit, double step, String leftTitle, String rightTitle, boolean pointedValues, List<Double> values) {
+    static HBox getSlider(String key, double min, double max, double tickUnit, double step, String leftTitle, String rightTitle, boolean pointedValues, List<Double> values, boolean restartRequired) {
         Slider slider = new Slider(min, max, SettingsManager.getSetting(SettingsManager.getCategory(), "file-box-size"));
         slider.setMajorTickUnit(tickUnit);
         slider.setBlockIncrement(step);
@@ -129,6 +132,7 @@ class SettingsControls {
                 double closest = values.stream().min((a, b) -> Double.compare(Math.abs(a - newValue.doubleValue()), Math.abs(b - newValue.doubleValue()))).orElse(newValue.doubleValue());
                 slider.setValue(closest);
                 SettingsManager.setSetting(SettingsManager.getCategory(), key, closest);
+                if (restartRequired) SettingsWindow.setRestartRequired();
             });
         }
         HBox.setMargin(slider, new Insets(0, 7, 0, 7));
@@ -136,7 +140,7 @@ class SettingsControls {
         return box;
     }
 
-    static DraggablePane getDraggablePane(String key) {
+    static DraggablePane getDraggablePane(String key, boolean restartRequired) {
         DraggablePane pane = new DraggablePane(330);
         InfoBox infoBox = new InfoBox();
         pane.setInfoBox(infoBox);
@@ -146,6 +150,7 @@ class SettingsControls {
         infoBox.setContent(new Label(Translator.translate("window.settings.menu.select-item")));
 
         pane.setOnUserChange(() -> {
+            if (restartRequired) SettingsWindow.setRestartRequired();
             List<DraggableItem> draggableItems = pane.getItems();
             List<Map<String, String>> values = new ArrayList<>();
 

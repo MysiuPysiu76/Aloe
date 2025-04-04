@@ -2,6 +2,8 @@ package com.example.aloe.settings;
 
 import com.example.aloe.*;
 import com.example.aloe.components.DraggablePane;
+import com.example.aloe.window.ConfirmWindow;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,9 +24,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class SettingsWindow extends Stage {
+
     private static ScrollPane settings;
+    private static boolean isRestartRequired = false;
 
     public SettingsWindow() {
+        isRestartRequired = false;
         settings = new ScrollPane();
         settings.setFitToWidth(true);
         settings.setPadding(new Insets(0, 65, 5, 65));
@@ -41,6 +46,11 @@ public final class SettingsWindow extends Stage {
         this.setResizable(false);
         this.show();
         loadMenu();
+        setOnClose();
+    }
+
+    static void setRestartRequired() {
+        isRestartRequired = true;
     }
 
     private static void loadMenu() {
@@ -141,24 +151,24 @@ public final class SettingsWindow extends Stage {
     private static void loadMenuSettings() {
         SettingsManager.setCategory("menu");
 
-        DraggablePane pane = SettingsControls.getDraggablePane("items");
+        DraggablePane pane = SettingsControls.getDraggablePane("items", true);
         pane.add(SettingsControls.getMenuItems("items"));
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),
-                getSettingBox("window.settings.menu.use-menu", SettingsControls.getToggleSwitch("use-menu")),
-                getSettingBox("window.settings.menu.menu-position", SettingsControls.getChoiceBox("position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
-                getSettingBox("window.settings.menu.use-icon", SettingsControls.getToggleSwitch("use-icon")),
-                getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text")),
-                getSettingBox("window.settings.menu.icons-page", SettingsControls.getChoiceBox("icon-position", "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
+                getSettingBox("window.settings.menu.use-menu", SettingsControls.getToggleSwitch("use-menu", true)),
+                getSettingBox("window.settings.menu.menu-position", SettingsControls.getChoiceBox("position", true, "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
+                getSettingBox("window.settings.menu.use-icon", SettingsControls.getToggleSwitch("use-icon", true)),
+                getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text", true)),
+                getSettingBox("window.settings.menu.icons-page", SettingsControls.getChoiceBox("icon-position", true, "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
                 getSettingBox("window.settings.menu.edit-order", "window.settings.menu.item-info", pane, pane.getInfoBox())));
     }
 
     private static void loadFilesSettings() {
         SettingsManager.setCategory("files");
 
-        ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", "home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
-        TextField pathInput = SettingsControls.getTextField("start-folder-location", Translator.translate("utils.example-path"));
+        ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", false,"home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
+        TextField pathInput = SettingsControls.getTextField("start-folder-location", Translator.translate("utils.example-path"), false);
         pathInput.setPromptText(Translator.translate("utils.example-path"));
         pathInput.setEditable(startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom"));
         startFolder.setOnAction(event -> {
@@ -171,15 +181,15 @@ public final class SettingsWindow extends Stage {
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate("window.settings.files")),
-                getSettingBox("window.settings.files.show-hidden-files", SettingsControls.getToggleSwitch("show-hidden")),
-                getSettingBox("window.settings.files.view", SettingsControls.getChoiceBox("view", "grid", Translator.translate("window.settings.files.view.grid"), "list", Translator.translate("window.settings.files.view.list"))),
-                getSettingBox("window.settings.files.use-binary-units", SettingsControls.getToggleSwitch("use-binary-units")),
+                getSettingBox("window.settings.files.show-hidden-files", SettingsControls.getToggleSwitch("show-hidden", false)),
+                getSettingBox("window.settings.files.view", SettingsControls.getChoiceBox("view", false, "grid", Translator.translate("window.settings.files.view.grid"), "list", Translator.translate("window.settings.files.view.list"))),
+                getSettingBox("window.settings.files.use-binary-units", SettingsControls.getToggleSwitch("use-binary-units", true)),
                 getSettingBox("window.settings.files.start-folder", startFolder, "window.settings.files.start-folder-location", pathInput),
-                getSettingBox("window.settings.files.delete-archive-after-extract", SettingsControls.getToggleSwitch("delete-archive-after-extract")),
-                getSettingBox("window.settings.files.display-directories-before-files", SettingsControls.getToggleSwitch("display-directories-before-files")),
-                getSettingBox("window.settings.files.file-box-size", SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()))),
-                getSettingBox("window.settings.files.trash-location", SettingsControls.getTextField("trash", Translator.translate("utils.example-path"))),
-                getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails"))));
+                getSettingBox("window.settings.files.delete-archive-after-extract", SettingsControls.getToggleSwitch("delete-archive-after-extract", true)),
+                getSettingBox("window.settings.files.display-directories-before-files", SettingsControls.getToggleSwitch("display-directories-before-files", false)),
+                getSettingBox("window.settings.files.file-box-size", SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()), false)),
+                getSettingBox("window.settings.files.trash-location", SettingsControls.getTextField("trash", Translator.translate("utils.example-path"), true)),
+                getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails", false))));
     }
 
     private static void loadLanguageSettings() {
@@ -187,7 +197,7 @@ public final class SettingsWindow extends Stage {
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.language"))),
-                getSettingBox("window.settings.language", SettingsControls.getChoiceBox("lang", "en", "English", "pl", "Polski"))));
+                getSettingBox("window.settings.language", SettingsControls.getChoiceBox("lang", true, "en", "English", "pl", "Polski"))));
     }
 
     private static void loadAppearanceSettings() {
@@ -195,6 +205,21 @@ public final class SettingsWindow extends Stage {
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.appearance"))),
-                getSettingBox("window.settings.appearance.theme", SettingsControls.getChoiceBox("theme", "light", Translator.translate("window.settings.appearance.theme.light"), "dark", Translator.translate("window.settings.appearance.theme.dark")))));
+                getSettingBox("window.settings.appearance.theme", SettingsControls.getChoiceBox("theme", true, "light", Translator.translate("window.settings.appearance.theme.light"), "dark", Translator.translate("window.settings.appearance.theme.dark")))));
+    }
+
+    private void setOnClose() {
+        this.setOnCloseRequest(e -> {
+            if (isRestartRequired) {
+                new ConfirmWindow(Translator.translate("window.settings.confirm.title"), Translator.translate("window.settings.confirm.description"), event -> {
+                    Platform.runLater(() -> {
+                        Main.stage.close();
+                        SettingsManager.loadSettings();
+                        Translator.reload();
+                        new Main().start(new Stage());
+                    });
+                });
+            }
+        });
     }
 }
