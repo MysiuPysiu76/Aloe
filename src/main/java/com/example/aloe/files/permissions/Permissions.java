@@ -1,4 +1,4 @@
-package com.example.aloe.permissions;
+package com.example.aloe.files.permissions;
 
 import java.util.List;
 

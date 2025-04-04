@@ -4,6 +4,8 @@ import com.example.aloe.Main;
 import com.example.aloe.Translator;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.files.DirectoryHistory;
+import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.SettingsWindow;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -15,7 +17,7 @@ public class NavigationPanel extends HBox {
 
     public NavigationPanel() {
         this.setPadding(new Insets(5, 8, 5, 8));
-        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), WindowComponents.getSpacer(), getRefreshButton(), getOptionsButton());
+        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), WindowComponents.getSpacer(), getViewButton(), getOptionsButton());
     }
 
     private Button getNavigationButton() {
@@ -61,6 +63,21 @@ public class NavigationPanel extends HBox {
         HBox.setMargin(button, new Insets(0, 5, 0, 0));
         button.setOnMouseClicked(e -> new Main().refreshCurrentDirectory());
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.reload")));
+        return button;
+    }
+
+    private Button getViewButton() {
+        Button button = getNavigationButton();
+        final boolean[] isGrid = {SettingsManager.getSetting("files", "view").equals("grid")};
+        button.setGraphic(getIcon(isGrid[0] ? FontAwesome.TH_LARGE : FontAwesome.LIST_UL, 20));
+        button.setTooltip(new Tooltip(Translator.translate(isGrid[0] ? "tooltip.navigate.view.grid" : "tooltip.navigate.view.list")));
+        button.setOnMouseClicked(e -> {
+            isGrid[0] = !isGrid[0];
+            button.setGraphic(getIcon(isGrid[0] ? FontAwesome.TH_LARGE : FontAwesome.LIST_UL, 20));
+            button.setTooltip(new Tooltip(Translator.translate(isGrid[0] ? "tooltip.navigate.view.grid" : "tooltip.navigate.view.list")));
+            SettingsManager.setSetting("files", "view", isGrid);
+            new Main().refreshCurrentDirectory();
+        });
         return button;
     }
 

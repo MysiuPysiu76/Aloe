@@ -12,7 +12,7 @@ public class ExtendedMenuItem extends MenuItem {
     }
 
     public ExtendedMenuItem(String key, Node graphic, EventHandler<ActionEvent> eventHandler) {
-        this(Translator.translate(key), eventHandler);
+        this(key, eventHandler);
         this.setGraphic(graphic);
     }
 }
