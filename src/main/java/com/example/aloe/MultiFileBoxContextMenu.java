@@ -19,7 +19,7 @@ class MultiFileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem duplicate = new ExtendedMenuItem("context-menu.duplicate", e -> new FileDuplicateTask(files, true));
         ExtendedMenuItem moveTo = new ExtendedMenuItem("context-menu.move-to", e -> new FileMoveTask(files, FileChooser.chooseDirectory(), true));
         ExtendedMenuItem moveToParent = new ExtendedMenuItem("context-menu.move-to-parent", e -> new FileMoveTask(files, files.getFirst().getParentFile().getParentFile(), true));
-        ExtendedMenuItem moveToTrash = new ExtendedMenuItem("context-menu.move-to-trash", e -> new FileMoveTask(files, SettingsManager.getSetting("files", "trash"), true));
+        ExtendedMenuItem moveToTrash = new ExtendedMenuItem("context-menu.move-to-trash", e -> new FileMoveTask(files, new File(SettingsManager.getSetting("files", "trash").toString()), true));
         ExtendedMenuItem compress = new ExtendedMenuItem("context-menu.compress", e -> new CompressWindow(files));
         ExtendedMenuItem delete = new ExtendedMenuItem("context-menu.delete", e -> new FileDeleteTask(files, true));
 

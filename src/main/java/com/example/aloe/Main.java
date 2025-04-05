@@ -8,9 +8,7 @@ import com.example.aloe.elements.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.window.AboutWindow;
-import com.example.aloe.window.ConfirmWindow;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -181,6 +179,8 @@ public class Main extends Application {
     private static List<VBox> selectedFiles = new ArrayList<>();
 
     public void loadDirectoryContents(File directory, boolean addToHistory) {
+        if (directory.getPath().equals("%trash%")) directory = new File(String.valueOf((SettingsManager.getSetting("files", "trash").toString())));
+
         removeSelectionFromFiles();
         FilesOperations.setCurrentDirectory(directory);
         filesPane.setVvalue(0);

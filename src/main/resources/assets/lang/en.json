@@ -231,5 +231,6 @@
   "window.settings.files.trash-location": "Trash location",
   "window.settings.confirm.title": "Application restart required",
   "window.settings.confirm.description": "Application restart required for settings to take effect",
-  "button.restart": "Restart"
+  "button.restart": "Restart",
+  "menu.trash": "Trash"
 }

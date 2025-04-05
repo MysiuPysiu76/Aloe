@@ -85,7 +85,6 @@ class SettingsControls {
         return choiceBox;
     }
 
-
     private static Map<String, String> getMapFromValues(String... values) {
         Map<String, String> map = new HashMap<>();
         if (values.length % 2 == 0) {

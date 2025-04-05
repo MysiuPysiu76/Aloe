@@ -26,7 +26,7 @@ class FileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem duplicate = new ExtendedMenuItem("context-menu.duplicate", e -> new FileDuplicateTask(file, true));
         ExtendedMenuItem moveTo = new ExtendedMenuItem("context-menu.move-to", e -> new FileMoveTask(file, FileChooser.chooseDirectory(), true));
         ExtendedMenuItem moveToParent = new ExtendedMenuItem("context-menu.move-to-parent", e -> new FileMoveTask(file, file.getParentFile().getParentFile(), true));
-        ExtendedMenuItem moveToTrash = new ExtendedMenuItem("context-menu.move-to-trash", e -> new FileMoveTask(file, SettingsManager.getSetting("files", "trash"), true));
+        ExtendedMenuItem moveToTrash = new ExtendedMenuItem("context-menu.move-to-trash", e -> new FileMoveTask(file, new File(SettingsManager.getSetting("files", "trash").toString()), true));
         ExtendedMenuItem archive = FilesUtils.isFileArchive(file) ?
                 new ExtendedMenuItem("context-menu.extract",e -> { ArchiveHandler.extract(file); new Main().refreshCurrentDirectory(); }) :
                 new ExtendedMenuItem("context-menu.compress", e -> new CompressWindow(List.of(file)));

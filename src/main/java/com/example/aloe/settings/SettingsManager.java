@@ -66,7 +66,9 @@ public final class SettingsManager {
                 Map.of("path", System.getProperty("user.home") + "/Downloads", "name", Translator.translate("menu.downloads"), "icon", "ARROW_DOWN"),
                 Map.of("path", System.getProperty("user.home") + "/Music", "name", Translator.translate("menu.music"), "icon", "MUSIC"),
                 Map.of("path", System.getProperty("user.home") + "/Pictures", "name", Translator.translate("menu.pictures"), "icon", "PICTURE_O"),
-                Map.of("path", System.getProperty("user.home") + "/Videos", "name", Translator.translate("menu.videos"), "icon", "VIDEO_CAMERA")
+                Map.of("path", System.getProperty("user.home") + "/Videos", "name", Translator.translate("menu.videos"), "icon", "VIDEO_CAMERA"),
+                Map.of("path", "%trash%", "name", Translator.translate("menu.trash"), "icon", "TRASH")
+
         ));
     }
 
