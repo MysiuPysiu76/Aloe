@@ -9,6 +9,8 @@ import javafx.scene.shape.Line;
  * styled using the "arrow-line" CSS class.
  *
  * <p>The direction of the arrow can be chosen from the {@link ArrowDirection} enum.
+ *
+ * @since 1.5.0
  */
 public class ArrowLoader {
 

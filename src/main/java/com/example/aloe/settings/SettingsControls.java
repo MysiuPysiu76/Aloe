@@ -1,9 +1,9 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.*;
-import com.example.aloe.components.DraggableItem;
-import com.example.aloe.components.DraggablePane;
-import com.example.aloe.components.InfoBox;
+import com.example.aloe.components.draggable.DraggableItem;
+import com.example.aloe.components.draggable.DraggablePane;
+import com.example.aloe.components.draggable.InfoBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;

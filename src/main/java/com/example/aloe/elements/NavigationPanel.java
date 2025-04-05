@@ -5,7 +5,6 @@ import com.example.aloe.Translator;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.SettingsManager;
-import com.example.aloe.settings.SettingsWindow;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;

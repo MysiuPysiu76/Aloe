@@ -1,7 +1,7 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.*;
-import com.example.aloe.components.DraggablePane;
+import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.window.ConfirmWindow;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
