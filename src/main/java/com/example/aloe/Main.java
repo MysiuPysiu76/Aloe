@@ -1,6 +1,6 @@
 package com.example.aloe;
 
-import com.example.aloe.elements.NavigationPanel;
+import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.tasks.FileOpenerTask;
@@ -9,6 +9,7 @@ import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.window.AboutWindow;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -277,7 +278,9 @@ public class Main extends Application {
                 }
                 filesPane.setFitToWidth(true);
 
-                filesPane.setContent(grid);
+                Platform.runLater(() -> {
+                    filesPane.setContent(grid);
+                });
                 filesPane.getStyleClass().add("files-pane");
                 heightListener = new ChangeListener<Number>() {
                     @Override

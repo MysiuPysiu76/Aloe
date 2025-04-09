@@ -134,16 +134,19 @@ public class WindowService {
         replaceButton.setOnAction(event -> {
             decisions[0] = FileDecision.REPLACE;
             decisionWindow.close();
+            content.getChildren().clear();
         });
 
         copyNextToButton.setOnAction(event -> {
             decisions[0] = FileDecision.NEXT_TO;
             decisionWindow.close();
+            content.getChildren().clear();
         });
 
         skipButton.setOnAction(event -> {
             decisions[0] = FileDecision.SKIP;
             decisionWindow.close();
+            content.getChildren().clear();
         });
 
         content.setAlignment(Pos.TOP_CENTER);
@@ -173,21 +176,25 @@ public class WindowService {
         replaceButton.setOnAction(event -> {
             decisions[0] = FileDecision.REPLACE;
             decisionWindow.close();
+            content.getChildren().clear();
         });
 
         combineButton.setOnAction(event -> {
             decisions[0] = FileDecision.COMBINE;
             decisionWindow.close();
+            content.getChildren().clear();
         });
 
         copyNextToButton.setOnAction(event -> {
             decisions[0] = FileDecision.NEXT_TO;
             decisionWindow.close();
+            content.getChildren().clear();
         });
 
         skipButton.setOnAction(event -> {
             decisions[0] = FileDecision.SKIP;
             decisionWindow.close();
+            content.getChildren().clear();
         });
 
         content.setAlignment(Pos.TOP_CENTER);

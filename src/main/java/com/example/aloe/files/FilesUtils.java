@@ -1,6 +1,10 @@
 package com.example.aloe.files;
 
+import com.example.aloe.settings.SettingsManager;
+
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class FilesUtils {
 
@@ -18,6 +22,14 @@ public class FilesUtils {
             for (File f : files) {
                 totalSize += calculateFileSize(f);
             }
+        }
+        return totalSize;
+    }
+
+    public static long calculateFileSize(List<File> files) {
+        long totalSize = 0;
+        for (File file : files) {
+            totalSize += calculateFileSize(file);
         }
         return totalSize;
     }

@@ -1,4 +1,4 @@
-package com.example.aloe.elements;
+package com.example.aloe.elements.navigation;
 
 import com.example.aloe.Main;
 import com.example.aloe.Translator;
@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -16,7 +17,7 @@ public class NavigationPanel extends HBox {
 
     public NavigationPanel() {
         this.setPadding(new Insets(5, 8, 5, 8));
-        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), WindowComponents.getSpacer(), getViewButton(), getOptionsButton());
+        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), WindowComponents.getSpacer(), getTasksButton(), getViewButton(), getOptionsButton());
     }
 
     private Button getNavigationButton() {
@@ -25,7 +26,7 @@ public class NavigationPanel extends HBox {
         button.setMinSize(40, 40);
         button.setPrefSize(40, 40);
         button.setMaxSize(40, 40);
-        button.setStyle("-fx-background-color: transparent");
+//        button.setStyle("-fx-background-color: transparent");
         return button;
     }
 
@@ -65,6 +66,19 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    private Button getTasksButton() {
+        Button button = getNavigationButton();
+        button.setGraphic(getIcon(FontAwesome.HOURGLASS_HALF, 20));
+        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.tasks")));
+        button.setOnMouseClicked(e -> {
+            ProgressManager popOver = new ProgressManager();
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            popOver.setDetachable(true);
+            popOver.show(button);
+        });
+        return button;
+    }
+
     private Button getViewButton() {
         Button button = getNavigationButton();
         final boolean[] isGrid = {SettingsManager.getSetting("files", "view").equals("grid")};
@@ -74,7 +88,7 @@ public class NavigationPanel extends HBox {
             isGrid[0] = !isGrid[0];
             button.setGraphic(getIcon(isGrid[0] ? FontAwesome.TH_LARGE : FontAwesome.LIST_UL, 20));
             button.setTooltip(new Tooltip(Translator.translate(isGrid[0] ? "tooltip.navigate.view.grid" : "tooltip.navigate.view.list")));
-            SettingsManager.setSetting("files", "view", isGrid);
+            SettingsManager.setSetting("files", "view", (isGrid[0] ? "list" : "grid"));
             new Main().refreshCurrentDirectory();
         });
         return button;

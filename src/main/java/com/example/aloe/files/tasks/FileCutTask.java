@@ -30,7 +30,7 @@ public class FileCutTask extends FileCopyTask {
     @Override
     protected Void call() throws Exception {
         for (File file : files) {
-            copyRecursive(file.toPath(), FilesOperations.getCurrentDirectory().toPath().resolve(file.getName()));
+            copyRecursive(file.toPath(), destination.resolve(file.getName()));
             FileDeleteTask.deleteInCurrentThread(file);
         }
 

@@ -232,5 +232,10 @@
   "window.settings.confirm.title": "Application restart required",
   "window.settings.confirm.description": "Application restart required for settings to take effect",
   "button.restart": "Restart",
-  "menu.trash": "Trash"
+  "menu.trash": "Trash",
+  "task.copying": "Copying ",
+  "task.item": " item to ",
+  "task.items": " items to ",
+  "tooltip.navigate.tasks": "Show running tasks",
+  "context-menu.empty": "Empty trash"
 }

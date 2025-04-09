@@ -94,4 +94,9 @@ public class Utils {
             return String.format("%.1f PB ", size / (1000 * 1000.0 * 1000.0 * 1000 * 1000));
         }
     }
+
+    public static double calculatePercentage(double current, double max) {
+        if (max == 0) return 0;
+        return Math.round((current / max) * 100);
+    }
 }
