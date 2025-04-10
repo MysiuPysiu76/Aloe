@@ -11,7 +11,6 @@ import java.util.List;
 
 public class FileMoveTask extends FilesTask {
 
-    private List<File> files;
     private File destination;
 
     public FileMoveTask(File file, File destination, boolean autostart) {

@@ -8,10 +8,8 @@ import java.util.List;
 
 public class FileDuplicateTask extends FileCopyTask {
 
-    private final List<File> files;
-
     public FileDuplicateTask(File file, boolean autoStart) {
-        files = List.of(file);
+        this.files = List.of(file);
 
         if (autoStart) runTask();
     }

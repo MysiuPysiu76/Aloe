@@ -234,6 +234,7 @@
   "button.restart": "Restart",
   "menu.trash": "Trash",
   "task.copying": "Copying ",
+  "task.cutting": "Cutting ",
   "task.item": " item to ",
   "task.items": " items to ",
   "tooltip.navigate.tasks": "Show running tasks",

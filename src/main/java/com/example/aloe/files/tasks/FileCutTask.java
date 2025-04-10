@@ -2,6 +2,7 @@ package com.example.aloe.files.tasks;
 
 import com.example.aloe.FilesOperations;
 import com.example.aloe.Main;
+import com.example.aloe.Utils;
 import javafx.application.Platform;
 
 import java.io.File;
@@ -9,9 +10,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class FileCutTask extends FileCopyTask {
-    private final List<File> files;
-    private Path destination;
 
+    private Path destination;
 
     public FileCutTask(File file, boolean autoStart) {
         this.files = List.of(file);
@@ -29,9 +29,17 @@ public class FileCutTask extends FileCopyTask {
 
     @Override
     protected Void call() throws Exception {
+        tryAddToTasksList("cutting", destination.getFileName().toString());
+
         for (File file : files) {
             copyRecursive(file.toPath(), destination.resolve(file.getName()));
             FileDeleteTask.deleteInCurrentThread(file);
+            copiedSize += file.length();
+
+            Platform.runLater(() -> {
+                progressProperty.set(Utils.calculatePercentage(copiedSize, totalSize) / 100);
+                descriptionProperty.set(Utils.convertBytesByUnit(copiedSize) + " / " + totalSizeString);
+            });
         }
 
         Platform.runLater(() -> new Main().refreshCurrentDirectory());

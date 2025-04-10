@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class FileDeleteTask extends FilesTask {
-    private final List<File> files;
 
     public FileDeleteTask(List<File> files, boolean autoStart) {
         this.files = files;

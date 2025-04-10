@@ -5,10 +5,6 @@ import com.example.aloe.elements.navigation.ProgressManager;
 import com.example.aloe.files.FileDecision;
 import com.example.aloe.files.FilesUtils;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 import java.io.*;
 import java.nio.file.*;
@@ -16,13 +12,7 @@ import java.util.List;
 
 public class FileCopyTask extends FilesTask {
 
-    private final DoubleProperty doubleProperty = new SimpleDoubleProperty(0);
-    private final StringProperty description = new SimpleStringProperty();
-    private List<File> files;
     private Path destination;
-    private long totalSize;
-    private String totalSizeString;
-    private long copiedSize = 0;
 
     private static boolean isCut = false;
 
@@ -74,11 +64,7 @@ public class FileCopyTask extends FilesTask {
 
     @Override
     protected Void call() throws Exception {
-        if(!(files.size() == 1 && files.getFirst().length() < 1048576)) {
-            String title = Translator.translate("task.copying") + files.size() + Translator.translate("task." + (files.size() == 1 ? "item" : "items")) + destination.getFileName();
-            ProgressManager.addTask(title, doubleProperty, description);
-            totalSizeString = Utils.convertBytesByUnit(totalSize);
-        }
+        tryAddToTasksList("copying", destination.getFileName().toString());
 
         for (File source : files) {
             if (!source.exists()) continue;
@@ -140,8 +126,8 @@ public class FileCopyTask extends FilesTask {
                 copiedSize += bytesRead;
 
                 Platform.runLater(() -> {
-                    doubleProperty.set(Utils.calculatePercentage(copiedSize, totalSize) / 100);
-                    description.set(Utils.convertBytesByUnit(copiedSize) + " / " + totalSizeString);
+                    progressProperty.set(Utils.calculatePercentage(copiedSize, totalSize) / 100);
+                    descriptionProperty.set(Utils.convertBytesByUnit(copiedSize) + " / " + totalSizeString);
                 });
             }
         }
