@@ -29,6 +29,8 @@ public class FileMoveTask extends FilesTask {
 
     @Override
     protected Void call() throws Exception {
+        tryAddToTasksList("moving", "to", destination.getName());
+
         if (destination != null) {
             for (File file : files) {
                 File newFile = new File(destination, file.getName());
@@ -50,6 +52,9 @@ public class FileMoveTask extends FilesTask {
                         return FileVisitResult.CONTINUE;
                     }
                 });
+
+                progress += newFile.length();
+                updateProgress();
             }
         }
 
