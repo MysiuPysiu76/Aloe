@@ -22,8 +22,11 @@ public class FileDuplicateTask extends FileCopyTask {
 
     @Override
     protected Void call() throws Exception {
+        tryAddToTasksList("duplicating", "to", new File(files.getFirst().getParent()).getName());
+
         for (File file : files) {
             copyNextTo(file.toPath(), file.toPath());
+            updateProgress();
         }
 
         Platform.runLater(() -> new Main().refreshCurrentDirectory());

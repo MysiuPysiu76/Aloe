@@ -35,11 +35,7 @@ public class FileCutTask extends FileCopyTask {
             copyRecursive(file.toPath(), destination.resolve(file.getName()));
             FileDeleteTask.deleteInCurrentThread(file);
             progress += file.length();
-
-            Platform.runLater(() -> {
-                progressProperty.set(Utils.calculatePercentage(progress, totalSize) / 100);
-                descriptionProperty.set(Utils.convertBytesByUnit(progress) + " / " + totalSizeString);
-            });
+            updateProgress();
         }
 
         Platform.runLater(() -> new Main().refreshCurrentDirectory());

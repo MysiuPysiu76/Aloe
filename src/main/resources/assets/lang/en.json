@@ -236,6 +236,7 @@
   "task.copying": "Copying ",
   "task.cutting": "Cutting ",
   "task.deleting": "Deleting ",
+  "task.duplicating": "Duplicating ",
   "task.item-to": " item to ",
   "task.item-from": " item from ",
   "task.items-to": " items to ",

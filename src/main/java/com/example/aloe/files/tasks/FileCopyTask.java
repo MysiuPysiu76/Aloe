@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class FileCopyTask extends FilesTask {
 
@@ -80,23 +81,26 @@ public class FileCopyTask extends FilesTask {
         return null;
     }
 
-    private void handleExistingFile(File source, Path target) {
+    private void handleExistingFile(File source, Path target) throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+
+        final FileDecision[] decision = new FileDecision[1];
+
         Platform.runLater(() -> {
             FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination.toFile());
-            FileDecision decision = source.isFile() ?
+            decision[0] = source.isFile() ?
                     WindowService.addFileDecisionAskToExistFileWindow(operation) :
                     WindowService.addDirectoryDecisionAskToExistFileWindow(operation);
-
-            try {
-                switch (decision) {
-                    case COMBINE -> copyRecursive(source.toPath(), target);
-                    case NEXT_TO -> copyNextTo(source.toPath(), target);
-                    case REPLACE -> copyReplace(source.toPath(), target);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            latch.countDown();
         });
+
+        latch.await();
+
+        switch (decision[0]) {
+            case COMBINE -> copyRecursive(source.toPath(), target);
+            case NEXT_TO -> copyNextTo(source.toPath(), target);
+            case REPLACE -> copyReplace(source.toPath(), target);
+        }
     }
 
     protected void copyRecursive(Path source, Path destination) throws IOException {
@@ -140,14 +144,7 @@ public class FileCopyTask extends FilesTask {
             index++;
         }
 
-        Path finalNewDestination = newDestination;
-        Platform.runLater(() -> {
-            try {
-                copyRecursive(source, finalNewDestination);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        copyRecursive(source, newDestination);
     }
 
     protected void copyReplace(Path source, Path destination) throws Exception {
