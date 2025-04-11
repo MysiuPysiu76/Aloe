@@ -47,7 +47,7 @@ If `JAVA_HOME` is not already set, configure it as follows:
 ### Step 4: Download the Project
 Clone the repository and navigate into it:
 ```bash
-git clone git@github.com:MysiuPysiu76/Aloe.git
+git clone https://github.com/MysiuPysiu76/Aloe
 cd Aloe
 ```
 

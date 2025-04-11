@@ -24,10 +24,15 @@ public class FileDeleteTask extends FilesTask {
 
     @Override
     protected Void call() throws Exception {
+        tryAddToTasksList("deleting", "from", new File(files.getFirst().getParent()).getName());
+
         for (File file : files) {
             if (file.exists()) {
+                long fileLength = file.length();
                 deleteRecursive(file.toPath());
+                progress += fileLength;
             }
+            updateProgress();
         }
 
         Platform.runLater(() -> new Main().refreshCurrentDirectory());

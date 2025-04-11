@@ -235,8 +235,11 @@
   "menu.trash": "Trash",
   "task.copying": "Copying ",
   "task.cutting": "Cutting ",
-  "task.item": " item to ",
-  "task.items": " items to ",
+  "task.deleting": "Deleting ",
+  "task.item-to": " item to ",
+  "task.item-from": " item from ",
+  "task.items-to": " items to ",
+  "task.items-from": " items from ",
   "tooltip.navigate.tasks": "Show running tasks",
   "context-menu.empty": "Empty trash"
 }

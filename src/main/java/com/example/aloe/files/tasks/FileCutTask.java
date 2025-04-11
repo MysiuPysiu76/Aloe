@@ -29,16 +29,16 @@ public class FileCutTask extends FileCopyTask {
 
     @Override
     protected Void call() throws Exception {
-        tryAddToTasksList("cutting", destination.getFileName().toString());
+        tryAddToTasksList("cutting", "to", destination.getFileName().toString());
 
         for (File file : files) {
             copyRecursive(file.toPath(), destination.resolve(file.getName()));
             FileDeleteTask.deleteInCurrentThread(file);
-            copiedSize += file.length();
+            progress += file.length();
 
             Platform.runLater(() -> {
-                progressProperty.set(Utils.calculatePercentage(copiedSize, totalSize) / 100);
-                descriptionProperty.set(Utils.convertBytesByUnit(copiedSize) + " / " + totalSizeString);
+                progressProperty.set(Utils.calculatePercentage(progress, totalSize) / 100);
+                descriptionProperty.set(Utils.convertBytesByUnit(progress) + " / " + totalSizeString);
             });
         }
 

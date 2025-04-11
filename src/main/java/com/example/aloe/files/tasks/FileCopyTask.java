@@ -1,7 +1,6 @@
 package com.example.aloe.files.tasks;
 
 import com.example.aloe.*;
-import com.example.aloe.elements.navigation.ProgressManager;
 import com.example.aloe.files.FileDecision;
 import com.example.aloe.files.FilesUtils;
 import javafx.application.Platform;
@@ -64,7 +63,7 @@ public class FileCopyTask extends FilesTask {
 
     @Override
     protected Void call() throws Exception {
-        tryAddToTasksList("copying", destination.getFileName().toString());
+        tryAddToTasksList("copying", "to", destination.getFileName().toString());
 
         for (File source : files) {
             if (!source.exists()) continue;
@@ -123,12 +122,8 @@ public class FileCopyTask extends FilesTask {
 
             while ((bytesRead = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
-                copiedSize += bytesRead;
-
-                Platform.runLater(() -> {
-                    progressProperty.set(Utils.calculatePercentage(copiedSize, totalSize) / 100);
-                    descriptionProperty.set(Utils.convertBytesByUnit(copiedSize) + " / " + totalSizeString);
-                });
+                progress += bytesRead;
+                updateProgress();
             }
         }
     }
