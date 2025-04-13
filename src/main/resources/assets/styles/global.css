@@ -1,0 +1,89 @@
+.back-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.check-box {
+    -fx-cursor: hand;
+}
+
+.check-box .box {
+    -fx-border-color: transparent;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.titled-pane {
+    -fx-font-size: 13px;
+}
+
+.titled-pane > .title {
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+.titled-pane > .title > .arrow-button {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 5px 8px 5px 8px;
+}
+
+.combo-box {
+    -fx-border-color: transparent;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px;
+    -fx-font-size: 13.5px;
+}
+
+.combo-box .list-cell {
+    -fx-padding: 5px 7px 5px 7px;
+}
+
+.combo-box .combo-box-popup {
+    -fx-border-color: transparent;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+.combo-box .combo-box-popup .scroll-bar {
+    -fx-background-insets: 0;
+    -fx-pref-width: 9px;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-shape: "";
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
+    -fx-opacity: 0;
+    -fx-background-insets: 0;
+}
+
+.text-area {
+    -fx-font-size: 13px;
+    -fx-padding: 3;
+    -fx-border-radius: 9px;
+}
+
+.text-area .content {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-bar:vertical {
+    -fx-pref-width: 9px;
+}
+
+.text-area .scroll-bar:horizontal {
+    -fx-pref-height: 9px;
+}

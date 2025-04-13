@@ -1,0 +1,74 @@
+.background {
+    -fx-background-color: #1a1a1b;
+}
+
+.text {
+    -fx-text-fill: #f6f6f6;
+}
+
+.check-box .text {
+    -fx-fill: #f6f6f6;
+}
+
+.check-box .box {
+    -fx-background-color: #363636;
+}
+
+.check-box:hover .box {
+    -fx-background-color: #484848;
+}
+
+.line {
+    -fx-stroke: #f6f6f6;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #272727;
+    -fx-text-fill: #f6f6f6;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: #f6f6f6;
+}
+
+.titled-pane > .title > .text {
+    -fx-fill: #f6f6f6;
+}
+
+.combo-box {
+    -fx-background-color: #2e2f2f;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #2e2f2f;
+    -fx-text-fill: #f6f6f6;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #4b4b4a;
+}
+
+.combo-box .combo-box-popup .scroll-bar {
+    -fx-background-color: #3a3a3a;
+}
+
+.combo-box .combo-box-popup .scroll-bar .thumb {
+    -fx-background-color: #646564;
+}
+
+.text-area {
+    -fx-background-color: #1a1a1b;
+    -fx-text-fill: #f6f6f6;
+}
+
+.text-area .content {
+    -fx-background-color: #1a1a1b;
+}
+
+.text-area .scroll-bar .track {
+    -fx-background-color: #1a1a1b;
+}
+
+.text-area .scroll-bar .thumb {
+    -fx-background-color: #646564;
+}

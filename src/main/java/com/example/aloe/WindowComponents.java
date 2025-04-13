@@ -10,21 +10,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class WindowComponents {
-    public static Stage getInternalStage(double width, double height) {
-        Stage stage = new Stage();
-        stage.setWidth(width);
-        stage.setHeight(height);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initStyle(StageStyle.TRANSPARENT);
-        return stage;
-    }
 
     public static Label getTitle(String text) {
         Label label = new Label(text);

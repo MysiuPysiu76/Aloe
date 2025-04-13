@@ -1,6 +1,7 @@
 package com.example.aloe.window;
 
 import com.example.aloe.*;
+import com.example.aloe.components.BackButton;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.properties.FileProperties;
 import com.example.aloe.files.properties.ImageProperties;
@@ -23,7 +24,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
@@ -53,41 +53,53 @@ public class PropertiesWindow extends Stage {
 
         root.getChildren().addAll(WindowComponents.getSpacer(), WindowComponents.getSpacer());
 
-        this.setScene(new Scene(root, 300, 430));
+        Scene scene = new Scene(root, 300, 430);
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/global.css").toExternalForm());
+        this.setScene(scene);
         this.show();
         loadProperties();
     }
 
     private void loadChecksumButtonBar() {
-        Button properties = getNavigateButton("window.properties", false);
-        properties.setOnAction(e -> loadProperties());
-        this.root.getChildren().set(0, new HBox(WindowComponents.getSpacer(), properties));
+        BackButton propertiesButton = new BackButton(Translator.translate("window.properties"), false);
+        propertiesButton.setColor("#62d0de");
+        propertiesButton.setOnMouseClicked(e -> loadProperties());
+        HBox bar = new HBox(WindowComponents.getSpacer(), propertiesButton);
+        bar.getStyleClass().add("background");
+        this.root.getChildren().set(0, bar);
     }
 
     private void loadPropertiesButtonBar() {
         HBox bar = new HBox();
+        bar.getStyleClass().add("background");
         if (this.file.isFile()) {
-            Button checksum = getNavigateButton("window.properties.checksum", true);
-            checksum.setOnAction(event -> loadChecksum());
-            bar.getChildren().add(checksum);
+            BackButton checksumButton = new BackButton(Translator.translate("window.properties.checksum"), true);
+            checksumButton.setColor("#62d0de");
+            checksumButton.setOnMouseClicked(e -> loadChecksum());
+            bar.getChildren().add(checksumButton);
         }
-        Button permissions = getNavigateButton("window.properties.permissions", false);
-        permissions.setOnAction(event -> {
-            loadPermissions();
-        });
-        bar.getChildren().addAll(WindowComponents.getSpacer(), permissions);
+        BackButton permissionsButton = new BackButton(Translator.translate("window.properties.permissions"), false);
+        permissionsButton.setColor("#62d0de");
+        permissionsButton.setOnMouseClicked(e -> loadPermissions());
+        bar.getChildren().addAll(WindowComponents.getSpacer(), permissionsButton);
         this.root.getChildren().set(0, bar);
     }
 
     private void loadPermissionsButtonBar() {
-        Button properties = getNavigateButton("window.properties", true);
-        properties.setOnAction(e -> loadProperties());
-        this.root.getChildren().set(0, new HBox(properties, WindowComponents.getSpacer()));
+        BackButton propertiesButton = new BackButton(Translator.translate("window.properties"), true);
+        propertiesButton.setColor("#62d0de");
+        propertiesButton.setOnMouseClicked(e -> loadProperties());
+        HBox bar = new HBox(propertiesButton, WindowComponents.getSpacer());
+        bar.getStyleClass().add("background");
+        this.root.getChildren().set(0, bar);
     }
 
     private void loadProperties() {
         loadPropertiesButtonBar();
         VBox content = new VBox();
+        VBox.setVgrow(content, Priority.ALWAYS);
+        content.getStyleClass().add("background");
 
         ImageView icon = getIcon(file, false);
         icon.setFitHeight(77);
@@ -95,17 +107,18 @@ public class PropertiesWindow extends Stage {
         VBox iconWrapper = new VBox();
         iconWrapper.setAlignment(Pos.TOP_CENTER);
         iconWrapper.getChildren().add(icon);
-        VBox.setMargin(icon, new Insets(25, 10, 10, 2));
+        VBox.setMargin(icon, new Insets(26, 10, 10, 2));
 
         GridPane fileData = new GridPane();
         fileData.setAlignment(Pos.TOP_CENTER);
-        VBox.setMargin(fileData, new Insets(30, 15, -20, 0));
+        VBox.setMargin(fileData, new Insets(30, 15, 0, 0));
         FileProperties properties = new FileProperties(file);
 
         byte index = 0;
         for (Map.Entry<String, String> entry : properties.getProperties().entrySet()) {
             Label title = getPropertiesLabel(entry.getKey());
             Label value = new Label(entry.getValue());
+            value.getStyleClass().add("text");
             fileData.add(title, 0, index);
             fileData.add(value, 1, index);
             index++;
@@ -121,6 +134,7 @@ public class PropertiesWindow extends Stage {
 
     private Label getPropertiesLabel(String text) {
         Label label = new Label(text);
+        label.getStyleClass().add("text");
         label.setAlignment(Pos.CENTER_RIGHT);
         label.setPadding(new Insets(4, 10, 4, 0));
         label.setMinWidth(110);
@@ -133,6 +147,7 @@ public class PropertiesWindow extends Stage {
 
         if (Arrays.asList(new String[]{"image/jpeg", "image/png", "image/tiff", "image/gif", "image/bmp", "image/webp"}).contains(type)) {
             Button button = getLinkButton(Translator.translate("show"));
+            button.setStyle(button.getStyle() + "-fx-text-fill: #62d0de;");
             button.setOnAction(event -> loadImageProperties());
             grid.add(getPropertiesLabel(Translator.translate("window.properties.image")), 0, grid.getRowCount());
             grid.add(button, 1, grid.getRowCount() - 1);
@@ -167,8 +182,7 @@ public class PropertiesWindow extends Stage {
 
     private Image loadIconForFile(File file, boolean useThumbnails) {
         return switch (FilesUtils.getExtension(file).toLowerCase()) {
-            case "jpg", "jpeg", "png", "gif" ->
-                    useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
+            case "jpg", "jpeg", "png", "gif" -> useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
             case "mp4" -> loadIcon("/assets/icons/video.png");
             case "mp3", "ogg" -> loadIcon("/assets/icons/music.png");
             case "iso" -> loadIcon("/assets/icons/cd.png");
@@ -176,17 +190,11 @@ public class PropertiesWindow extends Stage {
         };
     }
 
-    private Button getNavigateButton(String key, boolean leftIcon) {
-        Button button = WindowComponents.getBackButton(key, leftIcon);
-        button.setFont(Font.font(14 * 0.95));
-        button.setAlignment(Pos.CENTER);
-        return button;
-    }
-
     private void loadChecksum() {
         loadChecksumButtonBar();
 
         VBox content = new VBox();
+        content.getStyleClass().add("background");
         Accordion checksumAccordion = new Accordion(getVerifyChecksum(), getGenerateChecksum());
         checksumAccordion.setExpandedPane(checksumAccordion.getPanes().get(1));
         VBox.setVgrow(checksumAccordion, Priority.ALWAYS);
@@ -199,22 +207,29 @@ public class PropertiesWindow extends Stage {
 
     private TitledPane getVerifyChecksum() {
         VBox contentPane = new VBox();
+        contentPane.getStyleClass().add("background");
         contentPane.setPadding(new Insets(10, 10, 10, 10));
         Label choseAlgorithmLabel = new Label(Translator.translate("window.properties.checksum.chose-algorithm"));
         choseAlgorithmLabel.setPadding(new Insets(5));
         choseAlgorithmLabel.setStyle("-fx-font-size: 14.5px");
+        choseAlgorithmLabel.getStyleClass().add("text");
         ComboBox<String> comboBox = getChecksumAlgorithmComboBox();
+        setColorToComboBoxArrow(comboBox);
 
         Label enterChecksum = new Label(Translator.translate("window.properties.checksum.enter-checksum"));
         enterChecksum.setStyle("-fx-font-size: 14.5px");
+        enterChecksum.getStyleClass().add("text");
+        VBox.setMargin(enterChecksum, new Insets(0, 0, 10, 0));
+
         TextArea textArea = new TextArea();
         textArea.setWrapText(true);
-        textArea.setPrefRowCount(3);
-        textArea.setStyle("-fx-font-size: 14px");
+        textArea.setPrefRowCount(5);
+        textArea.setStyle("-fx-border-color: #62d0de;");
 
         Label infoLabel = new Label();
         infoLabel.setWrapText(true);
         infoLabel.setStyle("-fx-font-size: 14px; -fx-padding: 4px");
+        infoLabel.getStyleClass().add("text");
 
         Button verifyChecksum = WindowComponents.getButton(Translator.translate("window.properties.checksum.verify-checksum"));
         verifyChecksum.setOnAction(e -> verifyChecksum(infoLabel, comboBox.getSelectionModel().getSelectedItem(), textArea.getText()));
@@ -222,33 +237,77 @@ public class PropertiesWindow extends Stage {
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
 
         contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, WindowComponents.getSpacer(), buttonPanel);
-        return new TitledPane(Translator.translate("window.properties.checksum.verify"), contentPane);
+        TitledPane titledPane = new TitledPane(Translator.translate("window.properties.checksum.verify"), contentPane);
+        VBox.setMargin(titledPane, new Insets(0, 0, 333, 0));
+        return titledPane;
     }
 
     private TitledPane getGenerateChecksum() {
         VBox contentPane = new VBox();
+        contentPane.getStyleClass().add("background");
         contentPane.setPadding(new Insets(10, 10, 10, 10));
         Label choseAlgorithmLabel = new Label(Translator.translate("window.properties.checksum.chose-algorithm"));
         choseAlgorithmLabel.setPadding(new Insets(5));
         choseAlgorithmLabel.setStyle("-fx-font-size: 14.5px");
+        choseAlgorithmLabel.getStyleClass().add("text");
         ComboBox<String> comboBox = getChecksumAlgorithmComboBox();
+        setColorToComboBoxArrow(comboBox);
 
         Label checksumLabel = new Label(Translator.translate("window.properties.checksum") + ": ");
         checksumLabel.setStyle("-fx-font-size: 14.5px; -fx-padding: 5px 5px 1px 5px");
+        checksumLabel.getStyleClass().add("text");
         Label hash = new Label();
+        hash.getStyleClass().add("text");
         hash.setWrapText(true);
         hash.setStyle("-fx-font-size: 13.5px; -fx-padding: 4px 10px 10px 10px");
 
         Button copy = WindowComponents.getButton(Translator.translate("button.copy"));
         copy.setOnAction(e -> ClipboardManager.copyTextToClipboard(this.hash));
         Button generate = WindowComponents.getButton(Translator.translate("window.properties.checksum.generate-hash"));
-        generate.setOnAction(e -> generateHash(hash, comboBox.getSelectionModel().getSelectedItem()));
+        generate.setOnAction(e -> {
+            hash.setText(Translator.translate("window.properties.checksum.generating"));
+            generateHash(hash, comboBox.getSelectionModel().getSelectedItem());
+        });
         HBox buttonPanel = new HBox(copy, generate);
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
         buttonPanel.setSpacing(10);
 
         contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, checksumLabel, hash, WindowComponents.getVBoxSpacer(), buttonPanel);
-        return new TitledPane(Translator.translate("window.properties.checksum.generate"), contentPane);
+        TitledPane titledPane = new TitledPane(Translator.translate("window.properties.checksum.generate"), contentPane);
+        titledPane.getStyleClass().add("background");
+        return titledPane;
+    }
+
+    private void setColorToComboBoxArrow(ComboBox comboBox) {
+        comboBox.skinProperty().addListener((obs, oldSkin, newSkin) -> {
+            Platform.runLater(() -> {
+                Node arrow = comboBox.lookup(".arrow");
+                if (arrow != null) {
+                    arrow.setStyle("-fx-background-color: #62d0de;");
+                }
+            });
+        });
+
+        String color = SettingsManager.getSetting("appearance", "theme").equals("light") ? "#2e2f2f" : "#f6f6f6";
+        comboBox.setCellFactory(lv -> {
+            ListCell<String> cell = new ListCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(item);
+                    setStyle("");
+                }
+            };
+
+            cell.hoverProperty().addListener((obs, wasHovered, isHovered) -> {
+                if (isHovered) {
+                    cell.setStyle("-fx-text-fill: #62d0de;");
+                } else {
+                    cell.setStyle("-fx-text-fill: " + color);
+                }
+            });
+            return cell;
+        });
     }
 
     private void generateHash(Label labelHash, String algorithm) {
@@ -301,8 +360,10 @@ public class PropertiesWindow extends Stage {
         });
 
         VBox content = new VBox(permissionsGrid, applyToSubdirectories, updatePermissions);
+        content.getStyleClass().add("background");
         content.setAlignment(Pos.TOP_CENTER);
         content.setMinWidth(330);
+        VBox.setVgrow(content, Priority.ALWAYS);
 
         root.getChildren().set(1, content);
     }
@@ -313,7 +374,6 @@ public class PropertiesWindow extends Stage {
         permissionsGrid.setPadding(new Insets(25, 0, 0, 0));
 
         List<String> title = List.of(Translator.translate("window.properties.permissions.owner"), Translator.translate("window.properties.permissions.group"), Translator.translate("window.properties.permissions.other"));
-
         Label read = getLabel(Translator.translate("window.properties.permissions.read"));
         Label write = getLabel(Translator.translate("window.properties.permissions.write"));
         Label execute = getLabel(Translator.translate("window.properties.permissions.execute"));
@@ -336,7 +396,8 @@ public class PropertiesWindow extends Stage {
     }
 
     private void addRowSeparator(int row, GridPane grid) {
-        Line line = new Line(0, 0, 290, 0);
+        Line line = new Line(0, 0, 300, 0);
+        line.getStyleClass().add("line");
         grid.add(line, 0, row);
         GridPane.setColumnSpan(line, 4);
     }
@@ -364,6 +425,7 @@ public class PropertiesWindow extends Stage {
 
     private CheckBox getCheckBox(boolean isSelected) {
         CheckBox checkBox = new CheckBox();
+        checkBox.setStyle("-fx-mark-color: #62d0de;");
         checkBox.setSelected(isSelected);
         GridPane.setHalignment(checkBox, HPos.CENTER);
         GridPane.setValignment(checkBox, VPos.CENTER);
@@ -372,6 +434,7 @@ public class PropertiesWindow extends Stage {
 
     private Label getLabel(String text) {
         Label label = new Label(text);
+        label.getStyleClass().add("text");
         label.setPadding(new Insets(10, 13, 10, 13));
         return label;
     }
@@ -448,7 +511,7 @@ public class PropertiesWindow extends Stage {
     }
 
     private ScrollPane getScrollPane() {
-        return (ScrollPane) ((VBox) ((VBox) (root.getChildren().get(1))).getChildren().get(0)).getChildren().get(3);
+        return (ScrollPane) ((VBox) ((VBox) (root.getChildren().get(1))).getChildren().getFirst()).getChildren().get(3);
     }
 
     private void loadACLPermissionsPane(List<String> permissionsList, List<Boolean> permissions) {
@@ -480,6 +543,8 @@ public class PropertiesWindow extends Stage {
     private void loadImageProperties() {
         loadPermissionsButtonBar();
         VBox content = new VBox();
+        content.getStyleClass().add("background");
+        VBox.setVgrow(content, Priority.ALWAYS);
 
         GridPane imageData = new GridPane();
         imageData.setPadding(new Insets(5, 25, 5, 10));
@@ -487,7 +552,9 @@ public class PropertiesWindow extends Stage {
         ImageProperties imageProperties = new ImageProperties(this.file);
 
         for (Map.Entry<String, String> entry : imageProperties.getProperties().entrySet()) {
-            imageData.addRow(imageData.getRowCount(), getPropertiesLabel(entry.getKey()), new Label(entry.getValue()));
+            Label value = new Label(entry.getValue());
+            value.getStyleClass().add("text");
+            imageData.addRow(imageData.getRowCount(), getPropertiesLabel(entry.getKey()), value);
         }
 
         content.getChildren().add(imageData);
