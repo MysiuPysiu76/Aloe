@@ -25,7 +25,9 @@ public class CompressWindow extends InteriorWindow {
         super();
 
         TextField fileName = getInput(Translator.translate("window.interior.archive"), Translator.translate("window.interior.archive.name"));
+        fileName.setStyle("-fx-border-color: #62d0de;");
         TextField password = getInput(null, Translator.translate("window.interior.archive.password"));
+        password.setStyle("-fx-border-color: #62d0de;");
         Label error = getInfoLabel(null);
 
         ComboBox<ArchiveType> archiveType = new ComboBox<>();

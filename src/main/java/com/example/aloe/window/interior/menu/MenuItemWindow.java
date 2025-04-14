@@ -8,7 +8,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Callback;
@@ -25,7 +24,9 @@ class MenuItemWindow extends InteriorWindow {
         confirmButton = getConfirmButton(Translator.translate("window.interior.menu.save"));
 
         title = getInput(titleText, Translator.translate("window.interior.menu.title"));
+        title.setStyle("-fx-border-color: #62d0de;");
         path = getInput(pathText, Translator.translate("window.interior.menu.example-path"));
+        path.setStyle("-fx-border-color: #62d0de;");
         icon = getComboBox(iconText);
 
         this.getChildren().addAll(getTitleLabel(name),
@@ -58,7 +59,7 @@ class MenuItemWindow extends InteriorWindow {
                         } else {
                             FontIcon iconView = new FontIcon(item);
                             iconView.setIconSize(20);
-                            iconView.setIconColor(Color.BLACK);
+                            iconView.getStyleClass().add("font-icon");
                             setText(item.name());
                             setGraphic(iconView);
                         }
@@ -77,7 +78,7 @@ class MenuItemWindow extends InteriorWindow {
                 } else {
                     FontIcon iconView = new FontIcon(item);
                     iconView.setIconSize(20);
-                    iconView.setIconColor(Color.BLACK);
+                    iconView.getStyleClass().add("font-icon");
                     setText(item.name());
                     setGraphic(iconView);
                 }

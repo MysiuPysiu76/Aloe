@@ -72,3 +72,7 @@
 .text-area .scroll-bar .thumb {
     -fx-background-color: #646564;
 }
+
+.font-icon {
+    -fx-fill: #f6f6f6;
+}

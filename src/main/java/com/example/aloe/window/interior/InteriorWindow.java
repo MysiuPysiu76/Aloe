@@ -21,9 +21,7 @@ public class InteriorWindow extends VBox {
     protected Button confirmButton;
 
     public InteriorWindow() {
-        this.setPadding(new Insets(25, 25, 23, 25));
-        this.setMinWidth(500);
-        this.setStyle("-fx-background-color: #f0f1f0; -fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-color: #acacac;");
+        this.getStyleClass().addAll("background", "window");
 
         Main.pane.getChildren().add(this);
         Main.showDarkeningPlate();
@@ -34,25 +32,22 @@ public class InteriorWindow extends VBox {
 
     protected TextField getInput(String text, String prompt) {
         TextField input = new TextField(text);
-        input.setStyle("-fx-font-size: 14px; -fx-border-radius: 10px");
-        input.setPadding(new Insets(8));
+        input.getStyleClass().addAll("background", "text");
         input.selectAll();
         input.setPromptText(prompt);
-        VBox.setMargin(input, new Insets(2, 0, 5, 0));
+        VBox.setMargin(input, new Insets(4, 0, 5, 0));
         return input;
     }
 
     protected Label getTitleLabel(String text) {
         Label title = new Label(text);
-        title.setStyle("-fx-text-fill: #242524; -fx-font-size: 21px; -fx-font-weight: bold;");
-        title.setPadding(new Insets(0, 0, 10, 0));
+        title.getStyleClass().addAll("text", "title");
         return title;
     }
 
     protected Label getInfoLabel(String text) {
         Label title = new Label(text);
-        title.setStyle("-fx-text-fill: #444445; -fx-font-size: 14px");
-        title.setPadding(new Insets(4, 0, 4, 0));
+        title.getStyleClass().addAll("text", "info");
         return title;
     }
 
@@ -86,7 +81,6 @@ public class InteriorWindow extends VBox {
     protected ComboBox getComboBox(ObservableList observableList) {
         ComboBox comboBox = new ComboBox(observableList);
         comboBox.setMaxWidth(Double.MAX_VALUE);
-        comboBox.setPadding(new Insets(3, 4, 3, 4));
         HBox.setHgrow(comboBox, Priority.ALWAYS);
         return comboBox;
     }

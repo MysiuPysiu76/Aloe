@@ -110,7 +110,9 @@ public class Main extends Application {
         }
 
         scene.getStylesheets().add(getClass().getResource("/assets/styles/style.css").toExternalForm());
-
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/interior.css").toExternalForm());
         stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
         stage.setMinWidth(700);

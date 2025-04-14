@@ -67,7 +67,10 @@
 
 .text-area {
     -fx-font-size: 13px;
-    -fx-padding: 3;
+    -fx-padding: 3px;
+}
+
+.text-area, .text-field {
     -fx-border-radius: 9px;
 }
 
@@ -86,4 +89,9 @@
 
 .text-area .scroll-bar:horizontal {
     -fx-pref-height: 9px;
+}
+
+.text-field {
+    -fx-padding: 9px;
+    -fx-font-size: 14px;
 }

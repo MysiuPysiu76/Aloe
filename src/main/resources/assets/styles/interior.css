@@ -1,0 +1,18 @@
+.window {
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-color: #acacac;
+    -fx-padding: 25px 25px 23px 25px;
+    -fx-min-width: 500px;
+}
+
+.title {
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10px 0;
+    -fx-font-size: 21px;
+}
+
+.info {
+    -fx-font-size: 14px;
+    -fx-padding: 4px 0 4px 0;
+}
