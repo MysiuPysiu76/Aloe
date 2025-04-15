@@ -370,6 +370,7 @@ public class Main extends Application {
                 case "tar", "tar.gz" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/tar.png")));
                 case "zip", "7z" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/zip.png")));
                 case "rar" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/rar.png")));
+                case "sh", "bat" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/terminal.png")));
                 case "jar" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/jar.png")));
                 case "iso" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/cd.png")));
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
