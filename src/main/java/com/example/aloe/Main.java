@@ -360,13 +360,17 @@ public class Main extends Application {
                         icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
                     }
                 }
-                case "webp", "heif" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
+                case "webp", "heif", "raw" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
                 case "mp4", "mkv", "ts" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
                 case "mp3", "ogg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/music.png")));
                 case "epub", "mobi" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/book.png")));
                 case "pdf" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/pdf.png")));
                 case "exe", "msi", "deb", "rpm", "snap", "flatpak", "flatpakref", "dmg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/installer.png")));
                 case "torrent" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/torrent.png")));
+                case "tar", "tar.gz" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/tar.png")));
+                case "zip", "7z" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/zip.png")));
+                case "rar" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/rar.png")));
+                case "jar" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/jar.png")));
                 case "iso" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/cd.png")));
                 default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
             }
