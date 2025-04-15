@@ -1,0 +1,13 @@
+.root {
+    -fx-min-width: 550px;
+}
+
+.title {
+    -fx-padding: 13px 10px 3px 20px;
+    -fx-font-size: 21px;
+}
+
+.description {
+    -fx-padding: 3px 10px 5px 20px;
+    -fx-font-size: 14px;
+}

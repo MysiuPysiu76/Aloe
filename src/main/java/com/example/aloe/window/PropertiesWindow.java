@@ -55,7 +55,7 @@ public class PropertiesWindow extends Stage {
 
         Scene scene = new Scene(root, 300, 430);
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         this.setScene(scene);
         this.show();
         loadProperties();

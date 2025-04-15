@@ -2,6 +2,7 @@ package com.example.aloe.window;
 
 import com.example.aloe.Translator;
 import com.example.aloe.WindowComponents;
+import com.example.aloe.settings.SettingsManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,15 +19,13 @@ public class ConfirmWindow extends Stage {
 
     public ConfirmWindow(String title, String description, EventHandler<ActionEvent> confirmEventHandler) {
         VBox container = new VBox();
-        container.setMinWidth(500);
+        container.getStyleClass().addAll("background", "root");
         Label titleLabel = new Label(title);
         titleLabel.setWrapText(true);
-        titleLabel.setPadding(new Insets(13, 10, 3, 20));
-        titleLabel.setStyle("-fx-font-size: 20px");
+        titleLabel.getStyleClass().addAll("title", "text");
         Label descriptionLabel = new Label(description);
         descriptionLabel.setWrapText(true);
-        descriptionLabel.setPadding(new Insets(3, 10, 5, 20));
-        descriptionLabel.setStyle("-fx-font-size: 14px");
+        descriptionLabel.getStyleClass().addAll("description", "text");
         Button cancel = WindowComponents.getCancelButton();
         cancel.setOnMouseClicked(e -> this.close());
 
@@ -43,6 +42,9 @@ public class ConfirmWindow extends Stage {
         VBox.setMargin(box, new Insets(0, 15, 15, 5));
 
         Scene scene = new Scene(container);
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/confirm.css").toExternalForm());
         this.setScene(scene);
         this.initModality(Modality.APPLICATION_MODAL);
         this.showAndWait();
