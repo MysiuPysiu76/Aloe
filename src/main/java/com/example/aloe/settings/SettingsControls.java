@@ -1,6 +1,7 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.*;
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.draggable.DraggableItem;
 import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.components.draggable.InfoBox;
@@ -32,7 +33,7 @@ class SettingsControls {
         description.setStyle("-fx-font-size: 12px");
         VBox descriptionVBox = new VBox(title, description);
         descriptionVBox.setAlignment(Pos.CENTER_LEFT);
-        HBox box = new HBox(iconPane, descriptionVBox, WindowComponents.getSpacer(), getMenuArrow());
+        HBox box = new HBox(iconPane, descriptionVBox, new HBoxSpacer(), getMenuArrow());
         VBox.setMargin(box, new Insets(5));
         box.setAlignment(Pos.CENTER_LEFT);
         box.setMinWidth(500);

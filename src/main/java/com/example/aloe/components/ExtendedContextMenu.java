@@ -1,4 +1,4 @@
-package com.example.aloe;
+package com.example.aloe.components;
 
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;

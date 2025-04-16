@@ -1,5 +1,6 @@
 package com.example.aloe.window.interior.menu;
 
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.window.interior.InteriorWindow;
@@ -36,7 +37,7 @@ class MenuItemWindow extends InteriorWindow {
                 path,
                 getInfoLabel(Translator.translate("window.interior.menu.icon")),
                 new HBox(icon),
-                getBottomPanel(WindowComponents.getSpacer(), getCancelButton(), confirmButton));
+                getBottomPanel(new HBoxSpacer(), getCancelButton(), confirmButton));
     }
 
     protected ComboBox getComboBox(String icon) {

@@ -1,5 +1,8 @@
-package com.example.aloe;
+package com.example.aloe.elements;
 
+import com.example.aloe.Main;
+import com.example.aloe.components.ExtendedContextMenu;
+import com.example.aloe.components.ExtendedMenuItem;
 import com.example.aloe.files.archive.ArchiveHandler;
 import com.example.aloe.files.FileChooser;
 import com.example.aloe.files.FilesUtils;
@@ -16,7 +19,7 @@ import com.example.aloe.window.interior.RenameWindow;
 import java.io.File;
 import java.util.List;
 
-class FileBoxContextMenu extends ExtendedContextMenu {
+public class FileBoxContextMenu extends ExtendedContextMenu {
     public FileBoxContextMenu(File file) {
         super();
 

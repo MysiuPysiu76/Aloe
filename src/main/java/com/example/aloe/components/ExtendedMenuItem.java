@@ -1,4 +1,4 @@
-package com.example.aloe;
+package com.example.aloe.components;
 
 import com.example.aloe.utils.Translator;
 import javafx.event.ActionEvent;

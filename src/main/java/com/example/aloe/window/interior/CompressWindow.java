@@ -1,5 +1,6 @@
 package com.example.aloe.window.interior;
 
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.files.archive.ArchiveHandler;
@@ -56,7 +57,7 @@ public class CompressWindow extends InteriorWindow {
                 nameBox,
                 getInfoLabel(Translator.translate("window.interior.archive.password")),
                 password,
-                getBottomPanel(error, WindowComponents.getSpacer(), getCancelButton(), confirmButton));
+                getBottomPanel(error, new HBoxSpacer(), getCancelButton(), confirmButton));
 
         this.setOnConfirm(event -> {
             hideOverlay();

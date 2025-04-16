@@ -1,5 +1,7 @@
-package com.example.aloe;
+package com.example.aloe.elements;
 
+import com.example.aloe.components.ExtendedContextMenu;
+import com.example.aloe.components.ExtendedMenuItem;
 import com.example.aloe.files.FileChooser;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.tasks.FileDuplicateTask;
@@ -11,7 +13,7 @@ import com.example.aloe.window.interior.CompressWindow;
 import java.io.File;
 import java.util.List;
 
-class MultiFileBoxContextMenu extends ExtendedContextMenu {
+public class MultiFileBoxContextMenu extends ExtendedContextMenu {
     public MultiFileBoxContextMenu(List<File> files) {
         super();
 

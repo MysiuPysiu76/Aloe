@@ -1,5 +1,9 @@
 package com.example.aloe;
 
+import com.example.aloe.components.ExtendedContextMenu;
+import com.example.aloe.elements.DirectoryContextMenu;
+import com.example.aloe.elements.FileBoxContextMenu;
+import com.example.aloe.elements.MultiFileBoxContextMenu;
 import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;

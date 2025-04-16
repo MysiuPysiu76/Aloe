@@ -1,6 +1,7 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.*;
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.window.ConfirmWindow;
@@ -89,7 +90,7 @@ public final class SettingsWindow extends Stage {
 
     private static HBox getSettingBox(String key, Node control) {
         Label title = getSettingLabel(key);
-        HBox box = new HBox(title, WindowComponents.getSpacer(), control);
+        HBox box = new HBox(title, new HBoxSpacer(), control);
         box.setSpacing(10);
         box.setMinHeight(50);
         box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");

@@ -1,6 +1,8 @@
 package com.example.aloe.elements.menu;
 
 import com.example.aloe.*;
+import com.example.aloe.components.ExtendedContextMenu;
+import com.example.aloe.components.ExtendedMenuItem;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.window.PropertiesWindow;

@@ -1,5 +1,6 @@
 package com.example.aloe.window;
 
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.settings.SettingsManager;
@@ -33,7 +34,7 @@ public class ConfirmWindow extends Stage {
         confirm.setOnAction(confirmEventHandler);
         confirm.setOnMouseClicked(e -> this.close());
 
-        HBox box = new HBox(WindowComponents.getSpacer(), cancel, confirm);
+        HBox box = new HBox(new HBoxSpacer(), cancel, confirm);
         box.setAlignment(Pos.CENTER_RIGHT);
         box.setSpacing(10);
         box.setPadding(new Insets(13, 0, 0, 0));

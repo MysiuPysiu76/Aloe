@@ -2,6 +2,8 @@ package com.example.aloe.window;
 
 import com.example.aloe.*;
 import com.example.aloe.components.BackButton;
+import com.example.aloe.components.HBoxSpacer;
+import com.example.aloe.components.VBoxSpacer;
 import com.example.aloe.files.Checksum;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FilesUtils;
@@ -55,7 +57,7 @@ public class PropertiesWindow extends Stage {
         this.setMinHeight(430);
         this.setMinWidth(350);
 
-        root.getChildren().addAll(WindowComponents.getSpacer(), WindowComponents.getSpacer());
+        root.getChildren().addAll(new Pane(), new Pane());
 
         Scene scene = new Scene(root, 300, 430);
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
@@ -69,7 +71,7 @@ public class PropertiesWindow extends Stage {
         BackButton propertiesButton = new BackButton(Translator.translate("window.properties"), false);
         propertiesButton.setColor("#62d0de");
         propertiesButton.setOnMouseClicked(e -> loadProperties());
-        HBox bar = new HBox(WindowComponents.getSpacer(), propertiesButton);
+        HBox bar = new HBox(new HBoxSpacer(), propertiesButton);
         bar.getStyleClass().add("background");
         this.root.getChildren().set(0, bar);
     }
@@ -86,7 +88,7 @@ public class PropertiesWindow extends Stage {
         BackButton permissionsButton = new BackButton(Translator.translate("window.properties.permissions"), false);
         permissionsButton.setColor("#62d0de");
         permissionsButton.setOnMouseClicked(e -> loadPermissions());
-        bar.getChildren().addAll(WindowComponents.getSpacer(), permissionsButton);
+        bar.getChildren().addAll(new HBoxSpacer(), permissionsButton);
         this.root.getChildren().set(0, bar);
     }
 
@@ -94,7 +96,7 @@ public class PropertiesWindow extends Stage {
         BackButton propertiesButton = new BackButton(Translator.translate("window.properties"), true);
         propertiesButton.setColor("#62d0de");
         propertiesButton.setOnMouseClicked(e -> loadProperties());
-        HBox bar = new HBox(propertiesButton, WindowComponents.getSpacer());
+        HBox bar = new HBox(propertiesButton, new HBoxSpacer());
         bar.getStyleClass().add("background");
         this.root.getChildren().set(0, bar);
     }
@@ -240,7 +242,7 @@ public class PropertiesWindow extends Stage {
         HBox buttonPanel = new HBox(verifyChecksum);
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
 
-        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, WindowComponents.getSpacer(), buttonPanel);
+        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, new HBoxSpacer(), buttonPanel);
         TitledPane titledPane = new TitledPane(Translator.translate("window.properties.checksum.verify"), contentPane);
         VBox.setMargin(titledPane, new Insets(0, 0, 333, 0));
         return titledPane;
@@ -276,7 +278,7 @@ public class PropertiesWindow extends Stage {
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
         buttonPanel.setSpacing(10);
 
-        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, checksumLabel, hash, WindowComponents.getVBoxSpacer(), buttonPanel);
+        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, checksumLabel, hash, new VBoxSpacer(), buttonPanel);
         TitledPane titledPane = new TitledPane(Translator.translate("window.properties.checksum.generate"), contentPane);
         titledPane.getStyleClass().add("background");
         return titledPane;
@@ -470,7 +472,7 @@ public class PropertiesWindow extends Stage {
             permissions.savePermissions(readACLPermissions());
         });
         HBox.setMargin(updatePermissions, new Insets(10, 25, 10, 25));
-        HBox bottomButtonWrapper = new HBox(WindowComponents.getSpacer(), updatePermissions);
+        HBox bottomButtonWrapper = new HBox(new HBoxSpacer(), updatePermissions);
 
         AclFileAttributeView view = Files.getFileAttributeView(file.toPath(), AclFileAttributeView.class);
         List<String> users = new ArrayList<>();

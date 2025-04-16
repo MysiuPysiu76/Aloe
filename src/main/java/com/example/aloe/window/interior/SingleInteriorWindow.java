@@ -1,7 +1,7 @@
 package com.example.aloe.window.interior;
 
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
-import com.example.aloe.WindowComponents;
 import com.example.aloe.utils.Validator;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -23,6 +23,6 @@ public class SingleInteriorWindow extends InteriorWindow {
         this.getChildren().addAll(getTitleLabel(Translator.translate(title)),
                 getInfoLabel(Translator.translate(description)),
                 input,
-                getBottomPanel(error, WindowComponents.getSpacer(), getCancelButton(), confirmButton));
+                getBottomPanel(error, new HBoxSpacer(), getCancelButton(), confirmButton));
     }
 }

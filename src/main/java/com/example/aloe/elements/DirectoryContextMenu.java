@@ -1,5 +1,8 @@
-package com.example.aloe;
+package com.example.aloe.elements;
 
+import com.example.aloe.components.ExtendedContextMenu;
+import com.example.aloe.components.ExtendedMenuItem;
+import com.example.aloe.Main;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.tasks.FileCopyTask;
 import com.example.aloe.utils.Translator;
@@ -8,7 +11,7 @@ import com.example.aloe.window.interior.DirectoryWindow;
 import com.example.aloe.window.interior.FileWindow;
 import javafx.scene.input.Clipboard;
 
-class DirectoryContextMenu extends ExtendedContextMenu {
+public class DirectoryContextMenu extends ExtendedContextMenu {
     public DirectoryContextMenu() {
         super();
 

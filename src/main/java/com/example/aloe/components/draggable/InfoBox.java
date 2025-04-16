@@ -1,6 +1,6 @@
 package com.example.aloe.components.draggable;
 
-import com.example.aloe.WindowComponents;
+import com.example.aloe.components.HBoxSpacer;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -35,7 +35,7 @@ public class InfoBox extends VBox {
     public void setContent(ObjectProperties object) {
         this.getChildren().clear();
         for (Map.Entry<String, String> entry : object.getObjectPropertiesView().entrySet()) {
-            this.getChildren().add(new HBox(new Label(entry.getKey()), WindowComponents.getSpacer(), new Label(entry.getValue())));
+            this.getChildren().add(new HBox(new Label(entry.getKey()), new HBoxSpacer(), new Label(entry.getValue())));
         }
     }
 

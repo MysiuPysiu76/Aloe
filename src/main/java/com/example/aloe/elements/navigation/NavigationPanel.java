@@ -1,8 +1,8 @@
 package com.example.aloe.elements.navigation;
 
 import com.example.aloe.Main;
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
-import com.example.aloe.WindowComponents;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.SettingsManager;
 import javafx.geometry.Insets;
@@ -17,7 +17,7 @@ public class NavigationPanel extends HBox {
 
     public NavigationPanel() {
         this.setPadding(new Insets(5, 8, 5, 8));
-        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), WindowComponents.getSpacer(), getTasksButton(), getViewButton(), getOptionsButton());
+        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), new HBoxSpacer(), getTasksButton(), getViewButton(), getOptionsButton());
     }
 
     private Button getNavigationButton() {
@@ -26,7 +26,6 @@ public class NavigationPanel extends HBox {
         button.setMinSize(40, 40);
         button.setPrefSize(40, 40);
         button.setMaxSize(40, 40);
-//        button.setStyle("-fx-background-color: transparent");
         return button;
     }
 
