@@ -62,7 +62,6 @@
   "window.archive.extract.enter-password": "Wprowadź hasło:",
   "window.archive.extract.error": "Błąd podczas wypakowania!",
   "window.archive.extract.success": "Wypakowanie zakończone sukcesem!",
-  "window.archive.extract.title": "Wypakuj archiwum",
   "window.archive.extract.wrong-password": "Błędne hasło!",
   "window.archive.file-name": "Nazwa pliku:",
   "window.archive.password": "Użyj hasła",

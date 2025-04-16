@@ -2,7 +2,6 @@ package com.example.aloe.files.tasks;
 
 import com.example.aloe.FilesOperations;
 import com.example.aloe.Main;
-import com.example.aloe.Utils;
 import javafx.application.Platform;
 
 import java.io.File;

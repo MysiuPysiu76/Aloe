@@ -5,7 +5,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -15,53 +14,6 @@ import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class WindowService {
-    public static String openPasswordPromptWindow() {
-        Stage window = new Stage();
-        VBox root = new VBox();
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setMinWidth(430);
-        window.setMinHeight(167);
-        window.setMinWidth(430);
-        window.initModality(Modality.WINDOW_MODAL);
-        window.initStyle(StageStyle.TRANSPARENT);
-        final String[] password = {""};
-
-        Label name = new Label(Translator.translate("window.archive.extract.enter-password"));
-        name.setPadding(new Insets(1, 212, 7, 0));
-        name.setStyle("-fx-font-size: 14px");
-
-        TextField passwordField = new TextField();
-        passwordField.setStyle("-fx-font-size: 15px");
-        passwordField.setMaxWidth(330);
-        passwordField.setPadding(new Insets(7, 10, 7, 10));
-
-        Button cancel = new Button(Translator.translate("button.cancel"));
-        cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
-        Button extract = new Button(Translator.translate("button.extract"));
-        extract.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 15px;");
-
-        HBox bottomHBox = new HBox(cancel, extract);
-        bottomHBox.setAlignment(Pos.CENTER_RIGHT);
-        bottomHBox.setSpacing(10);
-        bottomHBox.setPadding(new Insets(12, 15, 5, 10));
-        root.getChildren().addAll(WindowComponents.getTitle(Translator.translate("window.archive.extract.password-required")), name, passwordField, bottomHBox);
-
-        cancel.setOnAction(event -> {
-            password[0] = null;
-            window.close();
-        });
-
-        extract.setOnAction(e -> {
-            password[0] = passwordField.getText();
-            window.close();
-        });
-
-        Scene scene = new Scene(root, 330, 140);
-        window.setScene(scene);
-        window.initOwner(Main.stage);
-        window.showAndWait();
-        return password[0];
-    }
 
     public static void openArchiveInfoWindow(String key) {
         Stage window = new Stage();
@@ -258,47 +210,5 @@ public class WindowService {
         combineButton.setMinHeight(45);
         combineButton.setGraphicTextGap(6);
         return combineButton;
-    }
-
-    public static boolean openConfirmWindow(String key) {
-        Stage window = new Stage();
-        VBox root = new VBox();
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setMinWidth(300);
-        window.setMinHeight(115);
-        window.setMinWidth(300);
-        window.setWidth(400);
-        window.setMaxWidth(500);
-        window.initModality(Modality.WINDOW_MODAL);
-        window.initStyle(StageStyle.TRANSPARENT);
-
-        final boolean[] userChose = {false};
-
-        Label title = new Label(Translator.translate(key));
-        title.setPadding(new Insets(17, 10, 10, 10));
-        title.setStyle("-fx-font-size: 20px");
-        Button cancel = new Button(Translator.translate("button.cancel"));
-        cancel.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 25px;");
-        Button confirm = new Button(Translator.translate("button.exit"));
-        confirm.setStyle("-fx-background-radius: 15px; -fx-border-radius: 15px; -fx-padding: 7px 25px;");
-        HBox buttonHBox = new HBox(cancel, confirm);
-        HBox.setMargin(cancel, new Insets(0, 10, 0 , 0));
-        buttonHBox.setAlignment(Pos.BOTTOM_RIGHT);
-        root.getChildren().addAll(title, buttonHBox);
-        VBox.setMargin(buttonHBox, new Insets(19, 15, 15, 10));
-
-        cancel.setOnAction(event -> {
-            window.close();
-        });
-        confirm.setOnAction(event -> {
-            userChose[0] = true;
-            window.close();
-        });
-
-        Scene scene = new Scene(root, 300, 115);
-        window.setScene(scene);
-        window.initOwner(Main.stage);
-        window.showAndWait();
-        return userChose[0];
     }
 }

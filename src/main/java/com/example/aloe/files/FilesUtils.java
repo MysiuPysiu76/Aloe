@@ -1,9 +1,6 @@
 package com.example.aloe.files;
 
-import com.example.aloe.settings.SettingsManager;
-
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 public class FilesUtils {

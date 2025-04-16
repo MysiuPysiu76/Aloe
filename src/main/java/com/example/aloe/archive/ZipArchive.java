@@ -3,6 +3,7 @@ package com.example.aloe.archive;
 import com.example.aloe.FilesOperations;
 import com.example.aloe.WindowService;
 import com.example.aloe.files.tasks.FileDeleteTask;
+import com.example.aloe.window.interior.PasswordPromptWindow;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
@@ -11,6 +12,7 @@ import net.lingala.zip4j.model.enums.EncryptionMethod;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Implementation of the {@link Archive} interface for handling ZIP archives.
@@ -68,15 +70,26 @@ class ZipArchive implements Archive {
     public void decompress(File file) {
         try {
             ZipFile zipFile = new ZipFile(file);
-            if (zipFile.isEncrypted()) {
-                String password = WindowService.openPasswordPromptWindow();
-                if (password == null) return;
-                zipFile.setPassword(password.toCharArray());
-            }
-
             Path outputPath = getOutputPath(file);
-            zipFile.extractAll(outputPath.toString());
-            WindowService.openArchiveInfoWindow("window.archive.extract.success");
+
+            if (zipFile.isEncrypted()) {
+                CompletableFuture<Void> completableFuture = new CompletableFuture<>();
+
+                StringBuilder password = new StringBuilder();
+                new PasswordPromptWindow(completableFuture, password);
+                completableFuture.thenRun(() -> {
+                    zipFile.setPassword(password.toString().toCharArray());
+                    System.out.println(password);
+                    try {
+                        zipFile.extractAll(outputPath.toString());
+                    } catch (ZipException e) {
+                        e.printStackTrace();
+                    }
+                    WindowService.openArchiveInfoWindow("window.archive.extract.success");
+                });
+            } else {
+                zipFile.extractAll(outputPath.toString());
+            }
         } catch (ZipException e) {
             handleDecompressionError(file, e);
         }
