@@ -1,6 +1,7 @@
 package com.example.aloe.window;
 
 import com.example.aloe.Translator;
+import com.example.aloe.settings.SettingsManager;
 import javafx.application.HostServices;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,8 +12,9 @@ import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.controlsfx.control.SegmentedButton;
@@ -30,23 +32,30 @@ public class AboutWindow extends Stage {
 
         VBox container = new VBox();
         container.setAlignment(Pos.TOP_CENTER);
+        container.getStyleClass().add("background");
         container.getChildren().addAll(getSegmentedButtons(container, getAboutContainer(), getCreatorContainer()), getAboutContainer());
 
         Scene scene = new Scene(container, 300, 390);
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/assets/styles/style_about.css")).toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/assets/styles/structural/about.css")).toExternalForm());
         this.setScene(scene);
+        this.setMaxHeight(390);
+        this.setMaxWidth(300);
         this.setTitle(Translator.translate("window.about.title"));
-        this.initModality(Modality.APPLICATION_MODAL);
         this.show();
     }
 
     private SegmentedButton getSegmentedButtons(VBox container, VBox aboutContainer, VBox creatorContainer) {
         ToggleButton aboutButton = new ToggleButton(Translator.translate("window.about.about"));
         aboutButton.setSelected(true);
-        aboutButton.setMinWidth(150);
+        aboutButton.getStyleClass().add("nav-button");
+        aboutButton.setTextFill(Color.web("#62d0de"));
 
         ToggleButton creatorButton = new ToggleButton(Translator.translate("window.about.creator"));
-        creatorButton.setMinWidth(150);
+        creatorButton.getStyleClass().add("nav-button");
+        creatorButton.setTextFill(Color.web("#62d0de"));
+
         SegmentedButton segmentedButton = new SegmentedButton(aboutButton, creatorButton);
 
         aboutButton.setOnMouseClicked(event -> {
@@ -62,69 +71,66 @@ public class AboutWindow extends Stage {
     }
 
     private VBox getAboutContainer() {
-        VBox aboutContainer = new VBox();
+        VBox container = new VBox();
+        container.getStyleClass().add("background");
         ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/folder.png"))));
         icon.setFitHeight(120);
         icon.setFitWidth(120);
         VBox.setMargin(icon, new Insets(25, 10, 25, 10));
 
         Label name = new Label("Aloe");
-        name.getStyleClass().add("about-name");
-        name.setPadding(new Insets(25, 10, 5, 10));
-
-        Label version = new Label("1.6.1");
-        version.getStyleClass().add("about-version");
-
+        name.getStyleClass().addAll("name", "text");
+        Label version = new Label("1.6.2");
+        version.getStyleClass().addAll("version", "text");
         Label description = new Label(Translator.translate("window.about.description"));
-        description.getStyleClass().add("about-description");
+        description.getStyleClass().addAll("description", "text");
 
         Hyperlink link = createLink(Translator.translate("window.about.website"), "https://github.com/MysiuPysiu76/Aloe");
 
         Label warranty = new Label(Translator.translate("window.about.warranty"));
         warranty.setTextOverrun(OverrunStyle.CLIP);
-        warranty.setMaxWidth(250);
-        warranty.setAlignment(Pos.CENTER);
-        warranty.getStyleClass().addAll("about-warranty", "text-center");
+        warranty.getStyleClass().addAll("warranty", "text-center", "text");
         warranty.setWrapText(true);
 
-        aboutContainer.getChildren().addAll(icon, name, version, description, link, warranty);
-        aboutContainer.setAlignment(Pos.TOP_CENTER);
-        return aboutContainer;
+        container.getChildren().addAll(icon, name, version, description, link, warranty);
+        container.setAlignment(Pos.TOP_CENTER);
+        VBox.setVgrow(container, Priority.ALWAYS);
+        return container;
     }
 
     private VBox getCreatorContainer() {
-        VBox creatorContainer = new VBox();
+        VBox container = new VBox();
+        container.getStyleClass().add("background");
         ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/icons/file.png"))));
         icon.setFitHeight(100);
         icon.setFitWidth(100);
         VBox.setMargin(icon, new Insets(25, 10, 25, 10));
 
         Label name = new Label("Aloe");
-        name.getStyleClass().add("about-name");
-        name.setPadding(new Insets(25, 10, 5, 10));
+        name.getStyleClass().addAll("name", "text");
 
         Label inspiration = new Label(Translator.translate("window.about.inspiration"));
-        inspiration.setPadding(new Insets(25, 10, 10, 10));
         inspiration.setTextOverrun(OverrunStyle.CLIP);
-        inspiration.setMaxWidth(250);
-        inspiration.setAlignment(Pos.CENTER);
-        inspiration.getStyleClass().add("text-center");
+        inspiration.getStyleClass().addAll("text-center", "text", "inspiration");
         inspiration.setWrapText(true);
 
         Hyperlink linkCreator = createLink(Translator.translate("window.about.creator-website"), "https://github.com/MysiuPysiu76");
 
         Label usedIcons = new Label(Translator.translate("window.about.used-icons"));
+        usedIcons.getStyleClass().add("text");
 
         Hyperlink linkIcons = createLink("Flaticon", "https://www.flaticon.com/");
         linkCreator.setPadding(new Insets(5, 10, 10, 10));
 
-        creatorContainer.getChildren().addAll(icon, name, inspiration, linkCreator, usedIcons, linkIcons);
-        creatorContainer.setAlignment(Pos.TOP_CENTER);
-        return creatorContainer;
+        container.getChildren().addAll(icon, name, inspiration, linkCreator, usedIcons, linkIcons);
+        container.setAlignment(Pos.TOP_CENTER);
+        VBox.setVgrow(container, Priority.ALWAYS);
+        return container;
     }
 
     private Hyperlink createLink(String text, String url) {
         Hyperlink linkCreator = new Hyperlink(text);
+        linkCreator.setTextFill(Color.web("#62d0de"));
         linkCreator.getStyleClass().add("text-center");
         linkCreator.setOnAction(event -> hostServices.showDocument(url));
         return linkCreator;

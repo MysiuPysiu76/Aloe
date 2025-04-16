@@ -352,6 +352,7 @@ public class PropertiesWindow extends Stage {
         CheckBox applyToSubdirectories = new CheckBox(Translator.translate("window.properties.permissions.apply-to-subdirectories"));
         applyToSubdirectories.setPadding(new Insets(35, 10, 15, 10));
         applyToSubdirectories.setDisable(file.isFile());
+        applyToSubdirectories.setStyle("-fx-mark-color: #62d0de;");
 
         Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
         updatePermissions.setOnAction(e -> {

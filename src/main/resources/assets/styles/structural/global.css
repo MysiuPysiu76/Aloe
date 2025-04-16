@@ -3,6 +3,10 @@
     -fx-cursor: hand;
 }
 
+.text-center {
+    -fx-text-alignment: center;
+}
+
 .check-box {
     -fx-cursor: hand;
 }
