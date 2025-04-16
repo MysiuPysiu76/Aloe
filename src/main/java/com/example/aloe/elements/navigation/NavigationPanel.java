@@ -1,7 +1,7 @@
 package com.example.aloe.elements.navigation;
 
 import com.example.aloe.Main;
-import com.example.aloe.Translator;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.SettingsManager;

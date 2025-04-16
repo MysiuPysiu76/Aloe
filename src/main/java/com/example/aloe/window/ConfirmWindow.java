@@ -1,6 +1,6 @@
 package com.example.aloe.window;
 
-import com.example.aloe.Translator;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.settings.SettingsManager;
 import javafx.event.ActionEvent;

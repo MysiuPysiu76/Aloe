@@ -1,6 +1,6 @@
 package com.example.aloe.settings;
 
-import com.example.aloe.Translator;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

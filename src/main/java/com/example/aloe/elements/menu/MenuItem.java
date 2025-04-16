@@ -3,6 +3,7 @@ package com.example.aloe.elements.menu;
 import com.example.aloe.*;
 import com.example.aloe.components.draggable.ObjectProperties;
 import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.utils.Translator;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;

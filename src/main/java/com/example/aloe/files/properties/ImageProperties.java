@@ -5,7 +5,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
-import com.example.aloe.Translator;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.files.FilesUtils;
 import org.jetbrains.annotations.NotNull;
 

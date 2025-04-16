@@ -1,6 +1,6 @@
-package com.example.aloe.archive;
+package com.example.aloe.files.archive;
 
-import com.example.aloe.FilesOperations;
+import com.example.aloe.files.CurrentDirectory;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
@@ -27,7 +27,7 @@ class SevenZipArchive implements Archive {
      */
     @Override
     public void compress(ArchiveParameters parameters) {
-        File archiveFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName());
+        File archiveFile = new File(CurrentDirectory.get(), parameters.getFileName());
 
         try (SevenZOutputFile out = new SevenZOutputFile(archiveFile)) {
             for (File file : parameters.getFiles()) {
@@ -146,7 +146,7 @@ class SevenZipArchive implements Archive {
      * @throws RuntimeException If the directory cannot be created.
      */
     private File createOutputDirectory(String archiveName) {
-        File outputDirectory = new File(FilesOperations.getCurrentDirectory(), archiveName);
+        File outputDirectory = new File(CurrentDirectory.get(), archiveName);
         if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
             throw new RuntimeException("Failed to create output directory: " + outputDirectory);
         }

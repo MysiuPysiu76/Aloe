@@ -1,6 +1,7 @@
 package com.example.aloe;
 
 import com.example.aloe.files.FileDecision;
+import com.example.aloe.utils.Translator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

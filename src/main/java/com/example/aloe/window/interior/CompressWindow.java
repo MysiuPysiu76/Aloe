@@ -1,11 +1,11 @@
 package com.example.aloe.window.interior;
 
-import com.example.aloe.Main;
-import com.example.aloe.Translator;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.WindowComponents;
-import com.example.aloe.archive.ArchiveHandler;
-import com.example.aloe.archive.ArchiveParameters;
-import com.example.aloe.archive.ArchiveType;
+import com.example.aloe.files.archive.ArchiveHandler;
+import com.example.aloe.files.archive.ArchiveParameters;
+import com.example.aloe.files.archive.ArchiveType;
+import com.example.aloe.utils.Validator;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
@@ -42,11 +42,11 @@ public class CompressWindow extends InteriorWindow {
 
         confirmButton = getConfirmButton(Translator.translate("window.interior.archive.create"));
 
-        fileName.textProperty().addListener(observable -> Main.validateFileName(error, confirmButton, Main.validateFileName(fileName.getText() + archiveType.getValue().getExtension())));
+        fileName.textProperty().addListener(observable -> Validator.validateFileName(error, confirmButton, Validator.validateFileName(fileName.getText() + archiveType.getValue().getExtension())));
 
         archiveType.valueProperty().addListener((observable, oldValue, newValue) -> {
             password.setDisable(newValue != ArchiveType.ZIP);
-            Main.validateFileName(error, confirmButton, Main.validateFileName(fileName.getText() + archiveType.getValue().getExtension()));
+            Validator.validateFileName(error, confirmButton, Validator.validateFileName(fileName.getText() + archiveType.getValue().getExtension()));
         });
 
         Platform.runLater(fileName::requestFocus);

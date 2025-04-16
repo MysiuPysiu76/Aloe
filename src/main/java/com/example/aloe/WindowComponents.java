@@ -1,5 +1,6 @@
 package com.example.aloe;
 
+import com.example.aloe.utils.Translator;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;

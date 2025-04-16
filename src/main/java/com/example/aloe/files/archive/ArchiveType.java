@@ -1,4 +1,4 @@
-package com.example.aloe.archive;
+package com.example.aloe.files.archive;
 
 /**
  * Represents different types of archive formats supported by the application.

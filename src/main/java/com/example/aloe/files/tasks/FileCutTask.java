@@ -1,6 +1,6 @@
 package com.example.aloe.files.tasks;
 
-import com.example.aloe.FilesOperations;
+import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.Main;
 import javafx.application.Platform;
 
@@ -14,14 +14,14 @@ public class FileCutTask extends FileCopyTask {
 
     public FileCutTask(File file, boolean autoStart) {
         this.files = List.of(file);
-        this.destination = FilesOperations.getCurrentDirectory().toPath();
+        this.destination = CurrentDirectory.get().toPath();
 
         if (autoStart) runTask();
     }
 
     public FileCutTask(List<File> files, boolean autoStart) {
         this.files = files;
-        this.destination = FilesOperations.getCurrentDirectory().toPath();
+        this.destination = CurrentDirectory.get().toPath();
 
         if (autoStart) runTask();
     }

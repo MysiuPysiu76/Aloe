@@ -1,4 +1,4 @@
-package com.example.aloe;
+package com.example.aloe.files;
 
 import java.io.File;
 import java.io.FileInputStream;

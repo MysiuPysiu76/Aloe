@@ -1,6 +1,6 @@
-package com.example.aloe.archive;
+package com.example.aloe.files.archive;
 
-import com.example.aloe.FilesOperations;
+import com.example.aloe.files.CurrentDirectory;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
@@ -31,7 +31,7 @@ import java.io.IOException;
  *
  * @since 0.8.8
  */
-class RarArchive implements com.example.aloe.archive.Archive {
+class RarArchive implements com.example.aloe.files.archive.Archive {
 
     /**
      * Throws {@link UnsupportedOperationException}, as RAR compression is not supported.
@@ -75,7 +75,7 @@ class RarArchive implements com.example.aloe.archive.Archive {
      * @return the created output directory.
      */
     private File createOutputDirectory(File file) {
-        File output = new File(FilesOperations.getCurrentDirectory(), file.getName().replace(".rar", ""));
+        File output = new File(CurrentDirectory.get(), file.getName().replace(".rar", ""));
         if (!output.exists() && !output.mkdirs()) {
             throw new RuntimeException("Failed to create output directory: " + output.getAbsolutePath());
         }

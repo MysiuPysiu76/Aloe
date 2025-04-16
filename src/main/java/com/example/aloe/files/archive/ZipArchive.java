@@ -1,6 +1,6 @@
-package com.example.aloe.archive;
+package com.example.aloe.files.archive;
 
-import com.example.aloe.FilesOperations;
+import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.WindowService;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.window.interior.PasswordPromptWindow;
@@ -102,7 +102,7 @@ class ZipArchive implements Archive {
      * @return a configured {@link ZipFile} instance.
      */
     private ZipFile createZipFileInstance(ArchiveParameters parameters) {
-        File zipFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName());
+        File zipFile = new File(CurrentDirectory.get(), parameters.getFileName());
         return (parameters.getPassword() == null) ? new ZipFile(zipFile) : new ZipFile(zipFile, parameters.getPassword().toCharArray());
     }
 
@@ -145,7 +145,7 @@ class ZipArchive implements Archive {
         if ("Wrong password!".equals(e.getMessage())) {
             WindowService.openArchiveInfoWindow("window.archive.extract.wrong-password");
         }
-        String extractionPath = FilesOperations.getCurrentDirectory().toPath() + "/" + file.getName().replace(".zip", "");
+        String extractionPath = CurrentDirectory.get().toPath() + "/" + file.getName().replace(".zip", "");
         new FileDeleteTask(new File(extractionPath), true);
         WindowService.openArchiveInfoWindow("window.archive.extract.error");
         e.printStackTrace();
@@ -158,6 +158,6 @@ class ZipArchive implements Archive {
      * @return the path where the files will be extracted.
      */
     private Path getOutputPath(File file) {
-        return FilesOperations.getCurrentDirectory().toPath().resolve(file.getName().replace(".zip", ""));
+        return CurrentDirectory.get().toPath().resolve(file.getName().replace(".zip", ""));
     }
 }

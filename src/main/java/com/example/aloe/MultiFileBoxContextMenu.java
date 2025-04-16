@@ -5,6 +5,7 @@ import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.tasks.FileDuplicateTask;
 import com.example.aloe.files.tasks.FileMoveTask;
 import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.window.interior.CompressWindow;
 
 import java.io.File;

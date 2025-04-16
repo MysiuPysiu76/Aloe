@@ -1,5 +1,6 @@
 package com.example.aloe;
 
+import com.example.aloe.utils.Translator;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;

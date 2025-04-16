@@ -1,6 +1,6 @@
-package com.example.aloe.archive;
+package com.example.aloe.files.archive;
 
-import com.example.aloe.FilesOperations;
+import com.example.aloe.files.CurrentDirectory;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream;
@@ -39,7 +39,7 @@ class JarArchive implements Archive {
      */
     @Override
     public void compress(ArchiveParameters parameters) {
-        try (JarArchiveOutputStream out = new JarArchiveOutputStream(new FileOutputStream(FilesOperations.getCurrentDirectory().toString() + "/" + parameters.getFileName()))) {
+        try (JarArchiveOutputStream out = new JarArchiveOutputStream(new FileOutputStream(CurrentDirectory.get().toString() + "/" + parameters.getFileName()))) {
             for (File file : parameters.getFiles()) {
                 addToArchive(out, file, ".");
             }
@@ -57,7 +57,7 @@ class JarArchive implements Archive {
     @Override
     public void decompress(File file) {
         String fileNameWithoutExtension = file.getName().replace(".jar", "");
-        File destinationDirectory = new File(FilesOperations.getCurrentDirectory(), fileNameWithoutExtension);
+        File destinationDirectory = new File(CurrentDirectory.get(), fileNameWithoutExtension);
         if (!destinationDirectory.exists()) {
             if (!destinationDirectory.mkdirs()) {
                 throw new RuntimeException("Could not create destination directory: " + destinationDirectory.getPath());

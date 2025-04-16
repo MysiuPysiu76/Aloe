@@ -1,8 +1,10 @@
 package com.example.aloe.files.tasks;
 
 import com.example.aloe.*;
+import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FileDecision;
 import com.example.aloe.files.FilesUtils;
+import com.example.aloe.utils.Translator;
 import javafx.application.Platform;
 
 import java.io.*;
@@ -29,7 +31,7 @@ public class FileCopyTask extends FilesTask {
         }
 
         this.files = files;
-        this.destination = FilesOperations.getCurrentDirectory().toPath();
+        this.destination = CurrentDirectory.get().toPath();
         this.totalSize = FilesUtils.calculateFileSize(files);
 
         if (autoStart) runTask();
@@ -49,7 +51,7 @@ public class FileCopyTask extends FilesTask {
         }
 
         this.files = List.of(file);
-        this.destination = FilesOperations.getCurrentDirectory().toPath();
+        this.destination = CurrentDirectory.get().toPath();
         this.totalSize = FilesUtils.calculateFileSize(file);
 
         if (autoStart) runTask();

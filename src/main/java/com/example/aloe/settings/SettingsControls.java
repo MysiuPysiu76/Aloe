@@ -4,6 +4,7 @@ import com.example.aloe.*;
 import com.example.aloe.components.draggable.DraggableItem;
 import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.components.draggable.InfoBox;
+import com.example.aloe.utils.Translator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;

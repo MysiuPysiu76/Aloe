@@ -1,6 +1,6 @@
-package com.example.aloe.archive;
+package com.example.aloe.files.archive;
 
-import com.example.aloe.FilesOperations;
+import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.WindowService;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -39,7 +39,7 @@ class TarArchive implements Archive {
      */
     @Override
     public void compress(ArchiveParameters parameters) {
-        File outputFile = new File(FilesOperations.getCurrentDirectory(), parameters.getFileName());
+        File outputFile = new File(CurrentDirectory.get(), parameters.getFileName());
         try (TarArchiveOutputStream tarOut = new TarArchiveOutputStream(new FileOutputStream(outputFile))) {
             for (File file : parameters.getFiles()) {
                 addFileToTar(tarOut, file, "");
@@ -61,7 +61,7 @@ class TarArchive implements Archive {
      */
     @Override
     public void decompress(File file) {
-        File destDir = new File(FilesOperations.getCurrentDirectory(), getOutputDirectoryName(file));
+        File destDir = new File(CurrentDirectory.get(), getOutputDirectoryName(file));
         if (!destDir.exists() && !destDir.mkdirs()) {
             handleError("window.archive.extract.error", new IOException("Failed to create destination directory."));
             return;

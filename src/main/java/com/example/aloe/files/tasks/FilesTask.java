@@ -1,6 +1,6 @@
 package com.example.aloe.files.tasks;
 
-import com.example.aloe.Translator;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.Utils;
 import com.example.aloe.elements.navigation.ProgressManager;
 import com.example.aloe.files.FilesUtils;

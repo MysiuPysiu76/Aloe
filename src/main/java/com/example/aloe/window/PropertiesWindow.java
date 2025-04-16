@@ -2,12 +2,16 @@ package com.example.aloe.window;
 
 import com.example.aloe.*;
 import com.example.aloe.components.BackButton;
+import com.example.aloe.files.Checksum;
+import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.properties.FileProperties;
 import com.example.aloe.files.properties.ImageProperties;
 import com.example.aloe.files.permissions.ACLPermissions;
 import com.example.aloe.files.permissions.POSIXPermissions;
 import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.utils.ClipboardManager;
+import com.example.aloe.utils.Translator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -182,7 +186,7 @@ public class PropertiesWindow extends Stage {
 
     private Image loadIconForFile(File file, boolean useThumbnails) {
         return switch (FilesUtils.getExtension(file).toLowerCase()) {
-            case "jpg", "jpeg", "png", "gif" -> useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(FilesOperations.getCurrentDirectory(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
+            case "jpg", "jpeg", "png", "gif" -> useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(CurrentDirectory.get(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
             case "mp4" -> loadIcon("/assets/icons/video.png");
             case "mp3", "ogg" -> loadIcon("/assets/icons/music.png");
             case "iso" -> loadIcon("/assets/icons/cd.png");

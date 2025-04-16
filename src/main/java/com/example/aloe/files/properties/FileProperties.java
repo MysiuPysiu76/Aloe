@@ -1,6 +1,6 @@
 package com.example.aloe.files.properties;
 
-import com.example.aloe.Translator;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.Utils;
 import com.example.aloe.files.FilesUtils;
 import org.apache.tika.Tika;

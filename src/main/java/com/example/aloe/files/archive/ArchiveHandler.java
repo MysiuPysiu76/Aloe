@@ -1,4 +1,4 @@
-package com.example.aloe.archive;
+package com.example.aloe.files.archive;
 
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.FilesUtils;

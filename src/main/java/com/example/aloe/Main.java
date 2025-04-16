@@ -1,12 +1,15 @@
 package com.example.aloe;
 
 import com.example.aloe.elements.navigation.NavigationPanel;
+import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.tasks.FileOpenerTask;
 import com.example.aloe.elements.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.settings.SettingsWindow;
+import com.example.aloe.utils.ClipboardManager;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.window.AboutWindow;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -121,7 +124,7 @@ public class Main extends Application {
         stage.setOnCloseRequest(event -> {
             SettingsManager.setSetting("menu", "divider-position", filesPanel.getDividerPositions());
             if (Objects.equals(SettingsManager.getSetting("files", "start-folder"), "last")) {
-                SettingsManager.setSetting("files", "start-folder-location", FilesOperations.getCurrentDirectory().getAbsolutePath());
+                SettingsManager.setSetting("files", "start-folder-location", CurrentDirectory.get().getAbsolutePath());
             }
         });
 
@@ -185,7 +188,7 @@ public class Main extends Application {
         if (directory.getPath().equals("%trash%")) directory = new File(String.valueOf((SettingsManager.getSetting("files", "trash").toString())));
 
         removeSelectionFromFiles();
-        FilesOperations.setCurrentDirectory(directory);
+        CurrentDirectory.set(directory);
         filesPane.setVvalue(0);
 
         grid = new FlowPane();
@@ -198,7 +201,7 @@ public class Main extends Application {
 
         if (addToHistory) DirectoryHistory.addDirectory(directory);
 
-        File[] files = FilesOperations.getCurrentDirectory().listFiles();
+        File[] files = CurrentDirectory.get().listFiles();
         if (files != null) {
             List<String> filesList = new ArrayList<>();
             List<String> directories = new ArrayList<>();
@@ -230,7 +233,7 @@ public class Main extends Application {
                         VBox box = createFileBox(dirName, true);
                         box.setOnMouseClicked(event -> {
                             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                                loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), dirName), true);
+                                loadDirectoryContents(new File(CurrentDirectory.get(), dirName), true);
                             } else {
                                 selectFile(box, event);
                                 event.consume();
@@ -242,7 +245,7 @@ public class Main extends Application {
                         VBox box = createFileBox(fileName, false);
                         box.setOnMouseClicked(event -> {
                             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                                new FileOpenerTask(new File(FilesOperations.getCurrentDirectory(), fileName), true);
+                                new FileOpenerTask(new File(CurrentDirectory.get(), fileName), true);
                             } else {
                                 selectFile(box, event);
                                 event.consume();
@@ -251,14 +254,14 @@ public class Main extends Application {
                         grid.getChildren().add(box);
                     }
                 } else {
-                    File currentDirectory = FilesOperations.getCurrentDirectory();
+                    File currentDirectory = CurrentDirectory.get();
                     for (String fileName : filesList) {
                         VBox box;
                         if (new File(currentDirectory, fileName).isDirectory()) {
                             box = createFileBox(fileName, true);
                             box.setOnMouseClicked(event -> {
                                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                                    loadDirectoryContents(new File(FilesOperations.getCurrentDirectory(), fileName), true);
+                                    loadDirectoryContents(new File(CurrentDirectory.get(), fileName), true);
                                 } else {
                                     selectFile(box, event);
                                     event.consume();
@@ -268,7 +271,7 @@ public class Main extends Application {
                             box = createFileBox(fileName, false);
                             box.setOnMouseClicked(event -> {
                                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                                    new FileOpenerTask(new File(FilesOperations.getCurrentDirectory(), fileName), true);
+                                    new FileOpenerTask(new File(CurrentDirectory.get(), fileName), true);
                                 } else {
                                     selectFile(box, event);
                                     event.consume();
@@ -303,7 +306,7 @@ public class Main extends Application {
                     if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                         String selectedItem = filesListView.getSelectionModel().getSelectedItem();
                         if (selectedItem != null) {
-                            File selectedFile = new File(FilesOperations.getCurrentDirectory(), selectedItem);
+                            File selectedFile = new File(CurrentDirectory.get(), selectedItem);
                             if (selectedFile.isDirectory()) {
                                 loadDirectoryContents(selectedFile, true);
                             } else {
@@ -355,7 +358,7 @@ public class Main extends Application {
             switch (FilesUtils.getExtension(name).toLowerCase()) {
                 case "jpg", "jpeg", "png", "gif" -> {
                     if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails"))) {
-                        icon.setImage(new Image(new File(FilesOperations.getCurrentDirectory(), name).toURI().toString()));
+                        icon.setImage(new Image(new File(CurrentDirectory.get(), name).toURI().toString()));
                     } else {
                         icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
                     }
@@ -395,7 +398,7 @@ public class Main extends Application {
         fileBox.setPadding(new Insets(0, 5, 15, 5));
         fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
 
-        FileBoxContextMenu fileBoxContextMenu = new FileBoxContextMenu(new File(FilesOperations.getCurrentDirectory(), name));
+        FileBoxContextMenu fileBoxContextMenu = new FileBoxContextMenu(new File(CurrentDirectory.get(), name));
         fileBox.setOnContextMenuRequested(e -> {
             fileBoxContextMenu.show(fileBox, e.getScreenX(), e.getScreenY());
             e.consume();
@@ -445,10 +448,10 @@ public class Main extends Application {
             boolean success = false;
             if (db.hasString()) {
                 String[] draggedFileNames = db.getString().split(",");
-                File targetDirectory = new File(FilesOperations.getCurrentDirectory(), name);
+                File targetDirectory = new File(CurrentDirectory.get(), name);
                 if (targetDirectory.isDirectory()) {
                     for (String draggedFileName : draggedFileNames) {
-                        File draggedFile = new File(FilesOperations.getCurrentDirectory(), draggedFileName);
+                        File draggedFile = new File(CurrentDirectory.get(), draggedFileName);
                         if (draggedFile.exists()) {
                             draggedFile.renameTo(new File(targetDirectory, draggedFile.getName()));
                         }
@@ -466,7 +469,7 @@ public class Main extends Application {
     MultiFileBoxContextMenu multiFileBoxContextMenu;
 
     public void refreshCurrentDirectory() {
-        loadDirectoryContents(FilesOperations.getCurrentDirectory(), false);
+        loadDirectoryContents(CurrentDirectory.get(), false);
     }
 
     DirectoryContextMenu directoryMenu = new DirectoryContextMenu();
@@ -492,46 +495,20 @@ public class Main extends Application {
         }
     }
 
-    public static String validateFileName(String name) {
-        if (name.isEmpty()) {
-            return Translator.translate("validator.empty-name");
-        }
-        if (name.isBlank()) {
-            return Translator.translate("validator.blank-name");
-        }
-        if (name.contains("/")) {
-            return Translator.translate("validator.contains-slash");
-        }
-        if (new File(FilesOperations.getCurrentDirectory(), name).exists()) {
-            return Translator.translate("validator.used-name");
-        }
-        return null;
-    }
-
-    public static void validateFileName(Label error, Button button, String text) {
-        if (text == null || text.isEmpty()) {
-            error.setText("");
-            button.setDisable(false);
-        } else {
-            error.setText(text);
-            button.setDisable(true);
-        }
-    }
-
     public static void showDarkeningPlate() {
         pane.setVisible(true);
     }
 
     public void getParentDirectory() {
-        if (!FilesOperations.getCurrentDirectory().getPath().equals("/")) {
-            loadDirectoryContents(new File(FilesOperations.getCurrentDirectory().getParent()), true);
+        if (!CurrentDirectory.get().getPath().equals("/")) {
+            loadDirectoryContents(new File(CurrentDirectory.get().getParent()), true);
         }
     }
 
     public static List<File> getSelectedFiles() {
         List<File> files = new ArrayList<>();
         for (VBox selectedFile : selectedFiles) {
-            files.add(new File(FilesOperations.getCurrentDirectory().getPath(), ((Label) selectedFile.getChildren().get(1)).getText()));
+            files.add(new File(CurrentDirectory.get().getPath(), ((Label) selectedFile.getChildren().get(1)).getText()));
         }
         return files;
     }
