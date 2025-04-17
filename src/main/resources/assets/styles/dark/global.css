@@ -76,3 +76,7 @@
 .font-icon {
     -fx-fill: #f6f6f6;
 }
+
+.button-option:hover {
+   -fx-background-color: #353535;
+}

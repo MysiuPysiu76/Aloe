@@ -1,0 +1,22 @@
+.title {
+    -fx-font-size: 15px;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+    -fx-max-width: 370px;
+    -fx-padding: 10px 10px 5px 10px;
+}
+
+.option {
+    -fx-alignment: center-left;
+    -fx-font-size: 14px;
+    -fx-background-radius: 0 0 0 0;
+    -fx-padding: 0 0 0 20px;
+    -fx-min-height: 45px;
+    -fx-min-width: 360px;
+    -fx-graphic-text-gap: 6px;
+}
+
+.option:hover {
+   -fx-border-radius: 0 0 0 0;
+   -fx-background-radius: 0 0 0 0;
+}

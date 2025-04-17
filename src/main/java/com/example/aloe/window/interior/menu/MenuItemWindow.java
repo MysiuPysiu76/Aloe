@@ -2,7 +2,6 @@ package com.example.aloe.window.interior.menu;
 
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
-import com.example.aloe.WindowComponents;
 import com.example.aloe.window.interior.InteriorWindow;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;

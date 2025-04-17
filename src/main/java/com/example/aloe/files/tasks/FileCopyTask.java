@@ -5,6 +5,7 @@ import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FileDecision;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.window.DecisionWindow;
 import javafx.application.Platform;
 
 import java.io.*;
@@ -91,8 +92,8 @@ public class FileCopyTask extends FilesTask {
         Platform.runLater(() -> {
             FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination.toFile());
             decision[0] = source.isFile() ?
-                    WindowService.addFileDecisionAskToExistFileWindow(operation) :
-                    WindowService.addDirectoryDecisionAskToExistFileWindow(operation);
+                    DecisionWindow.addFile(target.toFile()) :
+                    DecisionWindow.addDirectory(target.toFile());
             latch.countDown();
         });
 

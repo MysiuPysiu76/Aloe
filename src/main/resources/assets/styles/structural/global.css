@@ -99,3 +99,7 @@
     -fx-padding: 9px;
     -fx-font-size: 14px;
 }
+
+.button-option {
+    -fx-background-color: transparent;
+}

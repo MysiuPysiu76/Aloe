@@ -16,7 +16,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.controlsfx.control.SegmentedButton;
 
 import java.util.Objects;
@@ -26,9 +25,6 @@ public class AboutWindow extends Stage {
 
     public AboutWindow(HostServices hs) {
         this.hostServices = hs;
-        Stage window = new Stage();
-        window.setResizable(false);
-        window.initStyle(StageStyle.UNIFIED);
 
         VBox container = new VBox();
         container.setAlignment(Pos.TOP_CENTER);
@@ -80,7 +76,7 @@ public class AboutWindow extends Stage {
 
         Label name = new Label("Aloe");
         name.getStyleClass().addAll("name", "text");
-        Label version = new Label("1.6.5");
+        Label version = new Label("1.6.6");
         version.getStyleClass().addAll("version", "text");
         Label description = new Label(Translator.translate("window.about.description"));
         description.getStyleClass().addAll("description", "text");
