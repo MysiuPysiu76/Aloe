@@ -2,12 +2,11 @@ package com.example.aloe;
 
 import com.example.aloe.components.ExtendedContextMenu;
 import com.example.aloe.elements.DirectoryContextMenu;
-import com.example.aloe.elements.FileBoxContextMenu;
+import com.example.aloe.elements.FileBox;
 import com.example.aloe.elements.MultiFileBoxContextMenu;
 import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;
-import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.tasks.FileOpenerTask;
 import com.example.aloe.elements.menu.MenuManager;
 import com.example.aloe.settings.SettingsManager;
@@ -25,10 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.*;
 import org.controlsfx.control.PopOver;
 import org.jetbrains.annotations.NotNull;
@@ -186,7 +182,7 @@ public class Main extends Application {
             }
     }
 
-    private static List<VBox> selectedFiles = new ArrayList<>();
+    public static List<VBox> selectedFiles = new ArrayList<>();
 
     public void loadDirectoryContents(File directory, boolean addToHistory) {
         if (directory.getPath().equals("%trash%")) directory = new File(String.valueOf((SettingsManager.getSetting("files", "trash").toString())));
@@ -234,7 +230,7 @@ public class Main extends Application {
             if ((Objects.requireNonNull(SettingsManager.getSetting("files", "view"))).equals("grid")) {
                 if (displayDirectoriesBeforeFiles) {
                     for (String dirName : directories) {
-                        VBox box = createFileBox(dirName, true);
+                        FileBox box = new FileBox(new File(CurrentDirectory.get(), dirName));
                         box.setOnMouseClicked(event -> {
                             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                                 loadDirectoryContents(new File(CurrentDirectory.get(), dirName), true);
@@ -246,7 +242,7 @@ public class Main extends Application {
                         grid.getChildren().add(box);
                     }
                     for (String fileName : normalFiles) {
-                        VBox box = createFileBox(fileName, false);
+                        FileBox box = new FileBox(new File(CurrentDirectory.get(), fileName));
                         box.setOnMouseClicked(event -> {
                             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                                 new FileOpenerTask(new File(CurrentDirectory.get(), fileName), true);
@@ -260,9 +256,9 @@ public class Main extends Application {
                 } else {
                     File currentDirectory = CurrentDirectory.get();
                     for (String fileName : filesList) {
-                        VBox box;
+                        FileBox box;
                         if (new File(currentDirectory, fileName).isDirectory()) {
-                            box = createFileBox(fileName, true);
+                            box = new FileBox(new File(currentDirectory, fileName));
                             box.setOnMouseClicked(event -> {
                                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                                     loadDirectoryContents(new File(CurrentDirectory.get(), fileName), true);
@@ -272,7 +268,7 @@ public class Main extends Application {
                                 }
                             });
                         } else {
-                            box = createFileBox(fileName, false);
+                            box = new FileBox(new File(currentDirectory, fileName));
                             box.setOnMouseClicked(event -> {
                                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                                     new FileOpenerTask(new File(CurrentDirectory.get(), fileName), true);
@@ -332,7 +328,7 @@ public class Main extends Application {
         fileBox.getStyleClass().add("selected-file");
     }
 
-    private void removeSelectionFromFiles() {
+    public static void removeSelectionFromFiles() {
         for (VBox file : selectedFiles) {
             file.getStyleClass().remove("selected-file");
         }
@@ -341,144 +337,17 @@ public class Main extends Application {
 
     ChangeListener<Number> heightListener;
 
-    private VBox createFileBox(String name, boolean isDirectory) {
-        VBox fileBox = new VBox();
-        double scale = SettingsManager.getSetting("files", "file-box-size");
-        fileBox.setMinWidth(100 * scale);
-        fileBox.setPrefWidth(100 * scale);
-        fileBox.setMaxWidth(100 * scale);
-        fileBox.setMinHeight(120 * scale);
-        fileBox.setMaxHeight(120 * scale);
-        fileBox.setPadding(new Insets(125, 0, 0, 0));
-        fileBox.setAlignment(Pos.TOP_CENTER);
-        fileBox.setSpacing(5 * scale);
-        fileBox.getStyleClass().add("file-box");
-
-        ImageView icon = new ImageView();
-        icon.setPreserveRatio(true);
-        if (isDirectory) {
-            icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
-        } else {
-            switch (FilesUtils.getExtension(name).toLowerCase()) {
-                case "jpg", "jpeg", "png", "gif" -> {
-                    if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails"))) {
-                        icon.setImage(new Image(new File(CurrentDirectory.get(), name).toURI().toString()));
-                    } else {
-                        icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
-                    }
-                }
-                case "webp", "heif", "raw" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/image.png")));
-                case "mp4", "mkv", "ts" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/video.png")));
-                case "mp3", "ogg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/music.png")));
-                case "epub", "mobi" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/book.png")));
-                case "pdf" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/pdf.png")));
-                case "exe", "msi", "deb", "rpm", "snap", "flatpak", "flatpakref", "dmg" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/installer.png")));
-                case "torrent" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/torrent.png")));
-                case "tar", "tar.gz" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/tar.png")));
-                case "zip", "7z" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/zip.png")));
-                case "rar" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/rar.png")));
-                case "sh", "bat" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/terminal.png")));
-                case "jar" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/jar.png")));
-                case "iso" -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/cd.png")));
-                default -> icon.setImage(new Image(getClass().getResourceAsStream("/assets/icons/file.png")));
-            }
-        }
-        icon.setFitHeight(60 * scale);
-        icon.setFitWidth(60 * scale);
-        VBox.setMargin(icon, new Insets(5, 2, 5, 2));
-
-        Label fileName = new Label(name);
-        fileName.setWrapText(true);
-        fileName.setMaxWidth(90 * scale);
-        fileName.setAlignment(Pos.TOP_CENTER);
-        fileName.setTooltip(new Tooltip(name));
-        fileName.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
-
-        VBox box = new VBox(icon);
-        box.setAlignment(Pos.BOTTOM_CENTER);
-        box.setMinHeight(70 * scale);
-
-        fileBox.getChildren().addAll(box, fileName);
-        fileBox.setPadding(new Insets(0, 5, 15, 5));
-        fileBox.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px;");
-
-        FileBoxContextMenu fileBoxContextMenu = new FileBoxContextMenu(new File(CurrentDirectory.get(), name));
-        fileBox.setOnContextMenuRequested(e -> {
-            fileBoxContextMenu.show(fileBox, e.getScreenX(), e.getScreenY());
-            e.consume();
-        });
-
-        fileBox.setOnContextMenuRequested(event -> {
-            if (isSelected(fileBox) && selectedFiles.size() == 1) {
-                fileBoxContextMenu.show(fileBox, event.getScreenX(), event.getScreenY());
-            } else if (isSelected(fileBox)) {
-                multiFileBoxContextMenu = new MultiFileBoxContextMenu(getSelectedFiles());
-                multiFileBoxContextMenu.show(fileBox, event.getScreenX(), event.getScreenY());
-            } else {
-                fileBoxContextMenu.show(fileBox, event.getScreenX(), event.getScreenY());
-                directoryMenu.hide();
-                removeSelectionFromFiles();
-            }
-            event.consume();
-        });
-
-        fileBox.setOnDragDetected(event -> {
-            Dragboard db = fileBox.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent content = new ClipboardContent();
-            List<String> fileNamesToDrag = new ArrayList<>();
-            if (selectedFiles.contains(fileBox)) {
-                for (VBox selectedFile : selectedFiles) {
-                    Label fileNameLabel = (Label) selectedFile.getChildren().get(1);
-                    fileNamesToDrag.add(fileNameLabel.getText());
-                }
-            } else {
-                fileNamesToDrag.add(name);
-            }
-
-            content.putString(String.join(",", fileNamesToDrag));
-            db.setContent(content);
-            event.consume();
-        });
-
-        fileBox.setOnDragOver(event -> {
-            if (event.getGestureSource() != fileBox && event.getDragboard().hasString() && isDirectory) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-            event.consume();
-        });
-
-        fileBox.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasString()) {
-                String[] draggedFileNames = db.getString().split(",");
-                File targetDirectory = new File(CurrentDirectory.get(), name);
-                if (targetDirectory.isDirectory()) {
-                    for (String draggedFileName : draggedFileNames) {
-                        File draggedFile = new File(CurrentDirectory.get(), draggedFileName);
-                        if (draggedFile.exists()) {
-                            draggedFile.renameTo(new File(targetDirectory, draggedFile.getName()));
-                        }
-                    }
-                    refreshCurrentDirectory();
-                    success = true;
-                }
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
-        return fileBox;
-    }
-
-    MultiFileBoxContextMenu multiFileBoxContextMenu;
-
     public void refreshCurrentDirectory() {
         loadDirectoryContents(CurrentDirectory.get(), false);
     }
 
-    DirectoryContextMenu directoryMenu = new DirectoryContextMenu();
+    public static void refresh() {
+        new Main().refreshCurrentDirectory();
+    }
 
-    public void selectAllFiles() {
+    public static DirectoryContextMenu directoryMenu = new DirectoryContextMenu();
+
+    public static void selectAllFiles() {
         selectedFiles.clear();
         selectedFiles = grid.getChildren().stream()
                 .filter(node -> node instanceof VBox)
@@ -487,7 +356,7 @@ public class Main extends Application {
         selectedFiles.forEach(fileBox -> fileBox.getStyleClass().add("selected-file"));
     }
 
-    private boolean isSelected(VBox fileBox) {
+    public static boolean isSelected(VBox fileBox) {
         return selectedFiles.contains(fileBox);
     }
 

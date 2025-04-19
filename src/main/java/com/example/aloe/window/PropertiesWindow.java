@@ -4,8 +4,8 @@ import com.example.aloe.*;
 import com.example.aloe.components.BackButton;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.VBoxSpacer;
+import com.example.aloe.elements.FileBox;
 import com.example.aloe.files.Checksum;
-import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.properties.FileProperties;
 import com.example.aloe.files.properties.ImageProperties;
@@ -107,9 +107,7 @@ public class PropertiesWindow extends Stage {
         VBox.setVgrow(content, Priority.ALWAYS);
         content.getStyleClass().add("background");
 
-        ImageView icon = getIcon(file, false);
-        icon.setFitHeight(77);
-        icon.setFitWidth(77);
+        ImageView icon = getIcon(file);
         VBox iconWrapper = new VBox();
         iconWrapper.setAlignment(Pos.TOP_CENTER);
         iconWrapper.getChildren().add(icon);
@@ -172,28 +170,20 @@ public class PropertiesWindow extends Stage {
         CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(file.isFile() ? 15 : 17)).setText(result)));
     }
 
-    private ImageView getIcon(File file, boolean useThumbnails) {
+    private ImageView getIcon(File file) {
         ImageView icon = new ImageView();
+        icon.setFitHeight(77);
+        icon.setFitWidth(77);
         if (file.isDirectory()) {
             icon.setImage(loadIcon("/assets/icons/folder.png"));
         } else {
-            icon.setImage(loadIconForFile(file, useThumbnails));
+            icon.setImage(FileBox.getImage(file));
         }
         return icon;
     }
 
     private Image loadIcon(String path) {
         return new Image(Objects.requireNonNull(PropertiesWindow.class.getResourceAsStream(path)));
-    }
-
-    private Image loadIconForFile(File file, boolean useThumbnails) {
-        return switch (FilesUtils.getExtension(file).toLowerCase()) {
-            case "jpg", "jpeg", "png", "gif" -> useThumbnails && Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails")) ? new Image(new File(CurrentDirectory.get(), file.getName()).toURI().toString()) : loadIcon("/assets/icons/image.png");
-            case "mp4" -> loadIcon("/assets/icons/video.png");
-            case "mp3", "ogg" -> loadIcon("/assets/icons/music.png");
-            case "iso" -> loadIcon("/assets/icons/cd.png");
-            default -> loadIcon("/assets/icons/file.png");
-        };
     }
 
     private void loadChecksum() {
