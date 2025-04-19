@@ -1,10 +1,26 @@
-# Aloe
-Aloe is a simple file explorer written in Java using JavaFX, inspired by the Nautilus file manager in Pop!_OS 22.04 and cosmic files.
+# 🌿 Aloe
 
-## Usage
-**Requirements**:
-- Installed Maven.
-- Installed Java JDK (version **22 or higher**), with the `JAVA_HOME` environment variable set.
+**Aloe** is a simple and elegant file explorer built in **Java** using **JavaFX**.  
+It features a clean and intuitive interface designed for ease of use, while offering a wide range of customization options to fit your personal workflow. Aloe is lightweight, fast, and user-friendly — perfect for both casual users and power users who appreciate simplicity without sacrificing flexibility.
+
+## ✨ Features
+
+- 📁 **Intuitive user interface** with easy navigation through the file system
+- 🗂️ **Browse and manage files and folders** (copy, move, delete, rename, etc.)
+- 🗜️ **Support for creating archives** in popular formats:
+   - `.zip`, `.tar`, `.tar.gz`, `.jar`, `.7z` — directly from the interface
+- 🧩 **Extensive context menu customization**
+   - Add or remove actions, adjust behavior, and even configure custom shortcuts
+- ⚙️ **Advanced personalization options**:
+   - Customize the appearance, color scheme, behavior, and layout of the application
+   - A rich settings panel lets you tailor the experience to your workflow
+- 🌙 **Built-in Dark Mode** — automatic or manual switching
+- 🎨 **Style and color palette inspired by Nautilus and Cosmic Files**, with a focus on aesthetics and clarity
+
+## 🚀 Requirements
+
+- ☕ **Java JDK 23** or newer
+- 🛠️ **Maven** — for building and running the project
 
 ### Step 1: Verify Maven Installation
 Check if Maven is installed and accessible:
@@ -20,44 +36,22 @@ Ensure you have JDK version **22 or higher** installed:
 java --version
 ```
 
-If your version is below 22, update to a compatible JDK. You can download the latest version from the [OpenJDK website](https://openjdk.org/) or other sources like [Adoptium](https://adoptium.net/).
+If your version is below 23, update to a compatible JDK. You can download the latest version from the [OpenJDK website](https://openjdk.org/) or other sources like [Adoptium](https://adoptium.net/).
 
-### Step 3: Set the `JAVA_HOME` Environment Variable
-If `JAVA_HOME` is not already set, configure it as follows:
-
-#### On Linux/Mac:
-1. Locate your JDK installation path (e.g., `/usr/lib/jvm/java-22-openjdk`).
-2. Export the variable in your terminal:
-   ```bash
-   export JAVA_HOME=/path/to/your/jdk
-   ```
-3. To make this change permanent, add the export command to your `~/.bashrc` or `~/.zshrc` file:
-   ```bash
-   echo 'export JAVA_HOME=/path/to/your/jdk' >> ~/.bashrc
-   source ~/.bashrc
-   ```
-
-#### On Windows:
-1. Find your JDK installation directory (e.g., `C:\Program Files\Java\jdk-22`).
-2. Open the Start menu and search for "Environment Variables."
-3. Add a new variable:
-    - **Variable Name**: `JAVA_HOME`
-    - **Variable Value**: `C:\Path\To\Your\JDK`
-
-### Step 4: Download the Project
+### Step 3: Download the Project
 Clone the repository and navigate into it:
 ```bash
 git clone https://github.com/MysiuPysiu76/Aloe
 cd Aloe
 ```
 
-### Step 5: Build the Project
+### Step 4: Build the Project
 Clean, compile, and install the project artifact:
 ```bash
 mvn clean install
 ```
 
-### Step 6: Run the Application
+### Step 5: Run the Application
 Run the JavaFX application:
 ```bash
 mvn javafx:run
