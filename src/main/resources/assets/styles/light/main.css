@@ -1,0 +1,3 @@
+.file-box:hover, .file-box-selected {
+    -fx-background-color: #d6d6d6;
+}

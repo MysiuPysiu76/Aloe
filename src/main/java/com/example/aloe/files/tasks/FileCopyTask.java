@@ -1,6 +1,6 @@
 package com.example.aloe.files.tasks;
 
-import com.example.aloe.*;
+import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FileDecision;
 import com.example.aloe.files.FilesUtils;
@@ -80,7 +80,7 @@ public class FileCopyTask extends FilesTask {
             }
         }
 
-        Platform.runLater(() -> new Main().refreshCurrentDirectory());
+        Platform.runLater(FilesLoader::refresh);
         return null;
     }
 
@@ -90,7 +90,6 @@ public class FileCopyTask extends FilesTask {
         final FileDecision[] decision = new FileDecision[1];
 
         Platform.runLater(() -> {
-            FileOperation operation = new FileOperation(FileOperation.OperationType.COPY, source, destination.toFile());
             decision[0] = source.isFile() ?
                     DecisionWindow.addFile(target.toFile()) :
                     DecisionWindow.addDirectory(target.toFile());

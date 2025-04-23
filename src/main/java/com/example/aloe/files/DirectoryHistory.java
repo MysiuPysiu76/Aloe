@@ -1,6 +1,6 @@
 package com.example.aloe.files;
 
-import com.example.aloe.Main;
+import com.example.aloe.elements.files.FilesLoader;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -48,7 +48,7 @@ public class DirectoryHistory {
     public static void loadPreviousDirectory() {
         if (position > 0) {
             position--;
-            new Main().loadDirectoryContents(files.get(position), false);
+            FilesLoader.load(files.get(position));
         }
     }
 
@@ -61,7 +61,7 @@ public class DirectoryHistory {
     public static void loadNextDirectory() {
         if (position < files.size() - 1) {
             position++;
-            new Main().loadDirectoryContents(files.get(position), false);
+            FilesLoader.load(files.get(position));
         }
     }
 }

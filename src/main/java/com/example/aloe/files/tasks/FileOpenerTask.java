@@ -1,7 +1,5 @@
 package com.example.aloe.files.tasks;
 
-import com.example.aloe.Main;
-
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +18,6 @@ public class FileOpenerTask extends FilesTask {
     protected Void call() throws Exception {
         if (file.isFile()) {
             openFile();
-        } else {
-            new Main().loadDirectoryContents(file, true);
         }
         return null;
     }

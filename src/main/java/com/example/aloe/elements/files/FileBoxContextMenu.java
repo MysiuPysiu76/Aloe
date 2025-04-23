@@ -1,8 +1,8 @@
-package com.example.aloe.elements;
+package com.example.aloe.elements.files;
 
-import com.example.aloe.Main;
 import com.example.aloe.components.ExtendedContextMenu;
 import com.example.aloe.components.ExtendedMenuItem;
+import com.example.aloe.files.FilesOpener;
 import com.example.aloe.files.archive.ArchiveHandler;
 import com.example.aloe.files.FileChooser;
 import com.example.aloe.files.FilesUtils;
@@ -23,7 +23,7 @@ public class FileBoxContextMenu extends ExtendedContextMenu {
     public FileBoxContextMenu(File file) {
         super();
 
-        ExtendedMenuItem open = new ExtendedMenuItem("context-menu.open", e -> Main.openFileInOptions(file));
+        ExtendedMenuItem open = new ExtendedMenuItem("context-menu.open", e -> FilesOpener.open(file));
         ExtendedMenuItem cut = new ExtendedMenuItem("context-menu.cut", e -> ClipboardManager.cutFilesToClipboard(List.of(file)));
         ExtendedMenuItem copy = new ExtendedMenuItem("context-menu.copy", e -> ClipboardManager.copyFilesToClipboard(List.of(file)));
         ExtendedMenuItem rename = new ExtendedMenuItem("context-menu.rename", e -> new RenameWindow(file));
@@ -32,7 +32,7 @@ public class FileBoxContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem moveToParent = new ExtendedMenuItem("context-menu.move-to-parent", e -> new FileMoveTask(file, file.getParentFile().getParentFile(), true));
         ExtendedMenuItem moveToTrash = new ExtendedMenuItem("context-menu.move-to-trash", e -> new FileMoveTask(file, new File(SettingsManager.getSetting("files", "trash").toString()), true));
         ExtendedMenuItem archive = FilesUtils.isFileArchive(file) ?
-                new ExtendedMenuItem("context-menu.extract",e -> { ArchiveHandler.extract(file); new Main().refreshCurrentDirectory(); }) :
+                new ExtendedMenuItem("context-menu.extract",e -> { ArchiveHandler.extract(file); FilesLoader.refresh(); }) :
                 new ExtendedMenuItem("context-menu.compress", e -> new CompressWindow(List.of(file)));
         ExtendedMenuItem delete = new ExtendedMenuItem("context-menu.delete", e -> new FileDeleteTask(file, true));
         ExtendedMenuItem properties = new ExtendedMenuItem("context-menu.properties", e -> new PropertiesWindow(file));

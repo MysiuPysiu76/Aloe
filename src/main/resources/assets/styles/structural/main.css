@@ -1,0 +1,5 @@
+.file-box {
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 0 5px 15px 5px;
+}

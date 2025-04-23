@@ -1,6 +1,6 @@
 package com.example.aloe.files.tasks;
 
-import com.example.aloe.Main;
+import com.example.aloe.elements.files.FilesLoader;
 import javafx.application.Platform;
 
 import java.io.File;
@@ -29,7 +29,7 @@ public class FileDuplicateTask extends FileCopyTask {
             updateProgress();
         }
 
-        Platform.runLater(() -> new Main().refreshCurrentDirectory());
+        Platform.runLater(FilesLoader::refresh);
         return null;
     }
 }

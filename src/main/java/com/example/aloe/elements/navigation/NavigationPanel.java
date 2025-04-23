@@ -2,6 +2,7 @@ package com.example.aloe.elements.navigation;
 
 import com.example.aloe.Main;
 import com.example.aloe.components.HBoxSpacer;
+import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.SettingsManager;
@@ -51,7 +52,7 @@ public class NavigationPanel extends HBox {
         FontIcon icon = getIcon(FontAwesome.ANGLE_UP, 30);
         button.setGraphic(icon);
         button.setPadding(new Insets(0, 0, 10, 0));
-        button.setOnMouseClicked(e -> new Main().getParentDirectory());
+        button.setOnMouseClicked(e -> FilesLoader.loadParent());
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.parent")));
         return button;
     }
@@ -60,7 +61,7 @@ public class NavigationPanel extends HBox {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.REPEAT, 20));
         HBox.setMargin(button, new Insets(0, 5, 0, 0));
-        button.setOnMouseClicked(e -> new Main().refreshCurrentDirectory());
+        button.setOnMouseClicked(e -> FilesLoader.refresh());
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.reload")));
         return button;
     }
@@ -89,7 +90,7 @@ public class NavigationPanel extends HBox {
             button.setGraphic(getIcon(isGrid[0] ? FontAwesome.LIST_UL : FontAwesome.TH_LARGE, 20));
             button.setTooltip(new Tooltip(Translator.translate(isGrid[0] ? "tooltip.navigate.view.grid" : "tooltip.navigate.view.list")));
             SettingsManager.setSetting("files", "view", (isGrid[0] ? "grid" : "list"));
-            new Main().refreshCurrentDirectory();
+            FilesLoader.refresh();
         });
         return button;
     }

@@ -2,6 +2,7 @@ package com.example.aloe.window.interior;
 
 import com.example.aloe.Main;
 import com.example.aloe.WindowComponents;
+import com.example.aloe.elements.files.FilesLoader;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -70,7 +71,7 @@ public class InteriorWindow extends VBox {
     }
 
     protected void hideOverlay() {
-        new Main().refreshCurrentDirectory();
+        FilesLoader.refresh();
         Main.hideDarkeningPlate();
     }
 

@@ -1,7 +1,7 @@
 package com.example.aloe.files.tasks;
 
+import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.files.CurrentDirectory;
-import com.example.aloe.Main;
 import javafx.application.Platform;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class FileCutTask extends FileCopyTask {
             updateProgress();
         }
 
-        Platform.runLater(() -> new Main().refreshCurrentDirectory());
+        Platform.runLater(FilesLoader::refresh);
         return null;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.aloe.elements;
+package com.example.aloe.elements.files;
 
 import com.example.aloe.components.ExtendedContextMenu;
 import com.example.aloe.components.ExtendedMenuItem;

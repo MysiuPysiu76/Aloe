@@ -1,7 +1,7 @@
 package com.example.aloe.elements.menu;
 
-import com.example.aloe.*;
 import com.example.aloe.components.draggable.ObjectProperties;
+import com.example.aloe.files.FilesOpener;
 import com.example.aloe.settings.SettingsManager;
 import com.example.aloe.utils.Translator;
 import javafx.geometry.Pos;
@@ -59,7 +59,7 @@ public class MenuItem extends Button implements ObjectProperties {
 
         this.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
-                new Main().loadDirectoryContents(new File(path), true);
+                FilesOpener.open(new File(path));
             }
         });
     }
