@@ -1,6 +1,6 @@
 package com.example.aloe;
 
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class Utils {
     }
 
     public static boolean isFileExistsInResources(String path, String fileName) {
-        ClassLoader classLoader = SettingsManager.class.getClassLoader();
+        ClassLoader classLoader = Settings.class.getClassLoader();
         URL resource = classLoader.getResource(path);
 
         if (resource != null) {
@@ -56,7 +56,7 @@ public class Utils {
     }
 
     public static String convertBytesByUnit(long size) {
-        if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "use-binary-units"))) {
+        if (Boolean.TRUE.equals(Settings.getSetting("files", "use-binary-units"))) {
             return convertBytesToGiB(size);
         } else {
             return convertBytesToGB(size);

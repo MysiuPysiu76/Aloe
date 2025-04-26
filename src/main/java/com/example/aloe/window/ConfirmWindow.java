@@ -3,7 +3,7 @@ package com.example.aloe.window;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.WindowComponents;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -43,7 +43,7 @@ public class ConfirmWindow extends Stage {
         VBox.setMargin(box, new Insets(0, 15, 15, 5));
 
         Scene scene = new Scene(container);
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/confirm.css").toExternalForm());
         this.setScene(scene);

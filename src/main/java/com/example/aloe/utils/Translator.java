@@ -1,6 +1,6 @@
 package com.example.aloe.utils;
 
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,7 +19,7 @@ public class Translator {
     }
 
     private static void init() {
-        loadLanguageFile(SettingsManager.getSetting("language", "lang"));
+        loadLanguageFile(Settings.getSetting("language", "lang"));
     }
 
     private static JsonNode getJsonContent() {

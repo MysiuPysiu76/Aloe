@@ -1,15 +1,19 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.*;
+import com.example.aloe.components.ColorChooser;
+import com.example.aloe.components.ColorPicker;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.draggable.DraggableItem;
 import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.components.draggable.InfoBox;
+import com.example.aloe.elements.menu.MenuItem;
 import com.example.aloe.utils.Translator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -52,9 +56,9 @@ class SettingsControls {
 
     static ToggleSwitch getToggleSwitch(String key, boolean restartRequired) {
         ToggleSwitch toggleSwitch = new ToggleSwitch();
-        toggleSwitch.setSelected(Boolean.TRUE.equals(SettingsManager.getSetting(SettingsManager.getCategory(), key)));
+        toggleSwitch.setSelected(Boolean.TRUE.equals(Settings.getSetting(Settings.getCategory(), key)));
         toggleSwitch.setOnMouseClicked(event -> {
-            SettingsManager.setSetting(SettingsManager.getCategory(), key, toggleSwitch.isSelected());
+            Settings.setSetting(Settings.getCategory(), key, toggleSwitch.isSelected());
             if (restartRequired) SettingsWindow.setRestartRequired();
         });
         HBox.setMargin(toggleSwitch, new Insets(0, 20, 0, 20));
@@ -77,10 +81,10 @@ class SettingsControls {
                 return null;
             }
         });
-        choiceBox.getSelectionModel().select(Utils.getKeyIndex(items, SettingsManager.getSetting(SettingsManager.getCategory(), key)));
+        choiceBox.getSelectionModel().select(Utils.getKeyIndex(items, Settings.getSetting(Settings.getCategory(), key)));
         choiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                SettingsManager.setSetting(SettingsManager.getCategory(), key, newValue.getKey());
+                Settings.setSetting(Settings.getCategory(), key, newValue.getKey());
             }
             if (restartRequired) SettingsWindow.setRestartRequired();
         });
@@ -107,10 +111,10 @@ class SettingsControls {
     }
 
     static TextField getTextField(String key, String text, boolean restartRequired) {
-        TextField textField = new TextField(SettingsManager.getSetting(SettingsManager.getCategory(), key));
+        TextField textField = new TextField(Settings.getSetting(Settings.getCategory(), key));
         textField.setPadding(new Insets(5, 7, 5, 7));
         textField.setOnKeyReleased(event -> {
-            SettingsManager.setSetting(SettingsManager.getCategory(), key, textField.getText());
+            Settings.setSetting(Settings.getCategory(), key, textField.getText());
             if (restartRequired) SettingsWindow.setRestartRequired();
         });
         textField.setPromptText(text);
@@ -121,7 +125,7 @@ class SettingsControls {
     }
 
     static HBox getSlider(String key, double min, double max, double tickUnit, double step, String leftTitle, String rightTitle, boolean pointedValues, List<Double> values, boolean restartRequired) {
-        Slider slider = new Slider(min, max, SettingsManager.getSetting(SettingsManager.getCategory(), "file-box-size"));
+        Slider slider = new Slider(min, max, Settings.getSetting(Settings.getCategory(), "file-box-size"));
         slider.setMajorTickUnit(tickUnit);
         slider.setBlockIncrement(step);
         Label left = new Label(Translator.translate(leftTitle));
@@ -132,7 +136,7 @@ class SettingsControls {
             slider.valueProperty().addListener((observable, oldValue, newValue) -> {
                 double closest = values.stream().min((a, b) -> Double.compare(Math.abs(a - newValue.doubleValue()), Math.abs(b - newValue.doubleValue()))).orElse(newValue.doubleValue());
                 slider.setValue(closest);
-                SettingsManager.setSetting(SettingsManager.getCategory(), key, closest);
+                Settings.setSetting(Settings.getCategory(), key, closest);
                 if (restartRequired) SettingsWindow.setRestartRequired();
             });
         }
@@ -158,20 +162,46 @@ class SettingsControls {
             for (DraggableItem item : draggableItems) {
                 values.add(item.getObject().getObjectProperties());
             }
-            SettingsManager.setSetting(SettingsManager.getCategory(), key, values);
+            Settings.setSetting(Settings.getCategory(), key, values);
         });
 
         return pane;
     }
 
-    static List<DraggableItem> getMenuItems(String key) {
-        List<Map<String, Object>> items = SettingsManager.getSetting(SettingsManager.getCategory(), key);
-        List<DraggableItem> menuItems = new ArrayList<>();
+    static ColorChooser getColorChooser(String key, boolean restartRequired) {
+        String color = Settings.getSetting(Settings.getCategory(), key);
+        ColorChooser colorChooser = new ColorChooser(color, 27, 100);
+        HBox.setMargin(colorChooser, new Insets(0, 20, 0, 20));
+
+        ColorPicker picker = new ColorPicker();
+        colorChooser.colorProperty.bind(picker.colorProperty);
+        picker.colorProperty.set(color);
+
+        VBox wrapper = new VBox(picker);
+        wrapper.setPadding(new Insets(10));
+        PopOver box = new PopOver(wrapper);
+        box.setDetachable(false);
+        box.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+
+        colorChooser.setOnMouseClicked(e -> {
+            if (restartRequired) SettingsWindow.setRestartRequired();
+            picker.colorProperty.addListener(((event, oldValue, newValue) -> {
+                if (ColorPicker.isColorValid(newValue)) Settings.setSetting(Settings.getCategory(), key, newValue);
+            }));
+            box.show(colorChooser);
+        });
+
+        return colorChooser;
+    }
+
+    static List<DraggableItem> getDraggableItems(String key) {
+        List<Map<String, Object>> items = Settings.getSetting(Settings.getCategory(), key);
+        List<DraggableItem> draggableItems = new ArrayList<>();
         if (!(items == null || items.isEmpty())) {
             for (Map<String, Object> item : items) {
-                menuItems.add(new DraggableItem(new com.example.aloe.elements.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")), (String) item.get("name")));
+                draggableItems.add(new DraggableItem(new MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")), (String) item.get("name")));
             }
         }
-        return menuItems;
+        return draggableItems;
     }
 }

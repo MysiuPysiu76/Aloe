@@ -4,8 +4,7 @@ import com.example.aloe.Main;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.files.FilesOpener;
-import com.example.aloe.files.tasks.FileOpenerTask;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
@@ -24,7 +23,7 @@ public class FilesLoader {
 
         List<File> files = getSortedFiles(getFiles(directory.listFiles()));
 
-        if (SettingsManager.getSetting("files", "view").equals("list")) {
+        if (Settings.getSetting("files", "view").equals("list")) {
             ListView<String> list = new ListView<>();
             list.getItems().addAll(files.stream().map(File::getName).toList());
 
@@ -72,12 +71,12 @@ public class FilesLoader {
     }
 
     private static List<File> getFiles(File[] files) {
-        boolean showHidden = Boolean.TRUE.equals(SettingsManager.getSetting("files", "show-hidden"));
+        boolean showHidden = Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden"));
         return Arrays.stream(files).filter(file -> !file.isHidden() || showHidden).toList();
     }
 
     private static List<File> getSortedFiles(List<File> files) {
-        boolean directoriesFirst = Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-directories-before-files"));
+        boolean directoriesFirst = Boolean.TRUE.equals(Settings.getSetting("files", "display-directories-before-files"));
         return files.stream()
                 .sorted((file1, file2) -> {
                     if (directoriesFirst) {

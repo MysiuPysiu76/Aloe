@@ -103,3 +103,11 @@
 .button-option {
     -fx-background-color: transparent;
 }
+
+.link-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 0;
+    -fx-text-decoration: underline;
+    -fx-cursor: hand;
+}

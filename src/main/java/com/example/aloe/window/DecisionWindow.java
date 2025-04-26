@@ -1,7 +1,7 @@
 package com.example.aloe.window;
 
 import com.example.aloe.files.FileDecision;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.Translator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,7 +34,7 @@ public class DecisionWindow extends Stage {
         pane.getStyleClass().add("background");
 
         Scene scene = new Scene(pane, 430, 240);
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/decision.css").toExternalForm());
 

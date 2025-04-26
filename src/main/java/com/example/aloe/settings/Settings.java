@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public final class SettingsManager {
+public final class Settings {
 
     private static final String DEFAULT_SETTINGS_PATH = "/assets/settings.json";
     private static final String USER_SETTINGS_PATH = System.getProperty("user.dir") + "/settings.json";
@@ -29,7 +29,7 @@ public final class SettingsManager {
     }
 
     public static void setCategory(String category) {
-        SettingsManager.category = category;
+        Settings.category = category;
     }
 
     public static void loadSettings() {
@@ -59,7 +59,7 @@ public final class SettingsManager {
     }
 
     private static void initializeItemsInMenu() {
-        SettingsManager.setSetting("menu", "items", Arrays.asList(
+        Settings.setSetting("menu", "items", Arrays.asList(
                 Map.of("path", System.getProperty("user.home"), "name", Translator.translate("menu.home"), "icon", "HOME"),
                 Map.of("path", System.getProperty("user.home") + "/Desktop", "name", Translator.translate("menu.desktop"), "icon", "DESKTOP"),
                 Map.of("path", System.getProperty("user.home") + "/Documents", "name", Translator.translate("menu.documents"), "icon", "FILE_TEXT"),
@@ -75,17 +75,17 @@ public final class SettingsManager {
     private static void trySetLanguage() {
         String lang = Locale.getDefault().getLanguage();
         if (Utils.isFileExistsInResources("assets/lang/", lang + ".json")) {
-            SettingsManager.setSetting("language", "lang", lang);
+            Settings.setSetting("language", "lang", lang);
         }
         Translator.reload();
     }
 
     private static void setTrashLocation() {
-        SettingsManager.setSetting("files", "trash", new File(System.getProperty("user.home"), ".trash"));
+        Settings.setSetting("files", "trash", new File(System.getProperty("user.home"), ".trash"));
     }
 
     private static Map<String, Object> loadDefaultSettings() throws IOException {
-        return objectMapper.readValue(SettingsManager.class.getResourceAsStream(DEFAULT_SETTINGS_PATH), new TypeReference<>() {});
+        return objectMapper.readValue(Settings.class.getResourceAsStream(DEFAULT_SETTINGS_PATH), new TypeReference<>() {});
     }
 
     private static void saveSettingsToFile(Map<String, Object> settings) {
@@ -108,6 +108,14 @@ public final class SettingsManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String getTheme() {
+        return getSetting("appearance", "theme");
+    }
+
+    public static String getColor() {
+        return getSetting("appearance", "color");
     }
 
     private static <T> T addMissingValue(String category, String key) {

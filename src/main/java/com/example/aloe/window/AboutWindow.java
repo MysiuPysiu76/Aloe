@@ -1,7 +1,7 @@
 package com.example.aloe.window;
 
 import com.example.aloe.utils.Translator;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import javafx.application.HostServices;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -32,7 +32,7 @@ public class AboutWindow extends Stage {
         container.getChildren().addAll(getSegmentedButtons(container, getAboutContainer(), getCreatorContainer()), getAboutContainer());
 
         Scene scene = new Scene(container, 300, 390);
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/assets/styles/structural/about.css")).toExternalForm());
         this.setScene(scene);
@@ -76,7 +76,7 @@ public class AboutWindow extends Stage {
 
         Label name = new Label("Aloe");
         name.getStyleClass().addAll("name", "text");
-        Label version = new Label("1.6.9");
+        Label version = new Label("1.7.0");
         version.getStyleClass().addAll("version", "text");
         Label description = new Label(Translator.translate("window.about.description"));
         description.getStyleClass().addAll("description", "text");

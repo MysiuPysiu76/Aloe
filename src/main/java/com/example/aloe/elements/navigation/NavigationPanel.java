@@ -5,7 +5,7 @@ import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -81,7 +81,7 @@ public class NavigationPanel extends HBox {
 
     private Button getViewButton() {
         Button button = getNavigationButton();
-        final boolean[] isGrid = {SettingsManager.getSetting("files", "view").equals("grid")};
+        final boolean[] isGrid = {Settings.getSetting("files", "view").equals("grid")};
         button.setGraphic(getIcon(isGrid[0] ? FontAwesome.LIST_UL: FontAwesome.TH_LARGE, 20));
         button.setTooltip(new Tooltip(Translator.translate(isGrid[0] ? "tooltip.navigate.view.grid" : "tooltip.navigate.view.list")));
         HBox.setMargin(button, new Insets(0, 5, 0, 5));
@@ -89,7 +89,7 @@ public class NavigationPanel extends HBox {
             isGrid[0] = !isGrid[0];
             button.setGraphic(getIcon(isGrid[0] ? FontAwesome.LIST_UL : FontAwesome.TH_LARGE, 20));
             button.setTooltip(new Tooltip(Translator.translate(isGrid[0] ? "tooltip.navigate.view.grid" : "tooltip.navigate.view.list")));
-            SettingsManager.setSetting("files", "view", (isGrid[0] ? "grid" : "list"));
+            Settings.setSetting("files", "view", (isGrid[0] ? "grid" : "list"));
             FilesLoader.refresh();
         });
         return button;

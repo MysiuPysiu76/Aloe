@@ -11,7 +11,7 @@ import com.example.aloe.files.properties.FileProperties;
 import com.example.aloe.files.properties.ImageProperties;
 import com.example.aloe.files.permissions.ACLPermissions;
 import com.example.aloe.files.permissions.POSIXPermissions;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.Translator;
 import javafx.collections.FXCollections;
@@ -60,7 +60,7 @@ public class PropertiesWindow extends Stage {
         root.getChildren().addAll(new Pane(), new Pane());
 
         Scene scene = new Scene(root, 300, 430);
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         this.setScene(scene);
         this.show();
@@ -69,7 +69,7 @@ public class PropertiesWindow extends Stage {
 
     private void loadChecksumButtonBar() {
         BackButton propertiesButton = new BackButton(Translator.translate("window.properties"), false);
-        propertiesButton.setColor("#62d0de");
+        propertiesButton.setColor(Settings.getColor());
         propertiesButton.setOnMouseClicked(e -> loadProperties());
         HBox bar = new HBox(new HBoxSpacer(), propertiesButton);
         bar.getStyleClass().add("background");
@@ -81,12 +81,12 @@ public class PropertiesWindow extends Stage {
         bar.getStyleClass().add("background");
         if (this.file.isFile()) {
             BackButton checksumButton = new BackButton(Translator.translate("window.properties.checksum"), true);
-            checksumButton.setColor("#62d0de");
+            checksumButton.setColor(Settings.getColor());
             checksumButton.setOnMouseClicked(e -> loadChecksum());
             bar.getChildren().add(checksumButton);
         }
         BackButton permissionsButton = new BackButton(Translator.translate("window.properties.permissions"), false);
-        permissionsButton.setColor("#62d0de");
+        permissionsButton.setColor(Settings.getColor());
         permissionsButton.setOnMouseClicked(e -> loadPermissions());
         bar.getChildren().addAll(new HBoxSpacer(), permissionsButton);
         this.root.getChildren().set(0, bar);
@@ -94,7 +94,7 @@ public class PropertiesWindow extends Stage {
 
     private void loadPermissionsButtonBar() {
         BackButton propertiesButton = new BackButton(Translator.translate("window.properties"), true);
-        propertiesButton.setColor("#62d0de");
+        propertiesButton.setColor(Settings.getColor());
         propertiesButton.setOnMouseClicked(e -> loadProperties());
         HBox bar = new HBox(propertiesButton, new HBoxSpacer());
         bar.getStyleClass().add("background");
@@ -160,7 +160,8 @@ public class PropertiesWindow extends Stage {
 
     private Button getLinkButton(String text) {
         Button button = new Button(text);
-        button.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 2 0 2 0; -fx-text-decoration: underline; -fx-text-fill: #24baba; -fx-cursor: pointer;");
+        button.getStyleClass().add("link-button");
+        button.setStyle(String.format("-fx-text-fill: %s;", Settings.getColor()));
         return button;
     }
 
@@ -220,7 +221,7 @@ public class PropertiesWindow extends Stage {
         TextArea textArea = new TextArea();
         textArea.setWrapText(true);
         textArea.setPrefRowCount(5);
-        textArea.setStyle("-fx-border-color: #62d0de;");
+        textArea.setStyle("-fx-border-color: " + Settings.getColor() + ";");
 
         Label infoLabel = new Label();
         infoLabel.setWrapText(true);
@@ -279,12 +280,12 @@ public class PropertiesWindow extends Stage {
             Platform.runLater(() -> {
                 Node arrow = comboBox.lookup(".arrow");
                 if (arrow != null) {
-                    arrow.setStyle("-fx-background-color: #62d0de;");
+                    arrow.setStyle("-fx-background-color: " + Settings.getColor() + ";");
                 }
             });
         });
 
-        String color = SettingsManager.getSetting("appearance", "theme").equals("light") ? "#2e2f2f" : "#f6f6f6";
+        String color = Settings.getSetting("appearance", "theme").equals("light") ? "#2e2f2f" : "#f6f6f6";
         comboBox.setCellFactory(lv -> {
             ListCell<String> cell = new ListCell<>() {
                 @Override
@@ -297,7 +298,7 @@ public class PropertiesWindow extends Stage {
 
             cell.hoverProperty().addListener((obs, wasHovered, isHovered) -> {
                 if (isHovered) {
-                    cell.setStyle("-fx-text-fill: #62d0de;");
+                    cell.setStyle("-fx-text-fill: " + Settings.getColor() + ";");
                 } else {
                     cell.setStyle("-fx-text-fill: " + color);
                 }
@@ -348,7 +349,7 @@ public class PropertiesWindow extends Stage {
         CheckBox applyToSubdirectories = new CheckBox(Translator.translate("window.properties.permissions.apply-to-subdirectories"));
         applyToSubdirectories.setPadding(new Insets(35, 10, 15, 10));
         applyToSubdirectories.setDisable(file.isFile());
-        applyToSubdirectories.setStyle("-fx-mark-color: #62d0de;");
+        applyToSubdirectories.setStyle("-fx-mark-color: " + Settings.getColor() + ";");
 
         Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
         updatePermissions.setOnAction(e -> {
@@ -422,7 +423,7 @@ public class PropertiesWindow extends Stage {
 
     private CheckBox getCheckBox(boolean isSelected) {
         CheckBox checkBox = new CheckBox();
-        checkBox.setStyle("-fx-mark-color: #62d0de;");
+        checkBox.setStyle("-fx-mark-color: "+ Settings.getColor() + ";");
         checkBox.setSelected(isSelected);
         GridPane.setHalignment(checkBox, HPos.CENTER);
         GridPane.setValignment(checkBox, VPos.CENTER);

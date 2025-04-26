@@ -1,7 +1,7 @@
 package com.example.aloe.elements.menu;
 
 import com.example.aloe.Main;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import javafx.geometry.Pos;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -23,7 +23,7 @@ public class MenuManager {
     }
 
     private static void loadMenu() {
-        List<Map<String, Object>> items = SettingsManager.getSetting("menu", "items");
+        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
         menu = new VBox();
         menu.setAlignment(Pos.TOP_CENTER);
         if (!(items == null || items.isEmpty())) {
@@ -49,14 +49,14 @@ public class MenuManager {
     }
 
     public static void addItemToMenu(String path, String name, String icon) {
-        List<Map<String, Object>> items = SettingsManager.getSetting("menu", "items");
+        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
         items.add(Map.of("path", path, "name", name, "icon", icon));
-        SettingsManager.setSetting("menu", "items", items);
+        Settings.setSetting("menu", "items", items);
         loadMenu();
     }
 
     public static void editItemInMenu(String oldPath, String newPath, String name, String icon) {
-        List<Map<String, Object>> items = SettingsManager.getSetting("menu", "items");
+        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
         for (Map<String, Object> item : items) {
             if (item.get("path").equals(oldPath)) {
                 item.put("path", newPath);
@@ -64,19 +64,19 @@ public class MenuManager {
                 item.put("icon", icon);
             }
         }
-        SettingsManager.setSetting("menu", "items", items);
+        Settings.setSetting("menu", "items", items);
         loadMenu();
     }
 
     static void removeItemFromMenu(String path) {
-        List<Map<String, Object>> items = SettingsManager.getSetting("menu", "items");
+        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
         for (Map<String, Object> item : items) {
             if (item.get("path").equals(path)) {
                 items.remove(item);
                 break;
             }
         }
-        SettingsManager.setSetting("menu", "items", items);
+        Settings.setSetting("menu", "items", items);
         loadMenu();
     }
 

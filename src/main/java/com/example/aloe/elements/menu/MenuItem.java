@@ -2,7 +2,7 @@ package com.example.aloe.elements.menu;
 
 import com.example.aloe.components.draggable.ObjectProperties;
 import com.example.aloe.files.FilesOpener;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.Translator;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -26,9 +26,9 @@ public class MenuItem extends Button implements ObjectProperties {
     private static final boolean rightPageIcon;
 
     static {
-        useIcon = Boolean.TRUE.equals(SettingsManager.getSetting("menu", "use-icon"));
-        useText = Boolean.TRUE.equals(SettingsManager.getSetting("menu", "use-text"));
-        rightPageIcon = Boolean.TRUE.equals(SettingsManager.getSetting("menu", "icon-position"));
+        useIcon = Boolean.TRUE.equals(Settings.getSetting("menu", "use-icon"));
+        useText = Boolean.TRUE.equals(Settings.getSetting("menu", "use-text"));
+        rightPageIcon = Boolean.TRUE.equals(Settings.getSetting("menu", "icon-position"));
     }
 
     public MenuItem(String icon, String title, String path) {

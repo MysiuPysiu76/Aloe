@@ -244,5 +244,6 @@
   "task.items-from": " items from ",
   "tooltip.navigate.tasks": "Show running tasks",
   "context-menu.empty": "Empty trash",
-  "window.properties.checksum.generating": "Generating..."
+  "window.properties.checksum.generating": "Generating...",
+  "window.settings.appearance.color": "Accent color"
 }

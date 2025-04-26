@@ -4,7 +4,7 @@ import com.example.aloe.components.ExtendedContextMenu;
 import com.example.aloe.components.ExtendedMenuItem;
 import com.example.aloe.files.FilesOpener;
 import com.example.aloe.files.tasks.FileDeleteTask;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import com.example.aloe.window.PropertiesWindow;
 import com.example.aloe.window.interior.menu.EditMenuItemWindow;
 
@@ -23,7 +23,7 @@ class MenuItemContextMenu extends ExtendedContextMenu {
         this.getItems().addAll(open, edit, remove, properties);
 
         if (item.getPath().equals("%trash%")) {
-            File file = new File(SettingsManager.getSetting("files", "trash").toString());
+            File file = new File(Settings.getSetting("files", "trash").toString());
             properties.setOnAction(e -> new PropertiesWindow(file));
             ExtendedMenuItem empty = new ExtendedMenuItem("context-menu.empty", e -> new FileDeleteTask(Arrays.stream(file.listFiles()).toList(), true));
             this.getItems().add(3, empty);

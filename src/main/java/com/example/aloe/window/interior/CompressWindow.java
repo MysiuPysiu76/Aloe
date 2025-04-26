@@ -1,8 +1,8 @@
 package com.example.aloe.window.interior;
 
 import com.example.aloe.components.HBoxSpacer;
+import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.Translator;
-import com.example.aloe.WindowComponents;
 import com.example.aloe.files.archive.ArchiveHandler;
 import com.example.aloe.files.archive.ArchiveParameters;
 import com.example.aloe.files.archive.ArchiveType;
@@ -26,9 +26,9 @@ public class CompressWindow extends InteriorWindow {
         super();
 
         TextField fileName = getInput(Translator.translate("window.interior.archive"), Translator.translate("window.interior.archive.name"));
-        fileName.setStyle("-fx-border-color: #62d0de;");
+        fileName.setStyle(String.format("-fx-border-color: %s;", Settings.getColor()));
         TextField password = getInput(null, Translator.translate("window.interior.archive.password"));
-        password.setStyle("-fx-border-color: #62d0de;");
+        password.setStyle(String.format("-fx-border-color: %s;", Settings.getColor()));
         Label error = getInfoLabel(null);
 
         ComboBox<ArchiveType> archiveType = new ComboBox<>();

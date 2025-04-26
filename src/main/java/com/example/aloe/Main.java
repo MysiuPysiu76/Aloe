@@ -7,7 +7,7 @@ import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.elements.menu.MenuManager;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.Translator;
@@ -78,14 +78,14 @@ public class Main extends Application {
 
         filesPanel.getItems().add(filesPane);
 
-        if (Boolean.TRUE.equals(SettingsManager.getSetting("menu", "use-menu"))) {
+        if (Boolean.TRUE.equals(Settings.getSetting("menu", "use-menu"))) {
             loadMenu();
-            if (SettingsManager.getSetting("menu", "position").equals("right")) {
+            if (Settings.getSetting("menu", "position").equals("right")) {
                 filesPanel.getItems().addLast(filesMenu);
             } else {
                 filesPanel.getItems().addFirst(filesMenu);
             }
-            filesPanel.setDividerPositions((double) SettingsManager.getSetting("menu", "divider-position"));
+            filesPanel.setDividerPositions((double) Settings.getSetting("menu", "divider-position"));
         }
 
         SplitPane.setResizableWithParent(filesMenu, false);
@@ -99,15 +99,15 @@ public class Main extends Application {
         HBox navigationPanel1 = new NavigationPanel();
         mainContainer.getChildren().addAll(navigationPanel1, filesPanel);
 
-        if (!Objects.equals(SettingsManager.getSetting("files", "start-folder"), "home")) {
-            FilesLoader.load(new File((String) Objects.requireNonNull(SettingsManager.getSetting("files", "start-folder-location"))));
+        if (!Objects.equals(Settings.getSetting("files", "start-folder"), "home")) {
+            FilesLoader.load(new File((String) Objects.requireNonNull(Settings.getSetting("files", "start-folder-location"))));
         } else {
             FilesLoader.load(new File(System.getProperty("user.home")));
         }
 
         scene.getStylesheets().add(getClass().getResource("/assets/styles/style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (SettingsManager.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/main.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/main.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/interior.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/main.css").toExternalForm());
@@ -116,10 +116,13 @@ public class Main extends Application {
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
+        new SettingsWindow();
+
+
         stage.setOnCloseRequest(event -> {
-            SettingsManager.setSetting("menu", "divider-position", filesPanel.getDividerPositions());
-            if (Objects.equals(SettingsManager.getSetting("files", "start-folder"), "last")) {
-                SettingsManager.setSetting("files", "start-folder-location", CurrentDirectory.get().getAbsolutePath());
+            Settings.setSetting("menu", "divider-position", filesPanel.getDividerPositions());
+            if (Objects.equals(Settings.getSetting("files", "start-folder"), "last")) {
+                Settings.setSetting("files", "start-folder-location", CurrentDirectory.get().getAbsolutePath());
             }
         });
 
@@ -147,14 +150,13 @@ public class Main extends Application {
         PopOver popOver = new PopOver();
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         popOver.setDetachable(false);
-        popOver.setDetachable(true);
         VBox container = new VBox();
         container.setAlignment(Pos.CENTER);
         CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
         VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
-        showHiddenFiles.setSelected(Boolean.TRUE.equals(SettingsManager.getSetting("files", "show-hidden")));
+        showHiddenFiles.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
         showHiddenFiles.setOnAction(event -> {
-            SettingsManager.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
+            Settings.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
             FilesLoader.refresh();
         });
         Button aboutButton = new Button(Translator.translate("navigate.about-button"));

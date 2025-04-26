@@ -3,7 +3,7 @@ package com.example.aloe.elements.files;
 import com.example.aloe.Main;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FilesUtils;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -33,7 +33,7 @@ public class FileBox extends VBox {
 
     public FileBox(File file) {
         this.file = file;
-        this.scale = SettingsManager.getSetting("files", "file-box-size");
+        this.scale = Settings.getSetting("files", "file-box-size");
         this.setMinWidth(100 * scale);
         this.setPrefWidth(100 * scale);
         this.setMaxWidth(100 * scale);
@@ -54,7 +54,7 @@ public class FileBox extends VBox {
         } else {
             switch (FilesUtils.getExtension(file.getName()).toLowerCase()) {
                 case "jpg", "jpeg", "png", "gif" -> {
-                    if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "display-thumbnails"))) { return new Image(new File(CurrentDirectory.get(), file.getName()).toURI().toString()); }
+                    if (Boolean.TRUE.equals(Settings.getSetting("files", "display-thumbnails"))) { return new Image(new File(CurrentDirectory.get(), file.getName()).toURI().toString()); }
                     else { return new Image(getImageStream("image")); } }
                 case "webp", "heif", "raw" -> { return new Image(getImageStream("image")); }
                 case "mp4", "mkv", "ts" -> { return new Image(getImageStream("video")); }

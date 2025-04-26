@@ -151,10 +151,10 @@ public final class SettingsWindow extends Stage {
     }
 
     private static void loadMenuSettings() {
-        SettingsManager.setCategory("menu");
+        Settings.setCategory("menu");
 
         DraggablePane pane = SettingsControls.getDraggablePane("items", true);
-        pane.add(SettingsControls.getMenuItems("items"));
+        pane.add(SettingsControls.getDraggableItems("items"));
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),
@@ -167,7 +167,7 @@ public final class SettingsWindow extends Stage {
     }
 
     private static void loadFilesSettings() {
-        SettingsManager.setCategory("files");
+        Settings.setCategory("files");
 
         ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", false,"home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
         TextField pathInput = SettingsControls.getTextField("start-folder-location", Translator.translate("utils.example-path"), false);
@@ -195,7 +195,7 @@ public final class SettingsWindow extends Stage {
     }
 
     private static void loadLanguageSettings() {
-        SettingsManager.setCategory("language");
+        Settings.setCategory("language");
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.language"))),
@@ -203,11 +203,12 @@ public final class SettingsWindow extends Stage {
     }
 
     private static void loadAppearanceSettings() {
-        SettingsManager.setCategory("appearance");
+        Settings.setCategory("appearance");
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.appearance"))),
-                getSettingBox("window.settings.appearance.theme", SettingsControls.getChoiceBox("theme", true, "light", Translator.translate("window.settings.appearance.theme.light"), "dark", Translator.translate("window.settings.appearance.theme.dark")))));
+                getSettingBox("window.settings.appearance.theme", SettingsControls.getChoiceBox("theme", true, "light", Translator.translate("window.settings.appearance.theme.light"), "dark", Translator.translate("window.settings.appearance.theme.dark"))),
+                getSettingBox("window.settings.appearance.color", SettingsControls.getColorChooser("color", true))));
     }
 
     private void setOnClose() {
@@ -216,7 +217,7 @@ public final class SettingsWindow extends Stage {
                 new ConfirmWindow(Translator.translate("window.settings.confirm.title"), Translator.translate("window.settings.confirm.description"), event -> {
                     Platform.runLater(() -> {
                         Main.stage.close();
-                        SettingsManager.loadSettings();
+                        Settings.loadSettings();
                         Translator.reload();
                         new Main().start(new Stage());
                     });

@@ -1,6 +1,7 @@
 package com.example.aloe.window.interior.menu;
 
 import com.example.aloe.components.HBoxSpacer;
+import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.window.interior.InteriorWindow;
 import javafx.scene.control.ComboBox;
@@ -24,10 +25,11 @@ class MenuItemWindow extends InteriorWindow {
         confirmButton = getConfirmButton(Translator.translate("window.interior.menu.save"));
 
         title = getInput(titleText, Translator.translate("window.interior.menu.title"));
-        title.setStyle("-fx-border-color: #62d0de;");
+        title.setStyle(String.format("-fx-border-color: %s;", Settings.getColor()));
         path = getInput(pathText, Translator.translate("window.interior.menu.example-path"));
-        path.setStyle("-fx-border-color: #62d0de;");
+        path.setStyle(String.format("-fx-border-color: %s;", Settings.getColor()));
         icon = getComboBox(iconText);
+        icon.setStyle(String.format("-fx-border-color: %s; -fx-border-radius: 10px", Settings.getColor()));
 
         this.getChildren().addAll(getTitleLabel(name),
                 getInfoLabel(Translator.translate("window.interior.menu.title")),

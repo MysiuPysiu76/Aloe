@@ -2,7 +2,7 @@ package com.example.aloe.files.archive;
 
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.FilesUtils;
-import com.example.aloe.settings.SettingsManager;
+import com.example.aloe.settings.Settings;
 
 import java.io.File;
 
@@ -97,7 +97,7 @@ public class ArchiveHandler {
             case TAR -> new TarArchive().decompress(file);
             case TAR_GZ -> new TarGzArchive().decompress(file);
         }
-        if (Boolean.TRUE.equals(SettingsManager.getSetting("files", "delete-archive-after-extract"))) {
+        if (Boolean.TRUE.equals(Settings.getSetting("files", "delete-archive-after-extract"))) {
             new FileDeleteTask(file, true);
         }
     }

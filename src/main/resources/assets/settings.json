@@ -22,6 +22,7 @@
     "lang": "en"
   },
   "appearance": {
-    "theme": "light"
+    "theme": "light",
+    "color": "#62d0de"
   }
 }
