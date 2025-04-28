@@ -1,4 +1,7 @@
-.file-box:hover, .file-box-selected{
+.file-box:hover {
     -fx-background-color: rgba(103, 103, 103, 0.46);
 }
 
+.selected {
+    -fx-background-color: rgba(103, 103, 103, 0.46);
+}

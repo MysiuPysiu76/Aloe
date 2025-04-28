@@ -43,7 +43,7 @@ public class ConfirmWindow extends Stage {
         VBox.setMargin(box, new Insets(0, 15, 15, 5));
 
         Scene scene = new Scene(container);
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/confirm.css").toExternalForm());
         this.setScene(scene);

@@ -1,8 +1,8 @@
 package com.example.aloe.files.properties;
 
 import com.example.aloe.utils.Translator;
-import com.example.aloe.Utils;
 import com.example.aloe.files.FilesUtils;
+import com.example.aloe.utils.UnitConverter;
 import org.apache.tika.Tika;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,9 +44,17 @@ public record FileProperties(@NotNull File file) {
     public String getSize() {
         if (this.file.isDirectory()) {
             long directorySize = FilesUtils.calculateFileSize(this.file);
-            return Utils.convertBytesByUnit(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")";
+            return UnitConverter.convert(directorySize) + " (" + directorySize + Translator.translate("units.bytes") + ")";
         } else {
-            return Utils.convertBytesByUnit(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")";
+            return UnitConverter.convert(file.length()) + " (" + file.length() + Translator.translate("units.bytes") + ")";
+        }
+    }
+
+    public String getShortSize() {
+        if (this.file.isFile()) {
+            return UnitConverter.convert(this.file.length());
+        } else {
+            return String.format("%s%s", getItemsCount(), (getItemsCount().equals("1") ? Translator.translate("window.properties.item") : Translator.translate("window.properties.items")));
         }
     }
 
@@ -80,7 +88,7 @@ public record FileProperties(@NotNull File file) {
     }
 
     public String getFreeSpace() {
-        return Utils.convertBytesByUnit(this.file.getFreeSpace());
+        return UnitConverter.convert(this.file.getFreeSpace());
     }
 
     public List<String> getFilePropertiesNames() {

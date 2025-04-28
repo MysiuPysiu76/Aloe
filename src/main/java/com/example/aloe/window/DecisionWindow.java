@@ -34,7 +34,7 @@ public class DecisionWindow extends Stage {
         pane.getStyleClass().add("background");
 
         Scene scene = new Scene(pane, 430, 240);
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/decision.css").toExternalForm());
 

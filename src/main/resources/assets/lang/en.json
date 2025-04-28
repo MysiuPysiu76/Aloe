@@ -245,5 +245,9 @@
   "tooltip.navigate.tasks": "Show running tasks",
   "context-menu.empty": "Empty trash",
   "window.properties.checksum.generating": "Generating...",
-  "window.settings.appearance.color": "Accent color"
+  "window.settings.appearance.color": "Accent color",
+  "window.properties.item": " item",
+  "window.file-box.modified": "Modified",
+  "window.file-box.size": "Size",
+  "window.file-box.name": "Name"
 }

@@ -2,6 +2,7 @@ package com.example.aloe.elements.files;
 
 import com.example.aloe.Main;
 import com.example.aloe.files.CurrentDirectory;
+import com.example.aloe.files.FilesOpener;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.settings.Settings;
 import javafx.geometry.Insets;
@@ -10,10 +11,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -22,30 +23,25 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
-public class FileBox extends VBox {
+public class FileBox extends Pane {
 
-    private final File file;
-    private final double scale;
+    protected final File file;
+    protected final double scale;
     private boolean isSelected = false;
+
     private static MultiFileBoxContextMenu multiFileBoxContextMenu;
     private static final Set<FileBox> selectedFileBoxes = new LinkedHashSet<>();
 
-    public FileBox(File file) {
+     FileBox(File file) {
         this.file = file;
         this.scale = Settings.getSetting("files", "file-box-size");
-        this.setMinWidth(100 * scale);
-        this.setPrefWidth(100 * scale);
-        this.setMaxWidth(100 * scale);
-        this.setMinHeight(120 * scale);
-        this.setMaxHeight(120 * scale);
-        this.setPadding(new Insets(125, 0, 0, 0));
-        this.setAlignment(Pos.TOP_CENTER);
-        this.setSpacing(5 * scale);
+
         this.getStyleClass().add("file-box");
-        this.getChildren().addAll(getImageBox(), getName());
         this.setContextMenu();
         this.setOnDragAndDrop();
+        this.setOnClick();
     }
 
     public static Image getImage(File file) {
@@ -88,31 +84,38 @@ public class FileBox extends VBox {
     }
 
     public static void selectAllFiles() {
-        FlowPane grid = (FlowPane) Main.filesPane.getContent();
-        grid.getChildren().stream().filter(node -> node instanceof FileBox)
-                .forEach(node -> ((FileBox) node).setSelected());
-    }
-
-    private VBox getImageBox() {
-        ImageView icon = new ImageView();
-        icon.setPreserveRatio(true);
-        icon.setImage(getImage(this.file));
-        icon.setFitHeight(60 * scale);
-        icon.setFitWidth(60 * scale);
-        VBox.setMargin(icon, new Insets(5, 2, 5, 2));
-
-        VBox box = new VBox(icon);
-        box.setAlignment(Pos.BOTTOM_CENTER);
-        box.setMinHeight(70 * scale);
-        return box;
+        Stream stream;
+         if (Settings.getSetting("files", "view").equals("list")) {
+             VBox list = (VBox) Main.filesPane.getContent();
+             stream = list.getChildren().stream();
+         } else {
+             FlowPane grid = (FlowPane) Main.filesPane.getContent();
+             stream = grid.getChildren().stream();
+         }
+         stream.filter(node -> node instanceof FileBox).forEach(node -> ((FileBox) node).setSelected());
     }
 
     public File getFile() {
         return this.file;
     }
 
-    private Label getName() {
-        Label label = new javafx.scene.control.Label(this.file.getName());
+    protected VBox getImageBox(double size, Insets padding) {
+        ImageView icon = new ImageView();
+        icon.setPreserveRatio(true);
+        icon.setImage(getImage(this.file));
+        icon.setFitHeight(size * scale);
+        icon.setFitWidth(size * scale);
+        VBox.setMargin(icon, padding);
+        HBox.setMargin(icon, padding);
+
+        VBox box = new VBox(icon);
+        box.setAlignment(Pos.BOTTOM_CENTER);
+        box.setMinHeight(size * scale);
+        return box;
+    }
+
+    protected Label getName() {
+        Label label = new Label(this.file.getName());
         label.setWrapText(true);
         label.setMaxWidth(90 * scale);
         label.setAlignment(Pos.TOP_CENTER);
@@ -126,20 +129,37 @@ public class FileBox extends VBox {
         this.setOnContextMenuRequested(e -> {
             if (this.isSelected() && selectedFileBoxes.size() == 1) {
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
-            } else if (isSelected()) {
+            } else if (this.isSelected()) {
                 multiFileBoxContextMenu = new MultiFileBoxContextMenu(getSelectedFiles());
                 multiFileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
             } else {
+                FileBox.removeSelection();
+                this.setSelected();
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
                 Main.directoryMenu.hide();
-                removeSelection();
+            }
+            e.consume();
+        });
+    }
+
+    private void setOnClick() {
+        this.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1 && !e.isControlDown()) {
+                FileBox.removeSelection();
+                this.setSelected();
+            } else if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                FilesOpener.open(this.getFile());
+            } else if (e.isControlDown()) {
+                this.setSelected();
+            } else {
+                FileBox.removeSelection();
             }
             e.consume();
         });
     }
 
     public void setSelected() {
-        if (this.isSelected) {
+        if (this.isSelected()) {
             selectedFileBoxes.remove(this);
             this.removeSelectedStyle();
         } else {
@@ -150,11 +170,11 @@ public class FileBox extends VBox {
     }
 
     private void setSelectedStyle() {
-        this.getStyleClass().add("file-box-selected");
+        this.getStyleClass().add("selected");
     }
 
     public void removeSelectedStyle() {
-        this.getStyleClass().remove("file-box-selected");
+        this.getStyleClass().remove("selected");
     }
 
     public boolean isSelected() {
@@ -167,7 +187,7 @@ public class FileBox extends VBox {
             ClipboardContent content = new ClipboardContent();
             List<String> fileNamesToDrag = new ArrayList<>();
             if (selectedFileBoxes.contains(this)) {
-                for (VBox selectedFile : selectedFileBoxes) {
+                for (Pane selectedFile : selectedFileBoxes) {
                     Label fileNameLabel = (Label) selectedFile.getChildren().get(1);
                     fileNamesToDrag.add(fileNameLabel.getText());
                 }

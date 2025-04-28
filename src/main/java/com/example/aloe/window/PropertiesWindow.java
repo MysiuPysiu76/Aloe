@@ -14,6 +14,7 @@ import com.example.aloe.files.permissions.POSIXPermissions;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.utils.UnitConverter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -151,7 +152,7 @@ public class PropertiesWindow extends Stage {
 
         if (Arrays.asList(new String[]{"image/jpeg", "image/png", "image/tiff", "image/gif", "image/bmp", "image/webp"}).contains(type)) {
             Button button = getLinkButton(Translator.translate("show"));
-            button.setStyle(button.getStyle() + "-fx-text-fill: #62d0de;");
+            button.setStyle(button.getStyle() + String.format("-fx-text-fill: %s;", Settings.getColor()));
             button.setOnAction(event -> loadImageProperties());
             grid.add(getPropertiesLabel(Translator.translate("window.properties.image")), 0, grid.getRowCount());
             grid.add(button, 1, grid.getRowCount() - 1);
@@ -167,8 +168,8 @@ public class PropertiesWindow extends Stage {
 
     private void calculateFilesSizes() {
         GridPane pane = (GridPane) ((VBox) (root.getChildren().get(1))).getChildren().get(1);
-        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.isFile() ? file.length() : FilesUtils.calculateFileSize(this.file)), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(7)).setText(result)));
-        CompletableFuture.supplyAsync(() -> Utils.convertBytesByUnit(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(file.isFile() ? 15 : 17)).setText(result)));
+        CompletableFuture.supplyAsync(() -> UnitConverter.convert(file.isFile() ? file.length() : FilesUtils.calculateFileSize(this.file)), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(7)).setText(result)));
+        CompletableFuture.supplyAsync(() -> UnitConverter.convert(file.getFreeSpace()), executor).thenAccept(result -> Platform.runLater(() -> ((Label) pane.getChildren().get(file.isFile() ? 15 : 17)).setText(result)));
     }
 
     private ImageView getIcon(File file) {

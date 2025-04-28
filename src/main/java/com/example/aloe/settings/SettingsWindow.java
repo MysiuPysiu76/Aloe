@@ -120,7 +120,7 @@ public final class SettingsWindow extends Stage {
         label2.setPadding(new Insets(5, 0, 10, 5));
 
         HBox box = new HBox(new VBox(label1, control), new VBox(label2, control1));
-        box.setPadding(new Insets(10, 30, 20 , 20));
+        box.setPadding(new Insets(10, 30, 20, 20));
         box.setSpacing(20);
         box.setMinHeight(50);
         box.setStyle("-fx-border-radius: 10px; -fx-background-radius: 10px; -fx-background-color: #dedede;-fx-alignment: CENTER_LEFT;");
@@ -146,7 +146,7 @@ public final class SettingsWindow extends Stage {
 
     private static Button getBackToMenuButton() {
         Button button = WindowComponents.getBackButton("window.settings.back-to-menu", true);
-        button.setOnAction(event -> {loadMenu();});
+        button.setOnAction(event -> loadMenu());
         return button;
     }
 
@@ -169,7 +169,7 @@ public final class SettingsWindow extends Stage {
     private static void loadFilesSettings() {
         Settings.setCategory("files");
 
-        ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", false,"home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
+        ChoiceBox<Map.Entry<String, String>> startFolder = SettingsControls.getChoiceBox("start-folder", false, "home", Translator.translate("window.settings.files.start-folder.home"), "last", Translator.translate("window.settings.files.start-folder.last"), "custom", Translator.translate("window.settings.files.start-folder.custom"));
         TextField pathInput = SettingsControls.getTextField("start-folder-location", Translator.translate("utils.example-path"), false);
         pathInput.setPromptText(Translator.translate("utils.example-path"));
         pathInput.setEditable(startFolder.getSelectionModel().getSelectedItem().toString().substring(0, startFolder.getSelectionModel().getSelectedItem().toString().indexOf("=")).equals("custom"));

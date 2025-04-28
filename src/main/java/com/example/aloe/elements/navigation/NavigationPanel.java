@@ -73,7 +73,7 @@ public class NavigationPanel extends HBox {
         button.setOnMouseClicked(e -> {
             ProgressManager popOver = new ProgressManager();
             popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-            popOver.setDetachable(true);
+            popOver.setDetachable(false);
             popOver.show(button);
         });
         return button;

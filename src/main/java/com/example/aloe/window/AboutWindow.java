@@ -32,7 +32,7 @@ public class AboutWindow extends Stage {
         container.getChildren().addAll(getSegmentedButtons(container, getAboutContainer(), getCreatorContainer()), getAboutContainer());
 
         Scene scene = new Scene(container, 300, 390);
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/assets/styles/structural/about.css")).toExternalForm());
         this.setScene(scene);
@@ -46,11 +46,11 @@ public class AboutWindow extends Stage {
         ToggleButton aboutButton = new ToggleButton(Translator.translate("window.about.about"));
         aboutButton.setSelected(true);
         aboutButton.getStyleClass().add("nav-button");
-        aboutButton.setTextFill(Color.web("#62d0de"));
+        aboutButton.setTextFill(Color.web(Settings.getColor()));
 
         ToggleButton creatorButton = new ToggleButton(Translator.translate("window.about.creator"));
         creatorButton.getStyleClass().add("nav-button");
-        creatorButton.setTextFill(Color.web("#62d0de"));
+        creatorButton.setTextFill(Color.web(Settings.getColor()));
 
         SegmentedButton segmentedButton = new SegmentedButton(aboutButton, creatorButton);
 
@@ -76,7 +76,7 @@ public class AboutWindow extends Stage {
 
         Label name = new Label("Aloe");
         name.getStyleClass().addAll("name", "text");
-        Label version = new Label("1.7.0");
+        Label version = new Label("1.7.1");
         version.getStyleClass().addAll("version", "text");
         Label description = new Label(Translator.translate("window.about.description"));
         description.getStyleClass().addAll("description", "text");
@@ -126,7 +126,7 @@ public class AboutWindow extends Stage {
 
     private Hyperlink createLink(String text, String url) {
         Hyperlink linkCreator = new Hyperlink(text);
-        linkCreator.setTextFill(Color.web("#62d0de"));
+        linkCreator.setTextFill(Color.web(Settings.getColor()));
         linkCreator.getStyleClass().add("text-center");
         linkCreator.setOnAction(event -> hostServices.showDocument(url));
         return linkCreator;

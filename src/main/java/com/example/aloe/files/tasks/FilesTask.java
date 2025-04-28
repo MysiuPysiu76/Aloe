@@ -4,6 +4,7 @@ import com.example.aloe.utils.Translator;
 import com.example.aloe.Utils;
 import com.example.aloe.elements.navigation.ProgressManager;
 import com.example.aloe.files.FilesUtils;
+import com.example.aloe.utils.UnitConverter;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -34,14 +35,14 @@ abstract class FilesTask extends Task<Void> {
         if(!(files.size() == 1 && files.getFirst().length() < 1048576)) {
             String title = Translator.translate("task." + type) + files.size() + Translator.translate("task." + (files.size() == 1 ? "item-" : "items-") + destination) + destinationName;
             ProgressManager.addTask(title, progressProperty, descriptionProperty);
-            totalSizeString = Utils.convertBytesByUnit(totalSize);
+            totalSizeString = UnitConverter.convert(totalSize);
         }
     }
 
     protected void updateProgress() {
         Platform.runLater(() -> {
             progressProperty.set(Utils.calculatePercentage(progress, totalSize) / 100);
-            descriptionProperty.set(Utils.convertBytesByUnit(progress) + " / " + totalSizeString);
+            descriptionProperty.set(UnitConverter.convert(progress) + " / " + totalSizeString);
         });
     }
 }

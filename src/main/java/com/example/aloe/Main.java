@@ -60,7 +60,6 @@ public class Main extends Application {
         filesPanel.getStyleClass().add("navigation-panel");
         filesPane.getStyleClass().add("files-pane");
 
-        Main.filesPane.setFitToHeight(true);
         Main.filesPane.setFitToWidth(true);
         filesPanel.getStyleClass().add("files-panel");
         filesMenu.getStyleClass().add("files-menu");
@@ -70,6 +69,7 @@ public class Main extends Application {
         filesPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 directoryMenu.hide();
+
             }
         });
 
@@ -90,10 +90,6 @@ public class Main extends Application {
 
         SplitPane.setResizableWithParent(filesMenu, false);
 
-        filesPane.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            FileBox.removeSelection();
-        });
-
         filesMenu.setMinWidth(10);
         filesMenu.setPrefWidth(160);
         HBox navigationPanel1 = new NavigationPanel();
@@ -106,18 +102,17 @@ public class Main extends Application {
         }
 
         scene.getStylesheets().add(getClass().getResource("/assets/styles/style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/main.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/global.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/main.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/interior.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/main.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/assets/styles/" + (Settings.getSetting("appearance", "theme").equals("light") ? "light" : "dark") + "/main.css").toExternalForm());
+
         stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
-        new SettingsWindow();
-
 
         stage.setOnCloseRequest(event -> {
             Settings.setSetting("menu", "divider-position", filesPanel.getDividerPositions());
@@ -132,6 +127,8 @@ public class Main extends Application {
             directoryMenu.show(filesPane, event.getScreenX(), event.getScreenY());
             event.consume();
         });
+
+        filesPane.setOnMouseClicked(e -> FileBox.removeSelection());
     }
 
     public static void hideDarkeningPlate() {
