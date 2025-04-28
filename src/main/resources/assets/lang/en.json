@@ -249,5 +249,7 @@
   "window.properties.item": " item",
   "window.file-box.modified": "Modified",
   "window.file-box.size": "Size",
-  "window.file-box.name": "Name"
+  "window.file-box.name": "Name",
+  "window.settings.files.use-double-click": "Use double click to open file",
+  "window.confirm.confirm-action": "Confirm action"
 }

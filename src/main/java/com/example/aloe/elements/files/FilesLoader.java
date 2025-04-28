@@ -15,6 +15,7 @@ import java.util.List;
 public class FilesLoader {
 
     public static void load(File directory) {
+        if (directory.toPath().toString().equalsIgnoreCase("%trash%")) directory = new File(Settings.getSetting("files", "trash").toString());
         if (!directory.equals(CurrentDirectory.get())) {
             DirectoryHistory.addDirectory(directory);
             CurrentDirectory.set(directory);

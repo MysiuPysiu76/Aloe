@@ -144,15 +144,18 @@ public class FileBox extends Pane {
 
     private void setOnClick() {
         this.setOnMouseClicked(e -> {
-            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1 && !e.isControlDown()) {
-                FileBox.removeSelection();
-                this.setSelected();
-            } else if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
-                FilesOpener.open(this.getFile());
-            } else if (e.isControlDown()) {
-                this.setSelected();
-            } else {
-                FileBox.removeSelection();
+            int clicks = Settings.getSetting("files", "use-double-click").equals(Boolean.TRUE) ? 2 : 1;
+            if (e.getButton() == MouseButton.PRIMARY) {
+                if (e.isControlDown()) {
+                    this.setSelected();
+                } else if (e.getClickCount() == clicks) {
+                    FilesOpener.open(this.getFile());
+                } else if (e.getClickCount() == 1) {
+                    FileBox.removeSelection();
+                    this.setSelected();
+                } else {
+                    FileBox.removeSelection();
+                }
             }
             e.consume();
         });

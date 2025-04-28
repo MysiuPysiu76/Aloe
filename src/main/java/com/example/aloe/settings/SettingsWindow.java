@@ -188,6 +188,7 @@ public final class SettingsWindow extends Stage {
                 getSettingBox("window.settings.files.use-binary-units", SettingsControls.getToggleSwitch("use-binary-units", true)),
                 getSettingBox("window.settings.files.start-folder", startFolder, "window.settings.files.start-folder-location", pathInput),
                 getSettingBox("window.settings.files.delete-archive-after-extract", SettingsControls.getToggleSwitch("delete-archive-after-extract", true)),
+                getSettingBox("window.settings.files.use-double-click", SettingsControls.getToggleSwitch("use-double-click", false)),
                 getSettingBox("window.settings.files.display-directories-before-files", SettingsControls.getToggleSwitch("display-directories-before-files", false)),
                 getSettingBox("window.settings.files.file-box-size", SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", true, IntStream.rangeClosed(5, 45).mapToDouble(i -> i / 10.0).boxed().collect(Collectors.toList()), false)),
                 getSettingBox("window.settings.files.trash-location", SettingsControls.getTextField("trash", Translator.translate("utils.example-path"), true)),

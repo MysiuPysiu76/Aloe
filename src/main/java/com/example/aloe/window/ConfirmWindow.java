@@ -48,6 +48,7 @@ public class ConfirmWindow extends Stage {
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/confirm.css").toExternalForm());
         this.setScene(scene);
         this.initModality(Modality.APPLICATION_MODAL);
+        this.setTitle(Translator.translate("window.confirm.confirm-action"));
         this.showAndWait();
     }
 }
