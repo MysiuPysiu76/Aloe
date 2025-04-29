@@ -14,6 +14,7 @@
     "start-folder": "home",
     "start-folder-location": "",
     "delete-archive-after-extract": false,
+    "extract-on-click": false,
     "use-double-click": true,
     "display-thumbnails": true,
     "file-box-size": 1.0,

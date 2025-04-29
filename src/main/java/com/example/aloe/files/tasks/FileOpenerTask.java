@@ -1,5 +1,11 @@
 package com.example.aloe.files.tasks;
 
+import com.example.aloe.elements.files.FilesLoader;
+import com.example.aloe.files.FilesUtils;
+import com.example.aloe.files.archive.ArchiveHandler;
+import com.example.aloe.settings.Settings;
+import javafx.application.Platform;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +23,15 @@ public class FileOpenerTask extends FilesTask {
     @Override
     protected Void call() throws Exception {
         if (file.isFile()) {
-            openFile();
+            if (FilesUtils.isFileArchive(file) && Boolean.TRUE.equals(Settings.getSetting("files", "extract-on-click"))) {
+
+                Platform.runLater(() -> {
+                    ArchiveHandler.extract(file);
+                    FilesLoader.refresh();
+                });
+            } else {
+                openFile();
+            }
         }
         return null;
     }
