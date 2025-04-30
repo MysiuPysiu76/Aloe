@@ -1,8 +1,9 @@
 package com.example.aloe.elements.menu;
 
-import com.example.aloe.Main;
 import com.example.aloe.settings.Settings;
+import com.example.aloe.window.MainWindow;
 import javafx.geometry.Pos;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -10,38 +11,44 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 import java.util.Map;
 
-public class MenuManager {
-    private static VBox menu;
+public class Menu extends ScrollPane {
+
+    private static Menu menu;
     private static MenuContextMenu contextMenu;
 
-    static {
-        loadMenu();
+    private Menu() {
+        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
+        VBox content = new VBox();
+        content.setAlignment(Pos.TOP_CENTER);
+        if (!(items == null || items.isEmpty())) {
+            for (Map<String, Object> item : items) {
+                content.getChildren().add(new com.example.aloe.elements.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")));
+            }
+        }
+
+        this.setContent(content);
+        this.setFitToWidth(true);
+        this.setFitToHeight(true);
+        this.setHbarPolicy(ScrollBarPolicy.NEVER);
     }
 
-    public static VBox getMenu() {
+    public static Menu get() {
+        if (menu == null) menu = new Menu();
         return menu;
     }
 
-    private static void loadMenu() {
-        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
-        menu = new VBox();
-        menu.setAlignment(Pos.TOP_CENTER);
-        if (!(items == null || items.isEmpty())) {
-            for (Map<String, Object> item : items) {
-                menu.getChildren().add(new com.example.aloe.elements.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")));
-            }
-        }
-        Main.loadMenu();
-        MenuManager.setMenuOptions();
+    public static void reload() {
+        menu = new Menu();
+        MainWindow.loadMenu();
     }
 
-     static void setMenuOptions() {
+     private static void setMenuOptions(Menu content) {
         contextMenu = new MenuContextMenu();
 
-        menu.setOnContextMenuRequested(event -> {
-            contextMenu.show(menu, event.getScreenX(), event.getScreenY());
+        content.setOnContextMenuRequested(event -> {
+            contextMenu.show(content, event.getScreenX(), event.getScreenY());
         });
-        menu.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+        content.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 contextMenu.hide();
             }
@@ -52,7 +59,7 @@ public class MenuManager {
         List<Map<String, Object>> items = Settings.getSetting("menu", "items");
         items.add(Map.of("path", path, "name", name, "icon", icon));
         Settings.setSetting("menu", "items", items);
-        loadMenu();
+        reload();
     }
 
     public static void editItemInMenu(String oldPath, String newPath, String name, String icon) {
@@ -65,7 +72,7 @@ public class MenuManager {
             }
         }
         Settings.setSetting("menu", "items", items);
-        loadMenu();
+        reload();
     }
 
     static void removeItemFromMenu(String path) {
@@ -77,7 +84,7 @@ public class MenuManager {
             }
         }
         Settings.setSetting("menu", "items", items);
-        loadMenu();
+        reload();
     }
 
     static void hideOptions() {

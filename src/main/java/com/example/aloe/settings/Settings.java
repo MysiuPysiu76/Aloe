@@ -68,7 +68,6 @@ public final class Settings {
                 Map.of("path", System.getProperty("user.home") + "/Pictures", "name", Translator.translate("menu.pictures"), "icon", "PICTURE_O"),
                 Map.of("path", System.getProperty("user.home") + "/Videos", "name", Translator.translate("menu.videos"), "icon", "VIDEO_CAMERA"),
                 Map.of("path", "%trash%", "name", Translator.translate("menu.trash"), "icon", "TRASH")
-
         ));
     }
 

@@ -55,7 +55,7 @@ public class MenuItem extends Button implements ObjectProperties {
         this.setMaxWidth(Double.MAX_VALUE);
         MenuItemContextMenu menu = new MenuItemContextMenu(this);
         this.setContextMenu(menu);
-        this.setOnContextMenuRequested(e -> MenuManager.hideOptions());
+        this.setOnContextMenuRequested(e -> Menu.hideOptions());
 
         this.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {

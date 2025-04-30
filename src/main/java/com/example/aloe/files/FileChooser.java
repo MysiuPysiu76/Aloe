@@ -2,6 +2,7 @@ package com.example.aloe.files;
 
 import com.example.aloe.Main;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.window.MainWindow;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class FileChooser {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(Translator.translate("window.other.chose-directory"));
         directoryChooser.setInitialDirectory(CurrentDirectory.get());
-        return directoryChooser.showDialog(Main.scene.getWindow());
+        return directoryChooser.showDialog(MainWindow.getScene().getWindow());
     }
 
     /**
@@ -44,6 +45,6 @@ public class FileChooser {
         fileChooser.setTitle(Translator.translate("window.other.choose-file"));
         fileChooser.setInitialDirectory(CurrentDirectory.get());
         fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("All Files", "*.*"));
-        return fileChooser.showOpenDialog(Main.scene.getWindow());
+        return fileChooser.showOpenDialog(MainWindow.getScene().getWindow());
     }
 }

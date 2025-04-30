@@ -3,13 +3,18 @@ package com.example.aloe.elements.navigation;
 import com.example.aloe.Main;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.elements.files.FilesLoader;
+import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.Settings;
+import com.example.aloe.window.AboutWindow;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -99,7 +104,27 @@ public class NavigationPanel extends HBox {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.NAVICON, 20));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.options")));
-        button.setOnMouseClicked(e -> Main.showOptions(button));
+        PopOver popOver = new PopOver();
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        popOver.setDetachable(false);
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
+        VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
+        showHiddenFiles.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
+        showHiddenFiles.setOnAction(event -> {
+            Settings.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
+            FilesLoader.refresh();
+        });
+        Button aboutButton = new Button(Translator.translate("navigate.about-button"));
+        aboutButton.setOnMouseClicked(event -> new AboutWindow(new Main().getHostServices()));
+        Button settingsButton = new Button(Translator.translate("navigate.settings"));
+        settingsButton.setOnMouseClicked(event -> new SettingsWindow().show());
+        container.getChildren().addAll(showHiddenFiles, aboutButton, settingsButton);
+        popOver.setContentNode(container);
+        button.setOnMouseClicked(e -> {
+            popOver.show(button);
+        });
         return button;
     }
 

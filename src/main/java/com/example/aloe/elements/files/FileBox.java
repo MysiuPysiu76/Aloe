@@ -86,10 +86,10 @@ public class FileBox extends Pane {
     public static void selectAllFiles() {
         Stream stream;
          if (Settings.getSetting("files", "view").equals("list")) {
-             VBox list = (VBox) Main.filesPane.getContent();
+             VBox list = (VBox) FilesPane.get().getContent();
              stream = list.getChildren().stream();
          } else {
-             FlowPane grid = (FlowPane) Main.filesPane.getContent();
+             FlowPane grid = (FlowPane) FilesPane.get().getContent();
              stream = grid.getChildren().stream();
          }
          stream.filter(node -> node instanceof FileBox).forEach(node -> ((FileBox) node).setSelected());
@@ -137,7 +137,7 @@ public class FileBox extends Pane {
                 FileBox.removeSelection();
                 this.setSelected();
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
-                Main.directoryMenu.hide();
+                FilesPane.hideMenu();
             }
             e.consume();
         });

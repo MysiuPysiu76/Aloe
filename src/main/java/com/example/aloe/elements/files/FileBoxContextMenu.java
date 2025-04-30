@@ -9,7 +9,7 @@ import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.tasks.FileDuplicateTask;
 import com.example.aloe.files.tasks.FileMoveTask;
-import com.example.aloe.elements.menu.MenuManager;
+import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.window.PropertiesWindow;
@@ -40,7 +40,7 @@ public class FileBoxContextMenu extends ExtendedContextMenu {
         this.getItems().addAll(open, cut, copy, rename, duplicate, moveTo, moveToParent, moveToTrash, archive, delete, properties);
 
         if (file.isDirectory()) {
-            ExtendedMenuItem addToMenu = new ExtendedMenuItem("context-menu.add-to-menu", e -> MenuManager.addItemToMenu(file.getPath(), file.getName(), "FOLDER_OPEN_O"));
+            ExtendedMenuItem addToMenu = new ExtendedMenuItem("context-menu.add-to-menu", e -> Menu.addItemToMenu(file.getPath(), file.getName(), "FOLDER_OPEN_O"));
             this.getItems().add(9, addToMenu);
         }
     }

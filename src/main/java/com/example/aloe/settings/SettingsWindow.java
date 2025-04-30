@@ -5,6 +5,7 @@ import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.window.ConfirmWindow;
+import com.example.aloe.window.MainWindow;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -218,7 +219,7 @@ public final class SettingsWindow extends Stage {
             if (isRestartRequired) {
                 new ConfirmWindow(Translator.translate("window.settings.confirm.title"), Translator.translate("window.settings.confirm.description"), event -> {
                     Platform.runLater(() -> {
-                        Main.stage.close();
+                        MainWindow.getStage().close();
                         Settings.loadSettings();
                         Translator.reload();
                         new Main().start(new Stage());

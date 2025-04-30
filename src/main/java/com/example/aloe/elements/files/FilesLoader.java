@@ -4,6 +4,7 @@ import com.example.aloe.Main;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.Settings;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -22,7 +23,7 @@ public class FilesLoader {
         }
 
         List<File> files = getSortedFiles(getFiles(directory.listFiles()));
-        Main.filesPane.setVvalue(0);
+        FilesPane.resetPosition();
 
         if (Settings.getSetting("files", "view").equals("list")) {
             VBox list = new VBox();
@@ -31,14 +32,14 @@ public class FilesLoader {
             list.getChildren().add(HorizontalFileBox.getInfoPanel());
 
             files.forEach(file -> list.getChildren().add(new HorizontalFileBox(file)));
-            Main.filesPane.setContent(list);
+            FilesPane.set(list);
         } else {
             FlowPane grid = new FlowPane();
-            grid.setVgap(4);
-            grid.setHgap(4);
+            grid.setVgap(5);
+            grid.setHgap(5);
 
             files.forEach(file -> grid.getChildren().add(new VerticalFileBox(file)));
-            Main.filesPane.setContent(grid);
+            FilesPane.set(grid);
         }
     }
 

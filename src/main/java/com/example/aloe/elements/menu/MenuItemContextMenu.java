@@ -17,7 +17,7 @@ class MenuItemContextMenu extends ExtendedContextMenu {
 
         ExtendedMenuItem open = new ExtendedMenuItem("context-menu.open", e -> FilesOpener.open(new File(item.getPath())));
         ExtendedMenuItem edit = new ExtendedMenuItem("context-menu.edit", e -> new EditMenuItemWindow(item.getTitle(), item.getPath(), item.getIcon()));
-        ExtendedMenuItem remove = new ExtendedMenuItem("context-menu.remove", e -> MenuManager.removeItemFromMenu(item.getPath()));
+        ExtendedMenuItem remove = new ExtendedMenuItem("context-menu.remove", e -> Menu.removeItemFromMenu(item.getPath()));
         ExtendedMenuItem properties = new ExtendedMenuItem("context-menu.properties", e -> new PropertiesWindow(new File(item.getPath())));
 
         this.getItems().addAll(open, edit, remove, properties);

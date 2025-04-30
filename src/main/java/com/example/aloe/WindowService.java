@@ -34,7 +34,6 @@ public class WindowService {
 
         Scene scene = new Scene(root, 300, 95);
         window.setScene(scene);
-        window.initOwner(Main.stage);
         window.showAndWait();
     }
 }

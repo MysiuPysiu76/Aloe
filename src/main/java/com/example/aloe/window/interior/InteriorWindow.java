@@ -1,8 +1,8 @@
 package com.example.aloe.window.interior;
 
-import com.example.aloe.Main;
 import com.example.aloe.WindowComponents;
 import com.example.aloe.elements.files.FilesLoader;
+import com.example.aloe.window.MainWindow;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -24,11 +24,11 @@ public class InteriorWindow extends VBox {
     public InteriorWindow() {
         this.getStyleClass().addAll("background", "window");
 
-        Main.pane.getChildren().add(this);
-        Main.showDarkeningPlate();
+        MainWindow.getInteriorPane().getChildren().add(this);
+        MainWindow.showDarkeningPlate();
 
-        this.layoutXProperty().bind(Main.pane.widthProperty().subtract(this.widthProperty()).divide(2));
-        this.layoutYProperty().bind(Main.pane.heightProperty().subtract(this.heightProperty()).divide(2));
+        this.layoutXProperty().bind(MainWindow.getInteriorPane().widthProperty().subtract(this.widthProperty()).divide(2));
+        this.layoutYProperty().bind(MainWindow.getInteriorPane().heightProperty().subtract(this.heightProperty()).divide(2));
     }
 
     protected TextField getInput(String text, String prompt) {
@@ -58,7 +58,7 @@ public class InteriorWindow extends VBox {
 
     protected static Button getCancelButton() {
         Button button = WindowComponents.getCancelButton();
-        button.setOnAction(e -> Main.hideDarkeningPlate());
+        button.setOnAction(e -> MainWindow.hideDarkeningPlate());
         return button;
     }
 
@@ -72,7 +72,7 @@ public class InteriorWindow extends VBox {
 
     protected void hideOverlay() {
         FilesLoader.refresh();
-        Main.hideDarkeningPlate();
+        MainWindow.hideDarkeningPlate();
     }
 
     protected void setOnConfirm(EventHandler<? super MouseEvent> eventHandler) {
