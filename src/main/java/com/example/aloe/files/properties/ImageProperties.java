@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public record ImageProperties(@NotNull File file) {
+public record ImageProperties(@NotNull File file) implements Properties {
 
     public String getType() {
         return FilesUtils.getExtension(file).toUpperCase();
@@ -212,26 +212,28 @@ public record ImageProperties(@NotNull File file) {
         return (date != null) ? new SimpleDateFormat("HH:mm:ss").format(date) : null;
     }
 
+    @Override
     public List<String> getPropertiesNames() {
         List<String> names = new ArrayList<>();
-        names.add(Translator.translate("window.properties.image.type"));
-        names.add(Translator.translate("window.properties.image.width"));
-        names.add(Translator.translate("window.properties.image.height"));
+        names.add(Translator.translate("window.properties.media.type"));
+        names.add(Translator.translate("window.properties.media.width"));
+        names.add(Translator.translate("window.properties.media.height"));
         names.add(Translator.translate("window.properties.image.has-alpha"));
         names.add(Translator.translate("window.properties.image.camera-mode"));
-        names.add(Translator.translate("window.properties.image.camera"));
+        names.add(Translator.translate("window.properties.media.camera"));
         names.add(Translator.translate("window.properties.image.orientation"));
         names.add(Translator.translate("window.properties.image.software"));
         names.add(Translator.translate("window.properties.image.iso"));
         names.add(Translator.translate("window.properties.image.f-number"));
         names.add(Translator.translate("window.properties.image.compression"));
-        names.add(Translator.translate("window.properties.image.gps-width"));
-        names.add(Translator.translate("window.properties.image.gps-height"));
-        names.add(Translator.translate("window.properties.image.gps-date"));
-        names.add(Translator.translate("window.properties.image.gps-time"));
+        names.add(Translator.translate("window.properties.media.gps-width"));
+        names.add(Translator.translate("window.properties.media.gps-height"));
+        names.add(Translator.translate("window.properties.media.gps-date"));
+        names.add(Translator.translate("window.properties.media.gps-time"));
         return names;
     }
 
+    @Override
     public List<String> getPropertiesValues() {
         List<String> values = new ArrayList<>();
         values.add(getType());
@@ -252,6 +254,7 @@ public record ImageProperties(@NotNull File file) {
         return values;
     }
 
+    @Override
     public Map<String, String> getProperties() {
         List<String> names = getPropertiesNames();
         List<String> values = getPropertiesValues();

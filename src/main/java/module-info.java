@@ -21,6 +21,7 @@ module com.example.aloe {
     requires junrar;
     requires org.apache.commons.io;
     requires metadata.extractor;
+    requires com.github.kokorin.jaffree;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;
@@ -28,4 +29,6 @@ module com.example.aloe {
     opens com.example.aloe.files to javafx.fxml;
     exports com.example.aloe.utils;
     opens com.example.aloe.utils to javafx.fxml;
+    exports com.example.aloe.utils.ffmpeg;
+    opens com.example.aloe.utils.ffmpeg to javafx.fxml;
 }

@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 public class ConfirmWindow extends Stage {
 
-    public ConfirmWindow(String title, String description, EventHandler<ActionEvent> confirmEventHandler) {
+    public ConfirmWindow(String title, String description, String confirm, EventHandler<ActionEvent> confirmEventHandler) {
         VBox container = new VBox();
         container.getStyleClass().addAll("background", "root");
         Label titleLabel = new Label(title);
@@ -30,11 +30,11 @@ public class ConfirmWindow extends Stage {
         Button cancel = WindowComponents.getCancelButton();
         cancel.setOnMouseClicked(e -> this.close());
 
-        Button confirm = WindowComponents.getConfirmButton(Translator.translate("button.restart"));
-        confirm.setOnAction(confirmEventHandler);
-        confirm.setOnMouseClicked(e -> this.close());
+        Button confirmButton = WindowComponents.getConfirmButton(confirm);
+        confirmButton.setOnAction(confirmEventHandler);
+        confirmButton.setOnMouseClicked(e -> this.close());
 
-        HBox box = new HBox(new HBoxSpacer(), cancel, confirm);
+        HBox box = new HBox(new HBoxSpacer(), cancel, confirmButton);
         box.setAlignment(Pos.CENTER_RIGHT);
         box.setSpacing(10);
         box.setPadding(new Insets(13, 0, 0, 0));

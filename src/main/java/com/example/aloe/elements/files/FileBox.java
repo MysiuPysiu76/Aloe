@@ -53,7 +53,7 @@ public class FileBox extends Pane {
                     if (Boolean.TRUE.equals(Settings.getSetting("files", "display-thumbnails"))) { return new Image(new File(CurrentDirectory.get(), file.getName()).toURI().toString()); }
                     else { return new Image(getImageStream("image")); } }
                 case "webp", "heif", "raw" -> { return new Image(getImageStream("image")); }
-                case "mp4", "mkv", "ts" -> { return new Image(getImageStream("video")); }
+                case "mp4", "mkv", "ts", "mov" -> { return new Image(getImageStream("video")); }
                 case "mp3", "ogg" -> { return new Image(getImageStream("music")); }
                 case "epub", "mobi" -> { return new Image(getImageStream("book")); }
                 case "pdf" -> { return new Image(getImageStream("pdf")); }

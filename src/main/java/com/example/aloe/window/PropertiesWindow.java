@@ -11,8 +11,12 @@ import com.example.aloe.files.properties.FileProperties;
 import com.example.aloe.files.properties.ImageProperties;
 import com.example.aloe.files.permissions.ACLPermissions;
 import com.example.aloe.files.permissions.POSIXPermissions;
+import com.example.aloe.files.properties.Properties;
+import com.example.aloe.files.properties.VideoProperties;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.ClipboardManager;
+import com.example.aloe.utils.ffmpeg.FFmpegDownloader;
+import com.example.aloe.utils.ffmpeg.FFmpegChecker;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.utils.UnitConverter;
 import javafx.collections.FXCollections;
@@ -151,10 +155,28 @@ public class PropertiesWindow extends Stage {
         String type = ((Label) grid.getChildren().get(5)).getText();
 
         if (Arrays.asList(new String[]{"image/jpeg", "image/png", "image/tiff", "image/gif", "image/bmp", "image/webp"}).contains(type)) {
-            Button button = getLinkButton(Translator.translate("show"));
+            Button button = getLinkButton(Translator.translate("window.properties.file.show"));
             button.setStyle(button.getStyle() + String.format("-fx-text-fill: %s;", Settings.getColor()));
-            button.setOnAction(event -> loadImageProperties());
+            button.setOnAction(event -> loadOtherProperties(new ImageProperties(this.file), "image"));
             grid.add(getPropertiesLabel(Translator.translate("window.properties.image")), 0, grid.getRowCount());
+            grid.add(button, 1, grid.getRowCount() - 1);
+        } else if (Arrays.asList(new String[]{"video/mp4", "video/x-matroska", "video/quicktime", "video/x-msvideo", "video/webm", "video/x-flv", "video/mpeg"}).contains(type)) {
+            Button button = getLinkButton(Translator.translate("window.properties.file.show"));
+            button.setStyle(button.getStyle() + String.format("-fx-text-fill: %s;", Settings.getColor()));
+            button.setOnAction(event -> {
+                if (FFmpegChecker.isAvailable() || FFmpegChecker.isDownloaded()) {
+                    loadOtherProperties(new VideoProperties(this.file), "video");
+                } else {
+                    new ConfirmWindow(Translator.translate("window.properties.confirm.title"), Translator.translate("window.properties.confirm.description"), Translator.translate("button.download"), (e) -> {
+                        try {
+                            FFmpegDownloader.download();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                }
+            });
+            grid.add(getPropertiesLabel(Translator.translate("window.properties.video")), 0, grid.getRowCount());
             grid.add(button, 1, grid.getRowCount() - 1);
         }
     }
@@ -424,7 +446,7 @@ public class PropertiesWindow extends Stage {
 
     private CheckBox getCheckBox(boolean isSelected) {
         CheckBox checkBox = new CheckBox();
-        checkBox.setStyle("-fx-mark-color: "+ Settings.getColor() + ";");
+        checkBox.setStyle("-fx-mark-color: " + Settings.getColor() + ";");
         checkBox.setSelected(isSelected);
         GridPane.setHalignment(checkBox, HPos.CENTER);
         GridPane.setValignment(checkBox, VPos.CENTER);
@@ -517,7 +539,6 @@ public class PropertiesWindow extends Stage {
         ScrollPane pane = getScrollPane();
         GridPane permissionsGrid = new GridPane();
 
-        System.out.println(permissions.size());
         for (byte i = 0; i < permissions.size(); i++) {
             permissionsGrid.addRow(i, getLabel(Translator.translate("window.properties.permissions.acl." + permissionsList.get(i).toLowerCase().replace('_', '-'))), getCheckBox(permissions.get(i)));
         }
@@ -539,26 +560,25 @@ public class PropertiesWindow extends Stage {
         return permissions;
     }
 
-    private void loadImageProperties() {
+    private void loadOtherProperties(Properties properties, String type) {
         loadPermissionsButtonBar();
         VBox content = new VBox();
         content.getStyleClass().add("background");
         VBox.setVgrow(content, Priority.ALWAYS);
 
-        GridPane imageData = new GridPane();
-        imageData.setPadding(new Insets(5, 25, 5, 10));
-        imageData.setAlignment(Pos.TOP_CENTER);
-        ImageProperties imageProperties = new ImageProperties(this.file);
+        GridPane data = new GridPane();
+        data.setPadding(new Insets(5, 25, 5, 10));
+        data.setAlignment(Pos.TOP_CENTER);
 
-        for (Map.Entry<String, String> entry : imageProperties.getProperties().entrySet()) {
+        for (Map.Entry<String, String> entry : properties.getProperties().entrySet()) {
             Label value = new Label(entry.getValue());
             value.getStyleClass().add("text");
-            imageData.addRow(imageData.getRowCount(), getPropertiesLabel(entry.getKey()), value);
+            data.addRow(data.getRowCount(), getPropertiesLabel(entry.getKey()), value);
         }
 
-        content.getChildren().add(imageData);
+        content.getChildren().add(data);
         this.root.getChildren().set(1, content);
-        this.setTitle(Translator.translate("window.properties.image-properties"));
+        this.setTitle(Translator.translate("window.properties." + type + "-properties"));
     }
 
     @Override

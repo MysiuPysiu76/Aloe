@@ -19,7 +19,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public record FileProperties(@NotNull File file) {
+public record FileProperties(@NotNull File file) implements Properties{
 
     public String getName() {
         return this.file.getName();
@@ -91,11 +91,12 @@ public record FileProperties(@NotNull File file) {
         return UnitConverter.convert(this.file.getFreeSpace());
     }
 
-    public List<String> getFilePropertiesNames() {
+    @Override
+    public List<String> getPropertiesNames() {
         List<String> names = new ArrayList<>();
         names.add(Translator.translate("window.properties.file-name"));
         names.add(Translator.translate("window.properties.file-path"));
-        names.add(Translator.translate("window.properties.file-type"));
+        names.add(Translator.translate("window.properties.media.type"));
         names.add(Translator.translate("window.properties.file-size"));
         names.add(Translator.translate("window.properties.file-parent"));
         if (this.file.isDirectory()) {
@@ -107,7 +108,8 @@ public record FileProperties(@NotNull File file) {
         return names;
     }
 
-    public List<String> getFilePropertiesValues() {
+    @Override
+    public List<String> getPropertiesValues() {
         List<String> values = new ArrayList<>();
         values.add(getName());
         values.add(getPath());
@@ -123,9 +125,10 @@ public record FileProperties(@NotNull File file) {
         return values;
     }
 
+    @Override
     public Map<String, String> getProperties() {
-        List<String> names = getFilePropertiesNames();
-        List<String> values = getFilePropertiesValues();
+        List<String> names = getPropertiesNames();
+        List<String> values = getPropertiesValues();
 
         Map<String, String> map = new LinkedHashMap<>();
         for (int i = 0; i < Math.min(names.size(), values.size()); i++) {

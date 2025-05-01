@@ -21,13 +21,15 @@ public class MainWindow {
 
     private static Stage stage;
     private static Scene scene;
-    private static StackPane root = new StackPane();
-    private static Pane interiorWindowPane = new Pane();
+    private static StackPane root;
+    private static Pane interiorWindowPane;
     private static SplitPane filesPanel;
 
     public static void create(Stage stage1) {
         ExtendedContextMenu.setStage(stage1);
         stage = stage1;
+        root = new StackPane();
+        interiorWindowPane = new Pane();
 
         filesPanel = new SplitPane(FilesPane.get());
         SplitPane.setResizableWithParent(FilesPane.get(), true);

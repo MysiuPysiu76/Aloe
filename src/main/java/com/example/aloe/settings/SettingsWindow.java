@@ -23,6 +23,7 @@ import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -154,13 +155,24 @@ public final class SettingsWindow extends Stage {
     private static void loadMenuSettings() {
         Settings.setCategory("menu");
 
+        ChoiceBox<Map.Entry<String, String>> menuPosition = SettingsControls.getChoiceBox("position", true, "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"));
+        AtomicReference<String> position = new AtomicReference<>(Settings.getSetting("menu", "position"));
+        menuPosition.setOnAction(e -> {
+            String newPosition = Settings.getSetting("menu", "position");
+            if (!newPosition.equals(position)) {
+                position.set(newPosition);
+                double current = Settings.getSetting("menu", "divider-position");
+                Settings.setSetting("menu", "divider-position", 1.0 - current);
+            }
+        });
+
         DraggablePane pane = SettingsControls.getDraggablePane("items", true);
         pane.add(SettingsControls.getDraggableItems("items"));
 
         settings.setContent(getContentBox(getBackToMenuButton(),
                 SettingsControls.getTitleLabel(Translator.translate("window.settings.menu")),
                 getSettingBox("window.settings.menu.use-menu", SettingsControls.getToggleSwitch("use-menu", true)),
-                getSettingBox("window.settings.menu.menu-position", SettingsControls.getChoiceBox("position", true, "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
+                getSettingBox("window.settings.menu.menu-position", menuPosition),
                 getSettingBox("window.settings.menu.use-icon", SettingsControls.getToggleSwitch("use-icon", true)),
                 getSettingBox("window.settings.menu.use-text", SettingsControls.getToggleSwitch("use-text", true)),
                 getSettingBox("window.settings.menu.icons-page", SettingsControls.getChoiceBox("icon-position", true, "left", Translator.translate("utils.left"), "right", Translator.translate("utils.right"))),
@@ -217,12 +229,12 @@ public final class SettingsWindow extends Stage {
     private void setOnClose() {
         this.setOnCloseRequest(e -> {
             if (isRestartRequired) {
-                new ConfirmWindow(Translator.translate("window.settings.confirm.title"), Translator.translate("window.settings.confirm.description"), event -> {
+                new ConfirmWindow(Translator.translate("window.settings.confirm.title"), Translator.translate("window.settings.confirm.description"), Translator.translate("button.restart"), event -> {
                     Platform.runLater(() -> {
                         MainWindow.getStage().close();
                         Settings.loadSettings();
                         Translator.reload();
-                        new Main().start(new Stage());
+                        MainWindow.create(new Stage());
                     });
                 });
             }

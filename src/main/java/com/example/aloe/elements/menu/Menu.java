@@ -30,6 +30,7 @@ public class Menu extends ScrollPane {
         this.setFitToWidth(true);
         this.setFitToHeight(true);
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
+        this.setMenuOptions(this);
     }
 
     public static Menu get() {
@@ -42,7 +43,7 @@ public class Menu extends ScrollPane {
         MainWindow.loadMenu();
     }
 
-     private static void setMenuOptions(Menu content) {
+     private void setMenuOptions(Menu content) {
         contextMenu = new MenuContextMenu();
 
         content.setOnContextMenuRequested(event -> {
