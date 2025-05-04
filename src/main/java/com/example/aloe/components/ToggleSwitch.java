@@ -62,4 +62,8 @@ public class ToggleSwitch extends StackPane {
     public void setColor(String color) {
         knob.setStyle(String.format("-fx-background-color: %s; -fx-background-radius: 100px;", color));
     }
+
+    public Pane getKnob() {
+        return knob;
+    }
 }
