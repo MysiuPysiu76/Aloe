@@ -184,7 +184,7 @@ class SettingsControls {
         HBox.setMargin(colorChooser, new Insets(0, 20, 0, 20));
 
         ColorPicker picker = new ColorPicker();
-        colorChooser.colorProperty.bind(picker.colorProperty);
+        colorChooser.colorProperty().bind(picker.colorProperty);
         picker.colorProperty.set(color);
 
         VBox wrapper = new VBox(picker);
