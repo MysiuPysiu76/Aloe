@@ -23,21 +23,21 @@ public class ArrowLoader {
         /**
          * Left-pointing arrow.
          */
-        LEFT(new double[] {10, 5, 5, 10, 5, 10, 10, 15}),
+        LEFT(new double[]{10, 5, 5, 10, 5, 10, 10, 15}),
         /**
          * Upward-pointing arrow.
          */
-        TOP(new double[] {5, 10, 10, 5, 10, 5, 15, 10}),
+        TOP(new double[]{5, 10, 10, 5, 10, 5, 15, 10}),
 
         /**
          * Right-pointing arrow.
          */
-        RIGHT(new double[] {5, 5, 10, 10, 10, 10, 5, 15}),
+        RIGHT(new double[]{5, 5, 10, 10, 10, 10, 5, 15}),
 
         /**
          * Downward-pointing arrow.
          */
-        BOTTOM(new double[] {5, 5, 10, 10, 10, 10, 15, 5});
+        BOTTOM(new double[]{5, 5, 10, 10, 10, 10, 15, 5});
 
         /**
          * Points variable

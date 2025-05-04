@@ -24,7 +24,7 @@ import java.util.List;
 public class DraggablePane extends Pane {
 
     /**
-     *  List of draggable items contained within the pane.
+     * List of draggable items contained within the pane.
      */
     private final List<DraggableItem> items = new LinkedList<>();
 
@@ -59,10 +59,10 @@ public class DraggablePane extends Pane {
     private InfoBox infoBox;
 
     /**
-    * Constructs a DraggablePane with specified preferred width.
-    *
-    * @param width the preferred width of the pane
-    */
+     * Constructs a DraggablePane with specified preferred width.
+     *
+     * @param width the preferred width of the pane
+     */
     public DraggablePane(double width) {
         setPrefSize(width, USE_COMPUTED_SIZE);
         this.setStyle("fx-background-color: rgb(200,48,48);");
@@ -117,8 +117,8 @@ public class DraggablePane extends Pane {
      * Restricts a given value to be within a specified minimum and maximum range.
      *
      * @param value the value to clamp
-     * @param min the minimum allowable value
-     * @param max the maximum allowable value
+     * @param min   the minimum allowable value
+     * @param max   the maximum allowable value
      * @return the clamped value between {@code min} and {@code max}
      */
     private double clamp(double value, double min, double max) {
@@ -186,7 +186,7 @@ public class DraggablePane extends Pane {
      * appear in front of other items in the pane.
      *
      * @param sceneY the Y-coordinate of the mouse press in the scene
-     * @param item the {@link DraggableItem} that is being pressed
+     * @param item   the {@link DraggableItem} that is being pressed
      */
     private void handleMousePressed(double sceneY, DraggableItem item) {
         pressY = sceneY;
@@ -202,7 +202,7 @@ public class DraggablePane extends Pane {
      * stays within the bounds of the pane and does not overlap with other items.
      *
      * @param event the mouse event that provides the current Y-coordinate of the mouse
-     * @param item the {@link DraggableItem} that is being dragged
+     * @param item  the {@link DraggableItem} that is being dragged
      */
     private void handleMouseDragged(MouseEvent event, DraggableItem item) {
         if (draggableItem != null) {
