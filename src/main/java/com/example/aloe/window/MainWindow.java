@@ -50,6 +50,7 @@ public class MainWindow {
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/interior.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/main.css").toExternalForm());
+        scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; }", Settings.getColor()));
         stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
         stage.setMinWidth(700);

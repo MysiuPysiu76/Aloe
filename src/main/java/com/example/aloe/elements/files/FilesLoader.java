@@ -1,10 +1,8 @@
 package com.example.aloe.elements.files;
 
-import com.example.aloe.Main;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.Settings;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -20,6 +18,7 @@ public class FilesLoader {
         if (!directory.equals(CurrentDirectory.get())) {
             DirectoryHistory.addDirectory(directory);
             CurrentDirectory.set(directory);
+            if (Settings.getSetting("files", "start-folder").equals("last")) Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
         }
 
         List<File> files = getSortedFiles(getFiles(directory.listFiles()));

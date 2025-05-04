@@ -1,0 +1,60 @@
+.root {
+    -fx-padding: 5px 65px 5px 65px;
+}
+
+.box {
+    -fx-background-radius: 10px;
+}
+
+.menu-title {
+    -fx-font-size: 17px;
+}
+
+.menu-description {
+    -fx-font-size: 12px;
+}
+
+.content-box {
+    -fx-padding: 30px 30px 30px 30px;
+}
+
+.title {
+    -fx-font-size: 25px;
+}
+
+.setting-label {
+    -fx-font-size: 14px;
+    -fx-padding: 4px 20px 4px 20px;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.choice-box  {
+    -fx-padding: 4px 6px 4px 6px;
+    -fx-background-radius: 7px;
+}
+
+.choice-box .context-menu {
+    -fx-padding: 5px;
+    -fx-background-radius: 5px;
+}
+
+.choice-box .menu-item {
+    -fx-padding: 6px;
+    -fx-background-radius: 5px;
+    -fx-background-color: transparent;
+}
+
+.slider .track {
+    -fx-padding: 2px;
+}
+
+.text-field {
+    -fx-max-width: 300px;
+    -fx-padding: 6px 8px 6px 8px;
+    -fx-font-size: 13px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}

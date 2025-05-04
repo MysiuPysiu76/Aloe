@@ -144,6 +144,7 @@ public class DraggablePane extends Pane {
      */
     private void configureItem(DraggableItem item) {
         item.setLayoutX(0);
+        item.getStyleClass().add("text");
         item.setPrefHeight(25);
         item.setLayoutY(items.size() * (item.getPrefHeight() + spacing));
         item.setMinWidth(getPrefWidth());

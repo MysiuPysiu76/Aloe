@@ -1,0 +1,39 @@
+.box {
+    -fx-background-color: #fdfcfd;
+}
+
+.draggable-item {
+    -fx-background-color: #ececec;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #b8b8b8;
+}
+
+.choice-box  {
+    -fx-background-color: #eeeeee;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: #eeeeee;
+}
+
+.choice-box .menu-item {
+    -fx-text-fill: #2e2f2f;
+}
+
+.choice-box .menu-item:focused .label {
+    -fx-text-fill: #2e2f2f;
+}
+
+.slider .track {
+    -fx-background-color: #cccccc;
+}
+
+.text-field {
+    -fx-background-color: #f0f0f0;
+}
+
+.line {
+    -fx-stroke: #d1d1d1;
+}

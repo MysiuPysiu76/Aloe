@@ -52,6 +52,7 @@ public class ColorPicker extends VBox {
         colorPreview.setStroke(Color.BLACK);
 
         colorText = new TextField();
+        colorText.getStyleClass().add("text");
         colorText.textProperty().addListener((obs, oldVal, newVal) -> updateColor(newVal));
 
         colorProperty.addListener((obs, oldVal, newVal) -> updateColor(newVal));

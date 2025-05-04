@@ -69,6 +69,10 @@
     -fx-background-insets: 0;
 }
 
+.cursor-hand {
+    -fx-cursor: hand;
+}
+
 .text-area {
     -fx-font-size: 13px;
     -fx-padding: 3px;

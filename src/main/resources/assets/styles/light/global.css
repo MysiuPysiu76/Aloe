@@ -2,7 +2,7 @@
     -fx-background-color: #dcdcdd;
 }
 
-.text {
+.text, .choice-box .label {
     -fx-text-fill: #2e2f2f;
 }
 

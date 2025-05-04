@@ -1,6 +1,5 @@
 package com.example.aloe.elements.files;
 
-import com.example.aloe.Main;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FilesOpener;
 import com.example.aloe.files.FilesUtils;
