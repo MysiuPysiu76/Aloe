@@ -2,7 +2,7 @@
     -fx-background-color: #dcdcdd;
 }
 
-.text, .choice-box .label {
+.text, .choice-box .label, .list-cell {
     -fx-text-fill: #2e2f2f;
 }
 
@@ -79,4 +79,8 @@
 
 .button-option:hover {
    -fx-background-color: #c1c1c1;
+}
+
+.list-view {
+    -fx-background-color: #efefef;
 }

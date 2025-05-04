@@ -59,14 +59,16 @@ public class PropertiesWindow extends Stage {
 
     public PropertiesWindow(@NotNull File file) {
         this.file = file;
-        this.setMinHeight(430);
+        this.setMinHeight(440);
         this.setMinWidth(350);
 
         root.getChildren().addAll(new Pane(), new Pane());
+        root.getStyleClass().add("background");
 
         Scene scene = new Scene(root, 300, 430);
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
+        scene.getStylesheets().add(String.format("data:text/css, .list-cell:selected { -fx-background-color: %s; }", Settings.getColor()));
         this.setScene(scene);
         this.show();
         loadProperties();
@@ -462,6 +464,7 @@ public class PropertiesWindow extends Stage {
 
     private void loadACLPermissions() {
         VBox content = new VBox();
+        content.getStyleClass().add("background");
         content.setAlignment(Pos.TOP_CENTER);
         ListView<String> usersListView = new ListView<>();
         ACLPermissions permissions = new ACLPermissions(this.file);
@@ -478,8 +481,8 @@ public class PropertiesWindow extends Stage {
             }
         });
 
-        Label choseUserLabel = new Label(Translator.translate("window.properties.permissions.chose-user"));
-        Label modifyPermissionsLabel = new Label(Translator.translate("window.properties.permissions.modify-permissions"));
+        Label choseUserLabel = getLabel(Translator.translate("window.properties.permissions.chose-user"));
+        Label modifyPermissionsLabel = getLabel(Translator.translate("window.properties.permissions.modify-permissions"));
 
         Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
         updatePermissions.setOnAction(e -> {
@@ -500,13 +503,16 @@ public class PropertiesWindow extends Stage {
         }
 
         ScrollPane permissionsPane = new ScrollPane();
-        VBox.setVgrow(permissionsPane, Priority.ALWAYS);
-        permissionsPane.setPrefHeight(200);
-        permissionsPane.setMaxHeight(600);
+        permissionsPane.setPrefHeight(190);
+        permissionsPane.setMaxHeight(540);
 
         VBox container = new VBox(choseUserLabel, usersListView, modifyPermissionsLabel, permissionsPane, bottomButtonWrapper);
         container.setMaxWidth(400);
         content.getChildren().addAll(container);
+        VBox.setVgrow(permissionsPane, Priority.ALWAYS);
+        VBox.setVgrow(container, Priority.ALWAYS);
+        VBox.setVgrow(content, Priority.ALWAYS);
+
         this.root.getChildren().set(1, content);
         usersListView.getSelectionModel().selectFirst();
     }
@@ -537,13 +543,18 @@ public class PropertiesWindow extends Stage {
 
     private void loadACLPermissionsPane(List<String> permissionsList, List<Boolean> permissions) {
         ScrollPane pane = getScrollPane();
+        pane.getStyleClass().add("scroll-pane-properties");
         GridPane permissionsGrid = new GridPane();
+        permissionsGrid.getStyleClass().add("grid-properties");
+        permissionsGrid.setPadding(new Insets(0, 0, 0, 50));
 
         for (byte i = 0; i < permissions.size(); i++) {
             permissionsGrid.addRow(i, getLabel(Translator.translate("window.properties.permissions.acl." + permissionsList.get(i).toLowerCase().replace('_', '-'))), getCheckBox(permissions.get(i)));
         }
 
         pane.setVvalue(0);
+        pane.setFitToWidth(true);
+        pane.setFitToHeight(true);
         pane.setContent(permissionsGrid);
     }
 
