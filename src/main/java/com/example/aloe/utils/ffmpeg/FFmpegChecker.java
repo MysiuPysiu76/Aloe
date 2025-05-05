@@ -1,5 +1,7 @@
 package com.example.aloe.utils.ffmpeg;
 
+import com.example.aloe.utils.CurrentPlatform;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +24,7 @@ import java.nio.file.Paths;
  * }
  * </pre>
  *
+ * @see FFmpegDownloader
  * @since 1.9.1
  */
 public class FFmpegChecker {
@@ -66,15 +69,6 @@ public class FFmpegChecker {
      * @return {@code true} if the file is executable or the OS is Windows; {@code false} otherwise
      */
     private static boolean isExecutable(Path path) {
-        return Files.exists(path) && Files.isRegularFile(path) && Files.isReadable(path) && (Files.isExecutable(path) || isWindows());
-    }
-
-    /**
-     * Determines whether the current operating system is Windows.
-     *
-     * @return {@code true} if the OS name contains "win"; {@code false} otherwise
-     */
-    private static boolean isWindows() {
-        return System.getProperty("os.name").toLowerCase().contains("win");
+        return Files.exists(path) && Files.isRegularFile(path) && Files.isReadable(path) && (Files.isExecutable(path) || CurrentPlatform.isWindows());
     }
 }
