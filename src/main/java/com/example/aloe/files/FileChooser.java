@@ -1,6 +1,5 @@
 package com.example.aloe.files;
 
-import com.example.aloe.Main;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.window.MainWindow;
 import javafx.stage.DirectoryChooser;
