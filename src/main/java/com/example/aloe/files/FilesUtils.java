@@ -11,6 +11,8 @@ import java.util.List;
  * </p>
  *
  * <p>All methods are {@code static} and the class is not meant to be instantiated.</p>
+ *
+ * @since 1.9.7
  */
 public class FilesUtils {
 
