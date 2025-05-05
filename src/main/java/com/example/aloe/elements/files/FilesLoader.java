@@ -14,11 +14,13 @@ import java.util.List;
 public class FilesLoader {
 
     public static void load(File directory) {
-        if (directory.toPath().toString().equalsIgnoreCase("%trash%")) directory = new File(Settings.getSetting("files", "trash").toString());
+        if (directory.toPath().toString().equalsIgnoreCase("%trash%"))
+            directory = new File(Settings.getSetting("files", "trash").toString());
         if (!directory.equals(CurrentDirectory.get())) {
             DirectoryHistory.addDirectory(directory);
             CurrentDirectory.set(directory);
-            if (Settings.getSetting("files", "start-folder").equals("last")) Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
+            if (Settings.getSetting("files", "start-folder").equals("last"))
+                Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
         }
 
         List<File> files = getSortedFiles(getFiles(directory.listFiles()));
@@ -53,13 +55,35 @@ public class FilesLoader {
 
     private static List<File> getSortedFiles(List<File> files) {
         boolean directoriesFirst = Boolean.TRUE.equals(Settings.getSetting("files", "display-directories-before-files"));
+        Sorting sorting = Sorting.safeValueOf(Settings.getSetting("files", "sorting").toString().toUpperCase());
         return files.stream()
                 .sorted((file1, file2) -> {
                     if (directoriesFirst) {
                         if (file1.isDirectory() && !file2.isDirectory()) return -1;
                         if (!file1.isDirectory() && file2.isDirectory()) return 1;
                     }
-                    return file1.getName().compareToIgnoreCase(file2.getName());
+
+                    switch (sorting) {
+                        case NAMEASC -> {
+                            return file1.getName().compareToIgnoreCase(file2.getName());
+                        }
+                        case NAMEDESC -> {
+                            return file2.getName().compareToIgnoreCase(file1.getName());
+                        }
+                        case DATEASC -> {
+                            return Long.compare(file1.lastModified(), file2.lastModified());
+                        }
+                        case DATEDESC -> {
+                            return Long.compare(file2.lastModified(), file1.lastModified());
+                        }
+                        case SIZEASC -> {
+                            return Long.compare(file1.length(), file2.length());
+                        }
+                        case SIZEDESC -> {
+                            return Long.compare(file2.length(), file1.length());
+                        }
+                    }
+                    return 0;
                 }).toList();
     }
 

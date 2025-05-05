@@ -3,6 +3,7 @@ package com.example.aloe.elements.navigation;
 import com.example.aloe.Main;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.elements.files.FilesLoader;
+import com.example.aloe.elements.files.Sorting;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
@@ -10,9 +11,7 @@ import com.example.aloe.settings.Settings;
 import com.example.aloe.window.AboutWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
@@ -21,9 +20,11 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 public class NavigationPanel extends HBox {
 
+    private static ToggleGroup group = new ToggleGroup();
+
     public NavigationPanel() {
         this.setPadding(new Insets(5, 8, 5, 8));
-        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), new HBoxSpacer(), getTasksButton(), getViewButton(), getOptionsButton());
+        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), new HBoxSpacer(), getSortButton(), getTasksButton(), getViewButton(), getOptionsButton());
     }
 
     private Button getNavigationButton() {
@@ -82,6 +83,50 @@ public class NavigationPanel extends HBox {
             popOver.show(button);
         });
         return button;
+    }
+
+    private Button getSortButton() {
+        Button button = getNavigationButton();
+        button.setGraphic(getIcon(FontAwesome.SORT_ALPHA_ASC, 20));
+        button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.sort")));
+
+        RadioButton nameAsc = getRadioButton("name-asc", group, Sorting.NAMEASC);
+        RadioButton nameDesc = getRadioButton("name-desc", group, Sorting.NAMEDESC);
+        RadioButton dateAsc = getRadioButton("date-asc", group, Sorting.DATEASC);
+        RadioButton dateDesc = getRadioButton("date-desc", group, Sorting.DATEDESC);
+        RadioButton sizeAsc = getRadioButton("size-asc", group, Sorting.SIZEASC);
+        RadioButton sizeDesc = getRadioButton("size-desc", group, Sorting.SIZEDESC);
+
+        VBox content = new VBox(nameAsc, nameDesc, dateAsc, dateDesc, sizeAsc, sizeDesc);
+
+        switch (Sorting.safeValueOf(Settings.getSetting("files", "sorting").toString().toUpperCase())) {
+            case NAMEASC -> group.selectToggle(nameAsc);
+            case NAMEDESC -> group.selectToggle(nameDesc);
+            case DATEASC -> group.selectToggle(dateAsc);
+            case DATEDESC -> group.selectToggle(dateDesc);
+            case SIZEASC -> group.selectToggle(sizeAsc);
+            case SIZEDESC -> group.selectToggle(sizeDesc);
+        }
+
+        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            Settings.setSetting("files", "sorting", group.getSelectedToggle().getUserData().toString());
+            FilesLoader.refresh();
+        });
+
+        PopOver popOver = new PopOver();
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        popOver.setDetachable(false);
+        popOver.setContentNode(content);
+
+        button.setOnMouseClicked(e -> popOver.show(button));
+        return button;
+    }
+
+    private RadioButton getRadioButton(String text, ToggleGroup group, Sorting method) {
+        RadioButton radioButton = new RadioButton(Translator.translate("navigation.sorting." + text));
+        radioButton.setToggleGroup(group);
+        radioButton.setUserData(method);
+        return radioButton;
     }
 
     private Button getViewButton() {

@@ -18,7 +18,8 @@
     "use-double-click": true,
     "display-thumbnails": true,
     "file-box-size": 1.0,
-    "display-directories-before-files": true
+    "display-directories-before-files": true,
+    "sorting": "NAMEASC"
   },
   "language": {
     "lang": "en"

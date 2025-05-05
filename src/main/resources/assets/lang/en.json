@@ -264,5 +264,12 @@
   "window.properties.video-properties": "Video properties",
   "window.properties.video.bitrate": "Bitrate: ",
   "window.properties.video.fps": "FPS: ",
-  "window.properties.video.channel": "Channel: "
+  "window.properties.video.channel": "Channel: ",
+  "tooltip.navigate.sort": "Chose sorting",
+  "navigation.sorting.name-asc": "Name ascending",
+  "navigation.sorting.name-desc": "Name descending",
+  "navigation.sorting.date-asc": "Date ascending",
+  "navigation.sorting.date-desc": "Date descending",
+  "navigation.sorting.size-asc": "Size ascending",
+  "navigation.sorting.size-desc": "Size descending"
 }
