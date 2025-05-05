@@ -27,7 +27,6 @@ import java.util.*;
  * </p>
  *
  * @param file the image file whose properties are to be read
- *
  * @see Properties
  * @since 1.9.5
  */
@@ -406,7 +405,7 @@ public record ImageProperties(@NotNull File file) implements Properties {
         Map<String, String> map = new LinkedHashMap<>();
         for (int i = 0; i < Math.min(names.size(), values.size()); i++) {
             if (values.get(i) != null) {
-            map.put(names.get(i), values.get(i));
+                map.put(names.get(i), values.get(i));
             }
         }
         return map;

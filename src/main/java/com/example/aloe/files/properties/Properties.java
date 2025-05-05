@@ -9,10 +9,13 @@ import java.util.Map;
  * Implementations of this interface should provide a set of human-readable property names
  * and their corresponding values, which can be displayed in user interfaces or exported.
  * </p>
- *
+ * <p>
  * Typical properties may include file name, size, type, creation time, modification time,
  * parent directory, and so on.
  *
+ * @see FileProperties
+ * @see ImageProperties
+ * @see VideoProperties
  * @since 1.9.4
  */
 public interface Properties {

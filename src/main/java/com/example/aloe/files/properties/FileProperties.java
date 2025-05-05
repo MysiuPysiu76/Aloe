@@ -28,7 +28,6 @@ import java.util.*;
  * directory in a user-friendly format.
  *
  * @param file file whose properties are to be read
- *
  * @see Properties
  * @since 1.9.4
  */
