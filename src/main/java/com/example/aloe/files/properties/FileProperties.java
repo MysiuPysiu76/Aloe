@@ -27,6 +27,9 @@ import java.util.*;
  * using a {@link Translator}. It can be used to extract and display metadata about a file or
  * directory in a user-friendly format.
  *
+ * @param file file whose properties are to be read
+ *
+ * @see Properties
  * @since 1.9.4
  */
 public record FileProperties(@NotNull File file) implements Properties {

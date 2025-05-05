@@ -16,32 +16,67 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * A {@code Properties} implementation that extracts and provides metadata properties from an image file.
+ * <p>
+ * This class uses EXIF metadata and standard image file attributes to present image-related information
+ * such as dimensions, camera settings, GPS coordinates, orientation, and others.
+ * </p>
+ * <p>
+ * It supports various image formats and reads metadata using the {@code metadata-extractor} library.
+ * </p>
+ *
+ * @param file the image file whose properties are to be read
+ *
+ * @see Properties
+ * @since 1.9.5
+ */
 public record ImageProperties(@NotNull File file) implements Properties {
 
+    /**
+     * Returns the image file type based on its extension.
+     *
+     * @return the file extension in uppercase (e.g., "JPG", "PNG")
+     */
     public String getType() {
         return FilesUtils.getExtension(file).toUpperCase();
     }
 
+    /**
+     * Returns the width of the image in pixels.
+     *
+     * @return width as a string with "px" suffix, or {@code null} if unreadable
+     */
     public String getWidth() {
         try {
             BufferedImage image = ImageIO.read(file);
-            return image != null ? String.valueOf(image.getWidth()) + "px" : null;
+            return image != null ? image.getWidth() + "px" : null;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Returns the height of the image in pixels.
+     *
+     * @return height as a string with "px" suffix, or {@code null} if unreadable
+     */
     public String getHeight() {
         try {
             BufferedImage image = ImageIO.read(file);
-            return image != null ? String.valueOf(image.getHeight()) + "px" : null;
+            return image != null ? image.getHeight() + "px" : null;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Checks whether the image has an alpha (transparency) channel.
+     *
+     * @return localized "yes" or "no", or {@code null} if unreadable
+     */
     public String getAlpha() {
         try {
             BufferedImage image = ImageIO.read(file);
@@ -52,14 +87,30 @@ public record ImageProperties(@NotNull File file) implements Properties {
         return null;
     }
 
+    /**
+     * Returns the camera model that took the photo, extracted from EXIF data.
+     *
+     * @return camera model or {@code null} if not available
+     */
     public String getCamera() {
         return getExifTag(ExifIFD0Directory.TAG_MODEL);
     }
 
+    /**
+     * Returns the image orientation in a human-readable form based on EXIF metadata.
+     *
+     * @return localized description of orientation or {@code null} if unknown
+     */
     public String getOrientation() {
-        return decodeOrientation(Integer.parseInt(getExifTag(ExifIFD0Directory.TAG_ORIENTATION) == null ? String.valueOf(-1) : getExifTag(ExifIFD0Directory.TAG_ORIENTATION)));
+        return decodeOrientation(Integer.parseInt(getExifTag(ExifIFD0Directory.TAG_ORIENTATION) == null ? "-1" : getExifTag(ExifIFD0Directory.TAG_ORIENTATION)));
     }
 
+    /**
+     * Converts orientation numeric code to localized description.
+     *
+     * @param number EXIF orientation value
+     * @return localized string describing the orientation
+     */
     private String decodeOrientation(Integer number) {
         return switch (number) {
             case 1 -> Translator.translate("window.properties.image.orientation.normal");
@@ -74,27 +125,50 @@ public record ImageProperties(@NotNull File file) implements Properties {
         };
     }
 
+    /**
+     * Returns the software name used to process the image.
+     *
+     * @return software name or {@code null}
+     */
     public String getSoftware() {
         return getExifTag(ExifIFD0Directory.TAG_SOFTWARE);
     }
 
+    /**
+     * Returns the ISO sensitivity value from EXIF metadata.
+     *
+     * @return ISO value or {@code null}
+     */
     public String getISO() {
         return getExifTag(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
     }
 
+    /**
+     * Returns the F-number (aperture) used to capture the image.
+     *
+     * @return F-number or {@code null}
+     */
     public String getFNumber() {
         return getExifTag(ExifSubIFDDirectory.TAG_FNUMBER);
     }
 
+    /**
+     * Returns a localized string describing the camera shooting mode.
+     *
+     * @return shooting mode or {@code null} if not available
+     */
     public String getShootingMode() {
         Integer mode = getExifInteger();
-        if (mode == null) {
-            return null;
-        } else {
-            return decodeShootingMode(mode);
-        }
+        if (mode == null) return null;
+        return decodeShootingMode(mode);
     }
 
+    /**
+     * Maps shooting mode EXIF code to localized string.
+     *
+     * @param mode numeric shooting mode
+     * @return localized string for camera mode
+     */
     private String decodeShootingMode(Integer mode) {
         return switch (mode) {
             case 1 -> Translator.translate("window.properties.image.camera-mode.manual");
@@ -109,27 +183,46 @@ public record ImageProperties(@NotNull File file) implements Properties {
         };
     }
 
+    /**
+     * Returns the compression method used in the image, if available.
+     *
+     * @return compression type or {@code null}
+     */
     public String getCompression() {
         String compression = getExifTag(ExifIFD0Directory.TAG_COMPRESSION);
         return (compression == null || compression.isEmpty()) ? null : compression;
     }
 
+    /**
+     * Returns the GPS latitude coordinate of the image.
+     *
+     * @return latitude as string or {@code null}
+     */
     public String getGPSWidth() {
         GpsDirectory gpsDir = getGpsDirectory();
         return gpsDir != null ? String.valueOf(gpsDir.getGeoLocation().getLatitude()) : null;
     }
 
+    /**
+     * Returns the GPS longitude coordinate of the image.
+     *
+     * @return longitude as string or {@code null}
+     */
     public String getGPSHeight() {
         GpsDirectory gpsDir = getGpsDirectory();
         return gpsDir != null ? String.valueOf(gpsDir.getGeoLocation().getLongitude()) : null;
     }
 
+    /**
+     * Returns the capture date of the image in {@code yyyy-MM-dd} format.
+     *
+     * @return formatted date or {@code null}
+     */
     public String getDate() {
         String dateTimeOriginal = getExifDate(this.file);
         if (dateTimeOriginal != null) {
             try {
-                SimpleDateFormat exifFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-                Date date = exifFormat.parse(dateTimeOriginal);
+                Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(dateTimeOriginal);
                 return formatDate(date);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -138,12 +231,16 @@ public record ImageProperties(@NotNull File file) implements Properties {
         return null;
     }
 
+    /**
+     * Returns the capture time of the image in {@code HH:mm:ss} format.
+     *
+     * @return formatted time or {@code null}
+     */
     public String getTime() {
         String dateTimeOriginal = getExifDate(this.file);
         if (dateTimeOriginal != null) {
             try {
-                SimpleDateFormat exifFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-                Date date = exifFormat.parse(dateTimeOriginal);
+                Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(dateTimeOriginal);
                 return formatTime(date);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -152,24 +249,28 @@ public record ImageProperties(@NotNull File file) implements Properties {
         return null;
     }
 
+    /**
+     * Extracts original EXIF datetime string.
+     *
+     * @param photoFile the image file
+     * @return EXIF datetime string or {@code null}
+     */
     private static String getExifDate(File photoFile) {
         try {
             Metadata metadata = ImageMetadataReader.readMetadata(photoFile);
-
             ExifSubIFDDirectory subDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-            if (subDirectory != null) {
-                String dateTimeOriginal = subDirectory.getString(36867);
-                if (dateTimeOriginal != null) {
-                    return dateTimeOriginal;
-                }
-            }
-
+            return subDirectory != null ? subDirectory.getString(36867) : null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Reads metadata from the image file.
+     *
+     * @return parsed {@code Metadata} object or {@code null}
+     */
     private Metadata getMetadata() {
         try {
             return ImageMetadataReader.readMetadata(file);
@@ -178,6 +279,12 @@ public record ImageProperties(@NotNull File file) implements Properties {
         }
     }
 
+    /**
+     * Reads a specific EXIF tag's string value from metadata.
+     *
+     * @param tag the EXIF tag identifier
+     * @return tag value or {@code null}
+     */
     private String getExifTag(int tag) {
         Metadata metadata = getMetadata();
         if (metadata == null) return null;
@@ -187,10 +294,14 @@ public record ImageProperties(@NotNull File file) implements Properties {
 
         if (dir != null && dir.containsTag(tag)) return dir.getString(tag);
         if (subDir != null && subDir.containsTag(tag)) return subDir.getString(tag);
-
         return null;
     }
 
+    /**
+     * Reads an EXIF integer tag for shooting mode.
+     *
+     * @return shooting mode as integer or {@code null}
+     */
     private Integer getExifInteger() {
         Metadata metadata = getMetadata();
         if (metadata == null) return null;
@@ -199,19 +310,41 @@ public record ImageProperties(@NotNull File file) implements Properties {
         return (subDir != null) ? subDir.getInteger(com.drew.metadata.exif.ExifDirectoryBase.TAG_EXPOSURE_PROGRAM) : null;
     }
 
+    /**
+     * Gets the GPS directory from image metadata.
+     *
+     * @return {@code GpsDirectory} or {@code null}
+     */
     private GpsDirectory getGpsDirectory() {
         Metadata metadata = getMetadata();
         return metadata != null ? metadata.getFirstDirectoryOfType(GpsDirectory.class) : null;
     }
 
+    /**
+     * Formats a {@code Date} object into {@code yyyy-MM-dd} format.
+     *
+     * @param date the date to format
+     * @return formatted string or {@code null}
+     */
     private static String formatDate(Date date) {
         return (date != null) ? new SimpleDateFormat("yyyy-MM-dd").format(date) : null;
     }
 
+    /**
+     * Formats a {@code Date} object into {@code HH:mm:ss} format.
+     *
+     * @param date the date to format
+     * @return formatted time or {@code null}
+     */
     private static String formatTime(Date date) {
         return (date != null) ? new SimpleDateFormat("HH:mm:ss").format(date) : null;
     }
 
+    /**
+     * Returns a list of localized property names to be displayed in the UI.
+     *
+     * @return list of property names
+     */
     @Override
     public List<String> getPropertiesNames() {
         List<String> names = new ArrayList<>();
@@ -233,6 +366,11 @@ public record ImageProperties(@NotNull File file) implements Properties {
         return names;
     }
 
+    /**
+     * Returns a list of property values corresponding to the names returned by {@link #getPropertiesNames()}.
+     *
+     * @return list of property values
+     */
     @Override
     public List<String> getPropertiesValues() {
         List<String> values = new ArrayList<>();
@@ -254,6 +392,12 @@ public record ImageProperties(@NotNull File file) implements Properties {
         return values;
     }
 
+    /**
+     * Returns a map of property names and corresponding values.
+     * Useful for displaying or exporting file metadata.
+     *
+     * @return map of file properties
+     */
     @Override
     public Map<String, String> getProperties() {
         List<String> names = getPropertiesNames();
@@ -268,4 +412,3 @@ public record ImageProperties(@NotNull File file) implements Properties {
         return map;
     }
 }
-
