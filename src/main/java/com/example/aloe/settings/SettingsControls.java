@@ -1,6 +1,5 @@
 package com.example.aloe.settings;
 
-import com.example.aloe.*;
 import com.example.aloe.components.*;
 import com.example.aloe.components.ColorPicker;
 import com.example.aloe.components.Slider;
@@ -9,6 +8,7 @@ import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.components.draggable.InfoBox;
 import com.example.aloe.elements.menu.MenuItem;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.utils.Utils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

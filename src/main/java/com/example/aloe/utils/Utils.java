@@ -1,4 +1,4 @@
-package com.example.aloe;
+package com.example.aloe.utils;
 
 import com.example.aloe.settings.Settings;
 

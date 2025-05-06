@@ -22,7 +22,7 @@ import java.util.List;
  * </p>
  *
  * @see FilesTask
- * @see com.example.aloe.elements.files.FilesLoader
+ * @since 2.0.4
  */
 public class FileDeleteTask extends FilesTask {
 
