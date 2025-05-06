@@ -1,5 +1,6 @@
 package com.example.aloe.elements.files;
 
+import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.Settings;
@@ -23,6 +24,7 @@ public class FilesLoader {
                 Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
         }
 
+        NavigationPanel.updateFilesPath();
         List<File> files = getSortedFiles(getFiles(directory.listFiles()));
         FilesPane.resetPosition();
 

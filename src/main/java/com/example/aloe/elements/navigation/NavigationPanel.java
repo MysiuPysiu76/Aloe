@@ -4,6 +4,7 @@ import com.example.aloe.Main;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.files.Sorting;
+import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
@@ -11,6 +12,7 @@ import com.example.aloe.settings.Settings;
 import com.example.aloe.window.AboutWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -18,13 +20,57 @@ import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.File;
+
 public class NavigationPanel extends HBox {
 
     private static ToggleGroup group = new ToggleGroup();
+    private static ResponsivePane filesPath = new ResponsivePane();
 
     public NavigationPanel() {
+
+        HBoxSpacer leftSpacer = new HBoxSpacer();
+        leftSpacer.setMaxWidth(200);
+        HBoxSpacer rightSpacer = new HBoxSpacer();
+        rightSpacer.setMaxWidth(200);
+        filesPath.setMaxHeight(30);
+        filesPath.getStyleClass().add("files-path");
+
         this.setPadding(new Insets(5, 8, 5, 8));
-        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), new HBoxSpacer(), getSortButton(), getTasksButton(), getViewButton(), getOptionsButton());
+        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), leftSpacer, filesPath, rightSpacer, getSortButton(), getTasksButton(), getViewButton(), getOptionsButton());
+    }
+
+    public static void updateFilesPath() {
+        File currentDirectory = CurrentDirectory.get();
+
+        HBox container = new HBox();
+        container.setAlignment(Pos.CENTER);
+        String separator = System.getProperty("file.separator");
+        StringBuilder path = new StringBuilder();
+
+        for (String text : currentDirectory.getAbsolutePath().split(separator)) {
+            if (text.isBlank()) continue;
+            path.append(separator);
+            path.append(text);
+
+            Button button = new Button(text);
+            button.setUserData(path.toString());
+            button.getStyleClass().addAll("transparent", "cursor-hand");
+            HBox.setMargin(button, new Insets(4, 3, 0, 3));
+            String pathString = path.toString();
+            button.setOnAction(e -> FilesLoader.load(new File(pathString)));
+
+            container.getChildren().addAll(button, getStroke());
+        }
+
+        container.getChildren().removeLast();
+        filesPath.setContent(container);
+    }
+
+    private static Node getStroke() {
+        FontIcon icon = FontIcon.of(FontAwesome.ANGLE_RIGHT);
+        icon.setIconSize(20);
+        return icon;
     }
 
     private Button getNavigationButton() {
@@ -87,6 +133,7 @@ public class NavigationPanel extends HBox {
 
     private Button getSortButton() {
         Button button = getNavigationButton();
+        HBox.setMargin(button, new Insets(0, 5, 0, 15));
         button.setGraphic(getIcon(FontAwesome.SORT_ALPHA_ASC, 20));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.sort")));
 
