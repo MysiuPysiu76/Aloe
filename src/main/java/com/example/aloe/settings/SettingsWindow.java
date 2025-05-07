@@ -147,7 +147,7 @@ public class SettingsWindow extends Stage {
 
         settings.setContent(getContentBox(
                 SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.language"))),
-                getSettingBox("window.settings.language", SettingsControls.getChoiceBox("lang", true, "en", "English", "pl", "Polski"))));
+                getSettingBox("window.settings.language", SettingsControls.getChoiceBox("lang", true, "en", "English", "pl", "Polski", "de", "Deutsch", "fr", "Français"))));
     }
 
     private static void loadAppearanceSettings() {
