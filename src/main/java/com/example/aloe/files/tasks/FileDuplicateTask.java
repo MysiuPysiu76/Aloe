@@ -19,7 +19,7 @@ import java.util.List;
  * </p>
  *
  * @see FileCopyTask
- * @see com.example.aloe.elements.files.FilesLoader
+ * @since 2.0.5
  */
 public class FileDuplicateTask extends FileCopyTask {
 
