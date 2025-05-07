@@ -35,12 +35,11 @@ class HorizontalFileBox extends FileBox {
 
     static HBox getInfoPanel() {
         HBox box = new HBox();
-        box.setPadding(new Insets(7, 50, 7, 60));
+        box.setPadding(new Insets(7, 72, 7, 75));
 
         Label name = getInfoLabel("window.file-box.name");
         Label modified = getInfoLabel("window.file-box.modified");
-        modified.setMinWidth(140);
-        modified.setAlignment(Pos.CENTER);
+        modified.setMinWidth(148);
         Label size = getInfoLabel("window.file-box.size");
         size.setMinWidth(60);
         size.setAlignment(Pos.CENTER);
