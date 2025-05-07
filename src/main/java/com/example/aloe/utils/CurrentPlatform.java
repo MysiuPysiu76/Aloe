@@ -21,7 +21,7 @@ import java.util.Locale;
  * </ul>
  * </p>
  *
- * @since 2.0.8
+ * @since 2.0.9
  */
 public class CurrentPlatform {
 
