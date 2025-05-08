@@ -25,7 +25,7 @@ public class PasswordPromptWindow extends SingleInteriorWindow {
      *
      * @param completableFuture a future that is completed when the user confirms the input;
      *                          used for asynchronous flow control
-     * @param password a {@link StringBuilder} instance to which the entered password is appended
+     * @param password          a {@link StringBuilder} instance to which the entered password is appended
      */
     public PasswordPromptWindow(CompletableFuture<Void> completableFuture, StringBuilder password) {
         super(

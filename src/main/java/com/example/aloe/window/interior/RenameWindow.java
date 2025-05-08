@@ -33,7 +33,6 @@ public class RenameWindow extends SingleInteriorWindow {
                 "window.interior.rename"
         );
 
-        // Rename logic executed upon confirmation
         this.setOnConfirm(event -> {
             File newFile = new File(CurrentDirectory.get(), this.input.getText().trim());
             file.renameTo(newFile);
