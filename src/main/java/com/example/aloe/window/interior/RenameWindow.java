@@ -15,7 +15,7 @@ import java.io.File;
  * <p>The displayed labels and buttons are dynamically translated using keys based on the type of the file system item (file or directory).</p>
  *
  * @see SingleInteriorWindow
- * @see CurrentDirectory
+ * @since 2.2.0
  */
 public class RenameWindow extends SingleInteriorWindow {
 

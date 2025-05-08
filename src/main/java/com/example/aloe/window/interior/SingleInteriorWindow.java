@@ -19,7 +19,7 @@ import javafx.scene.control.TextField;
  * to be extended or instantiated directly for quick input prompts.</p>
  *
  * @see InteriorWindow
- * @see Validator
+ * @since 2.1.7
  */
 public class SingleInteriorWindow extends InteriorWindow {
 
