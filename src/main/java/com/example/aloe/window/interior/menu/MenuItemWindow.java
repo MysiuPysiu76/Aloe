@@ -28,6 +28,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
  * {@link Translator}.</p>
  *
  * @see InteriorWindow
+ * @since 2.2.8
  */
 class MenuItemWindow extends InteriorWindow {
 
