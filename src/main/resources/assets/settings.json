@@ -27,5 +27,9 @@
   "appearance": {
     "theme": "light",
     "color": "#62d0de"
+  },
+  "other": {
+    "width": 975.0,
+    "height": 550.0
   }
 }

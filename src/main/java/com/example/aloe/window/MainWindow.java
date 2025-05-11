@@ -44,7 +44,7 @@ public class MainWindow {
         interiorWindowPane.setVisible(false);
         root.getChildren().addAll(mainContainer, interiorWindowPane);
 
-        scene = new Scene(root, 975, 550);
+        scene = new Scene(root, (double)Settings.getSetting("other", "width"), (double)Settings.getSetting("other", "height"));
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/main.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/global.css").toExternalForm());
@@ -56,6 +56,10 @@ public class MainWindow {
         stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(e -> {
+            Settings.setSetting("other", "height", stage.getHeight());
+            Settings.setSetting("other", "width", stage.getWidth());
+        });
     }
 
     public static void showDarkeningPlate() {
