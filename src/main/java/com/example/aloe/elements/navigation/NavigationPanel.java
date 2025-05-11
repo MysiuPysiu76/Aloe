@@ -11,6 +11,8 @@ import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.window.AboutWindow;
+import com.example.aloe.window.interior.DirectoryWindow;
+import com.example.aloe.window.interior.FileWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -229,6 +231,13 @@ public class NavigationPanel extends HBox {
         container.setAlignment(Pos.TOP_CENTER);
         container.setSpacing(3);
         container.setPadding(new Insets(7, 7, 10, 7));
+
+        Button newFile = new Button(Translator.translate("context-menu.new-file"));
+        newFile.getStyleClass().addAll("nav-btn", "text");
+        newFile.setOnMouseClicked(e -> new FileWindow());
+        Button newFolder = new Button(Translator.translate("context-menu.new-folder"));
+        newFolder.getStyleClass().addAll("nav-btn", "text");
+        newFolder.setOnMouseClicked(e -> new DirectoryWindow());
         CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
         VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
         showHiddenFiles.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
@@ -244,8 +253,9 @@ public class NavigationPanel extends HBox {
         Button settingsButton = new Button(Translator.translate("navigate.settings"));
         settingsButton.getStyleClass().addAll("nav-btn", "text");
         settingsButton.setOnMouseClicked(event -> new SettingsWindow().show());
-        container.getChildren().addAll(showHiddenFiles, aboutButton, settingsButton);
+        container.getChildren().addAll(newFile, newFolder, showHiddenFiles, aboutButton, settingsButton);
         popOver.setContentNode(container);
+
         button.setOnMouseClicked(e -> {
             popOver.show(button);
         });
