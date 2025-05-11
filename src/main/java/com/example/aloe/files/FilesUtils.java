@@ -129,4 +129,21 @@ public class FilesUtils {
                         fileName.endsWith(".jar")
         );
     }
+
+    /**
+     * Checks whether the specified file is located within the user's home directory.
+     * <p>
+     * This method compares the absolute path of the given {@link File}
+     * against the user's home directory as defined by the system property {@code "user.home"}.
+     * It returns {@code true} if the file's absolute path starts with the home directory path.
+     * </p>
+     *
+     * @param file the file to check; must not be {@code null}
+     * @return {@code true} if the file resides within the user's home directory, {@code false} otherwise
+     * @see System#getProperty(String)
+     * @see File#getAbsolutePath()
+     */
+    public static boolean isinHomeDir(File file) {
+        return file.getAbsolutePath().startsWith(System.getProperty("user.home"));
+    }
 }

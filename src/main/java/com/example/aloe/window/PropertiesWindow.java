@@ -1,6 +1,5 @@
 package com.example.aloe.window;
 
-import com.example.aloe.*;
 import com.example.aloe.components.BackButton;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.VBoxSpacer;
@@ -68,7 +67,7 @@ public class PropertiesWindow extends Stage {
         Scene scene = new Scene(root, 300, 430);
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
-        scene.getStylesheets().add(String.format("data:text/css, .list-cell:selected { -fx-background-color: %s; }", Settings.getColor()));
+        scene.getStylesheets().add(String.format("data:text/css, .list-cell:selected, .confirm { -fx-background-color: %s; }", Settings.getColor()));
         this.setScene(scene);
         this.show();
         loadProperties();
@@ -253,12 +252,13 @@ public class PropertiesWindow extends Stage {
         infoLabel.setStyle("-fx-font-size: 14px; -fx-padding: 4px");
         infoLabel.getStyleClass().add("text");
 
-        Button verifyChecksum = WindowComponents.getButton(Translator.translate("window.properties.checksum.verify-checksum"));
+        Button verifyChecksum = new Button(Translator.translate("window.properties.checksum.verify-checksum"));
+        verifyChecksum.getStyleClass().add("btn");
         verifyChecksum.setOnAction(e -> verifyChecksum(infoLabel, comboBox.getSelectionModel().getSelectedItem(), textArea.getText()));
         HBox buttonPanel = new HBox(verifyChecksum);
         buttonPanel.setAlignment(Pos.CENTER_RIGHT);
 
-        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, new HBoxSpacer(), buttonPanel);
+        contentPane.getChildren().addAll(choseAlgorithmLabel, comboBox, enterChecksum, textArea, infoLabel, new HBoxSpacer(), new VBoxSpacer(), buttonPanel);
         TitledPane titledPane = new TitledPane(Translator.translate("window.properties.checksum.verify"), contentPane);
         VBox.setMargin(titledPane, new Insets(0, 0, 333, 0));
         return titledPane;
@@ -283,9 +283,11 @@ public class PropertiesWindow extends Stage {
         hash.setWrapText(true);
         hash.setStyle("-fx-font-size: 13.5px; -fx-padding: 4px 10px 10px 10px");
 
-        Button copy = WindowComponents.getButton(Translator.translate("button.copy"));
+        Button copy = new Button(Translator.translate("button.copy"));
+        copy.getStyleClass().add("btn");
         copy.setOnAction(e -> ClipboardManager.copyTextToClipboard(this.hash));
-        Button generate = WindowComponents.getButton(Translator.translate("window.properties.checksum.generate-hash"));
+        Button generate = new Button(Translator.translate("window.properties.checksum.generate-hash"));
+        generate.getStyleClass().add("btn");
         generate.setOnAction(e -> {
             hash.setText(Translator.translate("window.properties.checksum.generating"));
             generateHash(hash, comboBox.getSelectionModel().getSelectedItem());
@@ -376,7 +378,8 @@ public class PropertiesWindow extends Stage {
         applyToSubdirectories.setDisable(file.isFile());
         applyToSubdirectories.setStyle("-fx-mark-color: " + Settings.getColor() + ";");
 
-        Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
+        Button updatePermissions = new Button(Translator.translate("window.properties.permissions.update"));
+        updatePermissions.getStyleClass().add("btn");
         updatePermissions.setOnAction(e -> {
             permissions.setRecursively(applyToSubdirectories.isSelected());
             permissions.savePermissions(getSelectedPermissions());
@@ -484,7 +487,8 @@ public class PropertiesWindow extends Stage {
         Label choseUserLabel = getLabel(Translator.translate("window.properties.permissions.chose-user"));
         Label modifyPermissionsLabel = getLabel(Translator.translate("window.properties.permissions.modify-permissions"));
 
-        Button updatePermissions = WindowComponents.getConfirmButton(Translator.translate("window.properties.permissions.update"));
+        Button updatePermissions = new Button(Translator.translate("window.properties.permissions.update"));
+        updatePermissions.getStyleClass().addAll("btn", "confirm-btn");
         updatePermissions.setOnAction(e -> {
             permissions.savePermissions(readACLPermissions());
         });

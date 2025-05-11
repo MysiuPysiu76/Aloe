@@ -2,3 +2,41 @@
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
 }
+
+.menu-option {
+    -fx-padding: 6px 13px;
+    -fx-font-size: 13.5px;
+    -fx-background-radius: 8px;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-padding: 1px;
+    -fx-border-width: 2px;
+}
+
+.nav-button {
+    -fx-background-radius: 7px;
+}
+
+.responsive-pane .viewport, .responsive-pane {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+}
+
+.nav-btn {
+    -fx-min-width: 120px;
+    -fx-min-height: 28px;
+}
+
+.radio-button {
+    -fx-font-size: 13px;
+    -fx-padding: 8px;
+    -fx-min-width: 170px;
+    -fx-background-radius: 10px;
+}
+
+.radio-button .radio {
+    -fx-background-color: transparent;
+    -fx-padding: 3px 4px 5px 4px;
+    -fx-border-radius: 50%;
+}

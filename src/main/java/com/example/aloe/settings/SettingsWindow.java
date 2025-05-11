@@ -30,7 +30,7 @@ public class SettingsWindow extends Stage {
     public SettingsWindow() {
         isRestartRequired = false;
         settings = new ScrollPane();
-        settings.getStyleClass().addAll("background", "root");
+        settings.getStyleClass().addAll("background", "setting-root");
         settings.setFitToWidth(true);
 
         Scene scene = new Scene(settings, 900, 560);

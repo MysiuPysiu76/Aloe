@@ -1,9 +1,13 @@
-.background {
+.background, .setting-root .viewport {
     -fx-background-color: #1a1a1b;
 }
 
-.text, .choice-box .label, .list-cell {
+.text, .choice-box .label, .list-cell, .menu-item .label, .btn {
     -fx-text-fill: #f6f6f6;
+}
+
+.btn {
+    -fx-background-color: #444444;
 }
 
 .check-box .text {
@@ -91,4 +95,8 @@
 
 .list-view {
     -fx-background-color: #515151;
+}
+
+.extended-context-menu {
+    -fx-background-color: #2b2b2b;
 }

@@ -5,6 +5,7 @@ import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.files.Sorting;
 import com.example.aloe.files.CurrentDirectory;
+import com.example.aloe.files.FilesUtils;
 import com.example.aloe.settings.SettingsWindow;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
@@ -28,23 +29,26 @@ public class NavigationPanel extends HBox {
     private static ResponsivePane filesPath = new ResponsivePane();
 
     public NavigationPanel() {
-
         HBoxSpacer leftSpacer = new HBoxSpacer();
-        leftSpacer.setMaxWidth(200);
+        leftSpacer.setMaxWidth(80);
         HBoxSpacer rightSpacer = new HBoxSpacer();
-        rightSpacer.setMaxWidth(200);
+        rightSpacer.setMaxWidth(80);
         filesPath.setMaxHeight(30);
+        filesPath.setMaxWidth(Double.MAX_VALUE);
+        filesPath.setPadding(new Insets(0, 0, 0, 0));
         filesPath.getStyleClass().add("files-path");
 
         this.setPadding(new Insets(5, 8, 5, 8));
+        this.getStyleClass().add("background");
         this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), leftSpacer, filesPath, rightSpacer, getSortButton(), getTasksButton(), getViewButton(), getOptionsButton());
     }
 
     public static void updateFilesPath() {
         File currentDirectory = CurrentDirectory.get();
 
-        HBox container = new HBox();
+        HBox container = new HBox(getIcon());
         container.setAlignment(Pos.CENTER);
+        container.getStyleClass().add("transparent");
         String separator = System.getProperty("file.separator");
         StringBuilder path = new StringBuilder();
 
@@ -55,7 +59,7 @@ public class NavigationPanel extends HBox {
 
             Button button = new Button(text);
             button.setUserData(path.toString());
-            button.getStyleClass().addAll("transparent", "cursor-hand");
+            button.getStyleClass().addAll("transparent", "cursor-hand", "accent-color");
             HBox.setMargin(button, new Insets(4, 3, 0, 3));
             String pathString = path.toString();
             button.setOnAction(e -> FilesLoader.load(new File(pathString)));
@@ -67,9 +71,19 @@ public class NavigationPanel extends HBox {
         filesPath.setContent(container);
     }
 
+    private static FontIcon getIcon() {
+        FontIcon icon = FontIcon.of(FilesUtils.isinHomeDir(CurrentDirectory.get()) ? FontAwesome.HOME : FontAwesome.HDD_O);
+        icon.setIconSize(22);
+        icon.getStyleClass().add("font-icon");
+        HBox.setMargin(icon, new Insets(4, 5, 0, 10));
+        return icon;
+    }
+
     private static Node getStroke() {
         FontIcon icon = FontIcon.of(FontAwesome.ANGLE_RIGHT);
-        icon.setIconSize(20);
+        icon.setIconSize(22);
+        HBox.setMargin(icon, new Insets(2, 0, 0, 0));
+        icon.getStyleClass().add("font-icon");
         return icon;
     }
 
@@ -79,6 +93,7 @@ public class NavigationPanel extends HBox {
         button.setMinSize(40, 40);
         button.setPrefSize(40, 40);
         button.setMaxSize(40, 40);
+        button.getStyleClass().addAll("nav-button", "transparent");
         return button;
     }
 
@@ -123,10 +138,10 @@ public class NavigationPanel extends HBox {
         button.setGraphic(getIcon(FontAwesome.HOURGLASS_HALF, 20));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.tasks")));
         button.setOnMouseClicked(e -> {
-            ProgressManager popOver = new ProgressManager();
-            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-            popOver.setDetachable(false);
-            popOver.show(button);
+            ProgressManager progressManager = new ProgressManager();
+            progressManager.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+            progressManager.setDetachable(false);
+            progressManager.show(button);
         });
         return button;
     }
@@ -144,7 +159,15 @@ public class NavigationPanel extends HBox {
         RadioButton sizeAsc = getRadioButton("size-asc", group, Sorting.SIZEASC);
         RadioButton sizeDesc = getRadioButton("size-desc", group, Sorting.SIZEDESC);
 
-        VBox content = new VBox(nameAsc, nameDesc, dateAsc, dateDesc, sizeAsc, sizeDesc);
+        Label choseSortingLabel = new Label(Translator.translate("tooltip.navigate.sort"));
+        choseSortingLabel.setPadding(new Insets(2, 5, 5, 5));
+        choseSortingLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
+        choseSortingLabel.getStyleClass().add("text");
+        VBox content = new VBox(choseSortingLabel, nameAsc, nameDesc, dateAsc, dateDesc, sizeAsc, sizeDesc);
+        content.getStyleClass().add("popover-content");
+        content.setFillWidth(true);
+        content.setAlignment(Pos.TOP_CENTER);
+        content.setPadding(new Insets(10, 7, 10, 7));
 
         switch (Sorting.safeValueOf(Settings.getSetting("files", "sorting").toString().toUpperCase())) {
             case NAMEASC -> group.selectToggle(nameAsc);
@@ -173,13 +196,14 @@ public class NavigationPanel extends HBox {
         RadioButton radioButton = new RadioButton(Translator.translate("navigation.sorting." + text));
         radioButton.setToggleGroup(group);
         radioButton.setUserData(method);
+        radioButton.getStyleClass().addAll("text", "r");
         return radioButton;
     }
 
     private Button getViewButton() {
         Button button = getNavigationButton();
         final boolean[] isGrid = {Settings.getSetting("files", "view").equals("grid")};
-        button.setGraphic(getIcon(isGrid[0] ? FontAwesome.LIST_UL: FontAwesome.TH_LARGE, 20));
+        button.setGraphic(getIcon(isGrid[0] ? FontAwesome.LIST_UL : FontAwesome.TH_LARGE, 20));
         button.setTooltip(new Tooltip(Translator.translate(isGrid[0] ? "tooltip.navigate.view.grid" : "tooltip.navigate.view.list")));
         HBox.setMargin(button, new Insets(0, 5, 0, 5));
         button.setOnMouseClicked(e -> {
@@ -197,20 +221,28 @@ public class NavigationPanel extends HBox {
         button.setGraphic(getIcon(FontAwesome.NAVICON, 20));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.options")));
         PopOver popOver = new PopOver();
-        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
         popOver.setDetachable(false);
+        popOver.getStyleClass().add("background");
         VBox container = new VBox();
-        container.setAlignment(Pos.CENTER);
+        container.getStyleClass().add("popover-content");
+        container.setAlignment(Pos.TOP_CENTER);
+        container.setSpacing(3);
+        container.setPadding(new Insets(7, 7, 10, 7));
         CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
         VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
         showHiddenFiles.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
+        showHiddenFiles.setStyle("-fx-mark-color: " + Settings.getColor() + ";");
         showHiddenFiles.setOnAction(event -> {
             Settings.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
             FilesLoader.refresh();
         });
+        showHiddenFiles.getStyleClass().add("text");
         Button aboutButton = new Button(Translator.translate("navigate.about-button"));
         aboutButton.setOnMouseClicked(event -> new AboutWindow(new Main().getHostServices()));
+        aboutButton.getStyleClass().addAll("nav-btn", "text");
         Button settingsButton = new Button(Translator.translate("navigate.settings"));
+        settingsButton.getStyleClass().addAll("nav-btn", "text");
         settingsButton.setOnMouseClicked(event -> new SettingsWindow().show());
         container.getChildren().addAll(showHiddenFiles, aboutButton, settingsButton);
         popOver.setContentNode(container);
@@ -223,6 +255,7 @@ public class NavigationPanel extends HBox {
     private FontIcon getIcon(FontAwesome iconName, int size) {
         FontIcon icon = FontIcon.of(iconName);
         icon.setIconSize(size);
+        icon.getStyleClass().add("font-icon");
         return icon;
     }
 }

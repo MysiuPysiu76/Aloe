@@ -38,7 +38,9 @@ public class MenuItem extends Button implements ObjectProperties {
         this.setFocusTraversable(false);
         if (useIcon) {
             FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
-            fontIcon.setIconSize(16);
+            fontIcon.setIconSize(18);
+            fontIcon.getStyleClass().add("font-icon");
+            fontIcon.setWrappingWidth(20);
             this.setGraphicTextGap(10);
             this.setGraphic(fontIcon);
             if (rightPageIcon) {
@@ -55,6 +57,7 @@ public class MenuItem extends Button implements ObjectProperties {
         this.setMaxWidth(Double.MAX_VALUE);
         MenuItemContextMenu menu = new MenuItemContextMenu(this);
         this.setContextMenu(menu);
+        this.getStyleClass().addAll("transparent", "text", "menu-option");
         this.setOnContextMenuRequested(e -> Menu.hideOptions());
 
         this.setOnMouseClicked(e -> {

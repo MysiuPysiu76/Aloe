@@ -35,7 +35,7 @@ import javafx.stage.Stage;
 public class ExtendedContextMenu extends ContextMenu {
 
     private static Stage stage;
-    private static final double ITEM_HEIGHT = 25;
+    private static final double ITEM_HEIGHT = 34;
 
     /**
      * Sets the reference stage used for calculating screen bounds when showing the context menu.
@@ -44,6 +44,20 @@ public class ExtendedContextMenu extends ContextMenu {
      */
     public static void setStage(Stage s) {
         stage = s;
+    }
+
+    /**
+     * Constructs a new {@code ExtendedContextMenu} with default settings and applies
+     * the CSS style class {@code "extended-context-menu"} for custom styling.
+     * <p>
+     * This constructor initializes the context menu without any items.
+     * To function correctly within the application window bounds, the main application
+     * stage must be set beforehand via {@link #setStage(Stage)}.
+     * </p>
+     */
+    public ExtendedContextMenu() {
+        super();
+        this.getStyleClass().add("extended-context-menu");
     }
 
     /**
@@ -82,14 +96,19 @@ public class ExtendedContextMenu extends ContextMenu {
     }
 
     /**
-     * Calculates the vertical position to prevent the menu from overflowing to the bottom.
+     * Calculates the vertical position to prevent the menu from overflowing
+     * beyond the bottom or top edge of the application window.
      */
     private double calculateY(double clickY, double menuHeight) {
         double windowY = stage.getY();
         double windowHeight = stage.getHeight();
 
         if (clickY + menuHeight > windowY + windowHeight) {
-            return clickY - menuHeight;
+            clickY = clickY - menuHeight;
+        }
+
+        if (clickY < windowY) {
+            clickY = windowY;
         }
         return clickY;
     }

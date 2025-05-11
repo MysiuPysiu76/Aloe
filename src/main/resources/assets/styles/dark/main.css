@@ -1,7 +1,56 @@
+.files-pane, .files-pane .viewport {
+    -fx-background-color: #1c1c1c;
+}
+
+.menu, .menu .viewport {
+    -fx-background-color: #1e1e1e;
+}
+
 .file-box:hover {
     -fx-background-color: rgba(103, 103, 103, 0.46);
 }
 
 .selected {
     -fx-background-color: rgba(103, 103, 103, 0.46);
+}
+
+.menu-option:hover {
+    -fx-background-color: rgba(103, 103, 103, 0.46);
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: #292929;
+    -fx-border-color: #2e2e2e;
+}
+
+.nav-button:hover {
+    -fx-background-color: #2e2e2e;
+}
+
+.responsive-pane .viewport, .responsive-pane {
+    -fx-background-color: #292929;
+}
+
+.popover-content {
+    -fx-background-color: #252525;
+}
+
+.nav-btn {
+    -fx-background-color: #303030;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #4c4c4c;
+}
+
+.radio-button:hover {
+    -fx-background-color: #818181;
+}
+
+.radio-button .radio {
+    -fx-border-color: #f6f6f6;
+}
+
+.progress-bar .track {
+    -fx-background-color: #515151;
 }

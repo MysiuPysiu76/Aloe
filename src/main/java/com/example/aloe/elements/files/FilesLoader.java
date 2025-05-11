@@ -33,6 +33,7 @@ public class FilesLoader {
             list.setAlignment(Pos.TOP_CENTER);
             list.setFillWidth(true);
             list.getChildren().add(HorizontalFileBox.getInfoPanel());
+            list.getStyleClass().add("transparent");
 
             files.forEach(file -> list.getChildren().add(new HorizontalFileBox(file)));
             FilesPane.set(list);

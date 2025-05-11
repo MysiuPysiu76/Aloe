@@ -16,14 +16,17 @@ public class ProgressBox extends VBox {
 
         Label titleLabel = new Label(title);
         titleLabel.setPadding(new Insets(7, 9, 7, 5));
+        titleLabel.getStyleClass().add("text");
 
         ProgressBar progressBar = new ProgressBar(0);
         progressBar.progressProperty().bind(progress);
         progressBar.setMaxWidth(this.getMaxWidth());
         progressBar.setPadding(new Insets(0));
         progressBar.setMaxHeight(10);
+        progressBar.getStyleClass().add("ce");
 
         Label descriptionLabel = new Label();
+        descriptionLabel.getStyleClass().add("text");
         descriptionLabel.setPadding(new Insets(7, 9, 7, 5));
         descriptionLabel.textProperty().bind(description);
 

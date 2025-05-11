@@ -12,6 +12,7 @@ public class ProgressManager extends PopOver {
     {
         this.setContentNode(container);
         this.setDetachable(false);
+        container.getStyleClass().add("popover-content");
     }
 
     public static void addTask(String title, DoubleProperty progress, StringProperty description) {

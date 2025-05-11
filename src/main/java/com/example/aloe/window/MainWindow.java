@@ -32,6 +32,7 @@ public class MainWindow {
         interiorWindowPane = new Pane();
 
         filesPanel = new SplitPane(FilesPane.get());
+        filesPanel.getStyleClass().add("background");
         SplitPane.setResizableWithParent(FilesPane.get(), true);
 
         loadMenu();
@@ -44,13 +45,12 @@ public class MainWindow {
         root.getChildren().addAll(mainContainer, interiorWindowPane);
 
         scene = new Scene(root, 975, 550);
-        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/style.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/main.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/interior.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/main.css").toExternalForm());
-        scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; }", Settings.getColor()));
+        scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; } .extended-menu-item:hover, .confirm, .radio-button:selected .dot, .progress-bar .bar { -fx-background-color: %s; } .accent-color { -fx-text-fill: %s; }", Settings.getColor(), Settings.getColor(), Settings.getColor()));
         stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
         stage.setMinWidth(700);

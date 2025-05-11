@@ -121,6 +121,7 @@ public class FileBox extends Pane {
         label.setAlignment(Pos.TOP_CENTER);
         label.setTooltip(new Tooltip(this.file.getName()));
         label.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
+        label.getStyleClass().add("text");
         return label;
     }
 

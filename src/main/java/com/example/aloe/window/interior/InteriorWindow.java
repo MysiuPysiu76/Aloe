@@ -1,7 +1,7 @@
 package com.example.aloe.window.interior;
 
-import com.example.aloe.WindowComponents;
 import com.example.aloe.elements.files.FilesLoader;
+import com.example.aloe.utils.Translator;
 import com.example.aloe.window.MainWindow;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -99,7 +99,9 @@ public class InteriorWindow extends VBox {
      * @return a pre-styled confirm {@code Button}
      */
     protected Button getConfirmButton(String text) {
-        return WindowComponents.getConfirmButton(text);
+        Button button = new Button(text);
+        button.getStyleClass().addAll("btn", "text", "confirm");
+        return button;
     }
 
     /**
@@ -109,7 +111,8 @@ public class InteriorWindow extends VBox {
      * @return a pre-styled cancel {@code Button}
      */
     protected static Button getCancelButton() {
-        Button button = WindowComponents.getCancelButton();
+        Button button = new Button(Translator.translate("button.cancel"));
+        button.getStyleClass().add("btn");
         button.setOnAction(e -> MainWindow.hideDarkeningPlate());
         return button;
     }

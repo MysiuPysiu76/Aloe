@@ -2,7 +2,6 @@ package com.example.aloe.window;
 
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.utils.Translator;
-import com.example.aloe.WindowComponents;
 import com.example.aloe.settings.Settings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,10 +26,12 @@ public class ConfirmWindow extends Stage {
         Label descriptionLabel = new Label(description);
         descriptionLabel.setWrapText(true);
         descriptionLabel.getStyleClass().addAll("description", "text");
-        Button cancel = WindowComponents.getCancelButton();
+        Button cancel = new Button(Translator.translate("button.cancel"));
+        cancel.getStyleClass().add("btn");
         cancel.setOnMouseClicked(e -> this.close());
 
-        Button confirmButton = WindowComponents.getConfirmButton(confirm);
+        Button confirmButton = new Button(confirm);
+        confirmButton.getStyleClass().addAll("btn", "text", "confirm");
         confirmButton.setOnAction(confirmEventHandler);
         confirmButton.setOnMouseClicked(e -> this.close());
 
@@ -46,6 +47,7 @@ public class ConfirmWindow extends Stage {
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/confirm.css").toExternalForm());
+        scene.getStylesheets().add(String.format("data:text/css, .confirm { -fx-background-color: %s; }", Settings.getColor()));
         this.setScene(scene);
         this.initModality(Modality.APPLICATION_MODAL);
         this.setTitle(Translator.translate("window.confirm.confirm-action"));

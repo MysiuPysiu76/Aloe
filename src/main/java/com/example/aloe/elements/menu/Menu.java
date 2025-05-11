@@ -2,6 +2,7 @@ package com.example.aloe.elements.menu;
 
 import com.example.aloe.settings.Settings;
 import com.example.aloe.window.MainWindow;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
@@ -31,6 +32,8 @@ public class Menu extends ScrollPane {
         this.setFitToHeight(true);
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
         this.setMenuOptions(this);
+        this.setPadding(new Insets(5));
+        this.getStyleClass().add("menu");
     }
 
     public static Menu get() {

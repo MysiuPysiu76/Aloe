@@ -7,6 +7,12 @@
     -fx-cursor: hand;
 }
 
+.btn {
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-padding: 7px 15px;
+}
+
 .text-center {
     -fx-text-alignment: center;
 }
@@ -115,7 +121,7 @@
 .link-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-padding: 2 0 2 0;
+    -fx-padding: 2px 0px 2px 0px;
     -fx-text-decoration: underline;
     -fx-cursor: hand;
 }
@@ -133,5 +139,17 @@
 }
 
 .list-cell {
+    -fx-background-color: transparent;
+}
+
+.extended-context-menu {
+    -fx-border-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-padding: 0px;
+}
+
+.extended-menu-item {
+    -fx-padding: 8px 27px 8px 22px;
+    -fx-background-radius: 10px;
     -fx-background-color: transparent;
 }

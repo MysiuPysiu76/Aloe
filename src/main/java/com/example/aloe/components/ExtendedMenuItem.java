@@ -43,6 +43,7 @@ public class ExtendedMenuItem extends MenuItem {
     public ExtendedMenuItem(String key, EventHandler<ActionEvent> eventHandler) {
         super(Translator.translate(key));
         this.setOnAction(eventHandler);
+        this.getStyleClass().add("extended-menu-item");
     }
 
     /**
