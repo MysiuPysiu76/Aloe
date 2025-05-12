@@ -1,7 +1,8 @@
 package com.example.aloe.files.archive;
 
 import com.example.aloe.files.CurrentDirectory;
-import com.example.aloe.WindowService;
+import com.example.aloe.utils.Translator;
+import com.example.aloe.window.InfoWindow;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.window.interior.PasswordPromptWindow;
 import net.lingala.zip4j.ZipFile;
@@ -52,7 +53,7 @@ class ZipArchive implements Archive {
                     zipFile.addFile(file, zipParameters);
                 }
             }
-            WindowService.openArchiveInfoWindow("window.archive.compress.success");
+            new InfoWindow(Translator.translate("window.archive.compress.success"), null);
         } catch (ZipException e) {
             handleCompressionError(e);
         }
@@ -85,7 +86,7 @@ class ZipArchive implements Archive {
                     } catch (ZipException e) {
                         e.printStackTrace();
                     }
-                    WindowService.openArchiveInfoWindow("window.archive.extract.success");
+                    new InfoWindow(Translator.translate("window.archive.extract.success"), null);
                 });
             } else {
                 zipFile.extractAll(outputPath.toString());
@@ -128,7 +129,7 @@ class ZipArchive implements Archive {
      * @param e the exception that occurred.
      */
     private void handleCompressionError(ZipException e) {
-        WindowService.openArchiveInfoWindow("window.archive.compress.error");
+        new InfoWindow(Translator.translate("window.archive.compress.error"), null);
         e.printStackTrace();
     }
 
@@ -142,12 +143,14 @@ class ZipArchive implements Archive {
      * @param e    the exception that occurred.
      */
     private void handleDecompressionError(File file, ZipException e) {
-        if ("Wrong password!".equals(e.getMessage())) {
-            WindowService.openArchiveInfoWindow("window.archive.extract.wrong-password");
-        }
         String extractionPath = CurrentDirectory.get().toPath() + "/" + file.getName().replace(".zip", "");
+        if ("Wrong password!".equals(e.getMessage())) {
+            new InfoWindow(Translator.translate("window.archive.extract.wrong-password"), null);
+            new FileDeleteTask(new File(extractionPath), true);
+            return;
+        }
         new FileDeleteTask(new File(extractionPath), true);
-        WindowService.openArchiveInfoWindow("window.archive.extract.error");
+        new InfoWindow(Translator.translate("window.archive.extract.error"), null);
         e.printStackTrace();
     }
 

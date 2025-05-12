@@ -1,7 +1,8 @@
 package com.example.aloe.files.archive;
 
 import com.example.aloe.files.CurrentDirectory;
-import com.example.aloe.WindowService;
+import com.example.aloe.utils.Translator;
+import com.example.aloe.window.InfoWindow;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
@@ -49,7 +50,7 @@ class TarGzArchive extends TarArchive {
             for (File file : parameters.getFiles()) {
                 addFileToTar(tarOut, file, "");
             }
-            WindowService.openArchiveInfoWindow("window.archive.compress.success");
+            new InfoWindow(Translator.translate("window.archive.compress.success"), null);
         } catch (IOException e) {
             handleError("window.archive.compress.error", e);
         }
@@ -77,7 +78,7 @@ class TarGzArchive extends TarArchive {
              GZIPInputStream gzis = new GZIPInputStream(bis);
              TarArchiveInputStream tarIn = new TarArchiveInputStream(gzis)) {
             extractEntries(tarIn, destDir);
-            WindowService.openArchiveInfoWindow("window.archive.extract.success");
+            new InfoWindow(Translator.translate("window.archive.extract.success"), null);
         } catch (IOException e) {
             handleError("window.archive.extract.error", e);
         }

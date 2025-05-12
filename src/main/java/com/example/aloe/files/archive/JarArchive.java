@@ -1,6 +1,8 @@
 package com.example.aloe.files.archive;
 
 import com.example.aloe.files.CurrentDirectory;
+import com.example.aloe.utils.Translator;
+import com.example.aloe.window.InfoWindow;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream;
@@ -44,8 +46,10 @@ class JarArchive implements Archive {
                 addToArchive(out, file, ".");
             }
         } catch (Exception e) {
+            new InfoWindow(Translator.translate("window.archive.extract.error"), null);
             throw new RuntimeException("Compression failed: " + e.getMessage(), e);
         }
+        new InfoWindow(Translator.translate("window.archive.compress.success"), null);
     }
 
     /**
@@ -78,8 +82,10 @@ class JarArchive implements Archive {
                 IOUtils.copy(jin, new FileOutputStream(curfile));
             }
         } catch (Exception e) {
+            new InfoWindow(Translator.translate("window.archive.extract.error"), null);
             throw new RuntimeException("Decompression failed: " + e.getMessage(), e);
         }
+        new InfoWindow(Translator.translate("window.archive.extract.success"), null);
     }
 
     /**

@@ -10,6 +10,10 @@
     -fx-background-color: #c5c5c5;
 }
 
+.btn:hover {
+    -fx-background-color: #b9b9b9;
+}
+
 .check-box .text {
     -fx-fill: #2e2f2f;
 }

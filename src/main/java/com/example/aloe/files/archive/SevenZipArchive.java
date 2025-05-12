@@ -1,6 +1,8 @@
 package com.example.aloe.files.archive;
 
 import com.example.aloe.files.CurrentDirectory;
+import com.example.aloe.utils.Translator;
+import com.example.aloe.window.InfoWindow;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
@@ -36,6 +38,7 @@ class SevenZipArchive implements Archive {
         } catch (IOException e) {
             throw new RuntimeException("Error during compression", e);
         }
+        new InfoWindow(Translator.translate("window.archive.compress.success"), null);
     }
 
     /**
@@ -58,6 +61,7 @@ class SevenZipArchive implements Archive {
         } catch (IOException e) {
             throw new RuntimeException("Error during decompression", e);
         }
+        new InfoWindow(Translator.translate("window.archive.extract.success"), null);
     }
 
     /**

@@ -1,13 +1,15 @@
 package com.example.aloe.files.archive;
 
 import com.example.aloe.files.CurrentDirectory;
-import com.example.aloe.WindowService;
+import com.example.aloe.utils.Translator;
+import com.example.aloe.window.InfoWindow;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import java.io.*;
 import java.util.Objects;
+import java.util.concurrent.TransferQueue;
 
 /**
  * The {@code TarArchive} class implements the {@link Archive} interface and provides functionality
@@ -44,7 +46,7 @@ class TarArchive implements Archive {
             for (File file : parameters.getFiles()) {
                 addFileToTar(tarOut, file, "");
             }
-            WindowService.openArchiveInfoWindow("window.archive.compress.success");
+            new InfoWindow(Translator.translate("window.archive.compress.success"), null);
         } catch (IOException e) {
             handleError("window.archive.compress.error", e);
         }
@@ -69,7 +71,7 @@ class TarArchive implements Archive {
 
         try (TarArchiveInputStream tis = new TarArchiveInputStream(new FileInputStream(file))) {
             extractEntries(tis, destDir);
-            WindowService.openArchiveInfoWindow("window.archive.extract.success");
+            new InfoWindow(Translator.translate("window.archive.extract.success"), null);
         } catch (IOException e) {
             handleError("window.archive.extract.error", e);
         }
@@ -173,7 +175,7 @@ class TarArchive implements Archive {
      * @param e          The exception that was thrown.
      */
     protected void handleError(String messageKey, Exception e) {
-        WindowService.openArchiveInfoWindow(messageKey);
+        new InfoWindow(Translator.translate(messageKey), null);
         e.printStackTrace();
     }
 }

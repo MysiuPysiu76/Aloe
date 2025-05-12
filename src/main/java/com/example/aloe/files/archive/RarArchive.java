@@ -1,6 +1,8 @@
 package com.example.aloe.files.archive;
 
 import com.example.aloe.files.CurrentDirectory;
+import com.example.aloe.utils.Translator;
+import com.example.aloe.window.InfoWindow;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
@@ -41,6 +43,7 @@ class RarArchive implements com.example.aloe.files.archive.Archive {
      */
     @Override
     public void compress(ArchiveParameters parameters) {
+        new InfoWindow(Translator.translate("window.archive.compress.error"), null);
         throw new UnsupportedOperationException("RAR compression is not supported yet.");
     }
 
@@ -65,7 +68,10 @@ class RarArchive implements com.example.aloe.files.archive.Archive {
             }
         } catch (RarException | IOException e) {
             handleExtractionException(e);
+            new InfoWindow(Translator.translate("window.archive.extract.error"), null);
+            return;
         }
+        new InfoWindow(Translator.translate("window.archive.extract.success"), null);
     }
 
     /**
