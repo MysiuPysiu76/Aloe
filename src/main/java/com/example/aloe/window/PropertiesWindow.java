@@ -68,6 +68,7 @@ public class PropertiesWindow extends Stage {
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(String.format("data:text/css, .list-cell:selected, .confirm { -fx-background-color: %s; }", Settings.getColor()));
+        this.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         this.setScene(scene);
         this.show();
         loadProperties();

@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -40,6 +41,7 @@ public class SettingsWindow extends Stage {
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/settings.css").toExternalForm());
         scene.getStylesheets().add(String.format("data:text/css, .choice-box .menu-item:hover, .choice-box .arrow, .choice-box .menu-item:focused, .slider .thumb { -fx-background-color: %s; } .text-field { -fx-highlight-fill: %s; }", Settings.getColor(), Settings.getColor(), Settings.getColor()));
 
+        this.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         this.setTitle(Translator.translate("window.settings.title"));
         this.setScene(scene);
         this.setMinWidth(700);

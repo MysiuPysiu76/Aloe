@@ -66,6 +66,7 @@ public class AboutWindow extends Stage {
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/assets/styles/structural/about.css")).toExternalForm());
 
+        this.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         this.setScene(scene);
         this.setMaxHeight(390);
         this.setMaxWidth(300);
@@ -130,7 +131,7 @@ public class AboutWindow extends Stage {
         Label name = new Label("Aloe");
         name.getStyleClass().addAll("name", "text");
 
-        Label version = new Label("2.3.8");
+        Label version = new Label("2.3.9");
         version.getStyleClass().addAll("version", "text");
 
         Label description = new Label(Translator.translate("window.about.description"));

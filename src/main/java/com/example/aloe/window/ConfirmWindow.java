@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -48,6 +49,7 @@ public class ConfirmWindow extends Stage {
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/confirm.css").toExternalForm());
         scene.getStylesheets().add(String.format("data:text/css, .confirm { -fx-background-color: %s; }", Settings.getColor()));
+        this.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         this.setScene(scene);
         this.initModality(Modality.APPLICATION_MODAL);
         this.setTitle(Translator.translate("window.confirm.confirm-action"));

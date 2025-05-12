@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -38,6 +39,7 @@ public class DecisionWindow extends Stage {
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/decision.css").toExternalForm());
 
+        this.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         this.setScene(scene);
         this.setMinHeight(235);
         this.setMinWidth(430);
