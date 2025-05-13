@@ -141,6 +141,7 @@ public class SettingsWindow extends Stage {
                 getSettingBox("window.settings.files.display-directories-before-files", SettingsControls.getToggleSwitch("display-directories-before-files", false)),
                 getSettingBox("window.settings.files.file-box-size", SettingsControls.getSlider("file-box-size", 0.6, 2.0, 1.0, 0.1, "window.settings.files.file-box-size.small", "window.settings.files.file-box-size.large", false)),
                 getSettingBox("window.settings.files.trash-location", SettingsControls.getTextField("trash", Translator.translate("utils.example-path"), true)),
+                getSettingBox("window.settings.files.use-copy-location", SettingsControls.getToggleSwitch("use-copy-location", true)),
                 getSettingBox("window.settings.files.display-thumbnails", SettingsControls.getToggleSwitch("display-thumbnails", false))));
     }
 

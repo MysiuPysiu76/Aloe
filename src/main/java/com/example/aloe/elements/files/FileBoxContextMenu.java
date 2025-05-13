@@ -39,6 +39,11 @@ public class FileBoxContextMenu extends ExtendedContextMenu {
 
         this.getItems().addAll(open, cut, copy, rename, duplicate, moveTo, moveToParent, moveToTrash, archive, delete, properties);
 
+        if (Boolean.TRUE.equals(Settings.getSetting("files", "use-copy-location"))) {
+            ExtendedMenuItem copyLocation = new ExtendedMenuItem("context-menu.copy-location", e -> ClipboardManager.copyTextToClipboard(file.getPath()));
+            this.getItems().add(3, copyLocation);
+        }
+
         if (file.isDirectory()) {
             ExtendedMenuItem addToMenu = new ExtendedMenuItem("context-menu.add-to-menu", e -> Menu.addItemToMenu(file.getPath(), file.getName(), "FOLDER_OPEN_O"));
             this.getItems().add(9, addToMenu);

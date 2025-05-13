@@ -271,5 +271,7 @@
   "window.settings.menu.use-icon": "Display icon",
   "window.settings.menu.use-menu": "Display files menu",
   "window.settings.menu.use-text": "Display text",
-  "window.settings.title": "Settings"
+  "window.settings.title": "Settings",
+  "context-menu.copy-location": "Copy location",
+  "window.settings.files.use-copy-location": "Use copy location in file context menu"
 }

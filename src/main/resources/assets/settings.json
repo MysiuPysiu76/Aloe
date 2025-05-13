@@ -19,7 +19,8 @@
     "display-thumbnails": true,
     "file-box-size": 1.0,
     "display-directories-before-files": true,
-    "sorting": "NAMEASC"
+    "sorting": "NAMEASC",
+    "use-copy-location": true
   },
   "language": {
     "lang": "en"
