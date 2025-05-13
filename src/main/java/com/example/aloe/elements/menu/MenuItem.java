@@ -28,7 +28,7 @@ public class MenuItem extends Button implements ObjectProperties {
     static {
         useIcon = Boolean.TRUE.equals(Settings.getSetting("menu", "use-icon"));
         useText = Boolean.TRUE.equals(Settings.getSetting("menu", "use-text"));
-        rightPageIcon = Boolean.TRUE.equals(Settings.getSetting("menu", "icon-position"));
+        rightPageIcon = Settings.getSetting("menu", "icon-position").toString().equalsIgnoreCase("right");
     }
 
     public MenuItem(String icon, String title, String path) {

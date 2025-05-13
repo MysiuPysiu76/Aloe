@@ -31,9 +31,9 @@ public class FileMoveTask extends FilesTask {
     /**
      * Constructs a task to move a single file or directory to the given destination.
      *
-     * @param file       the file or directory to move
+     * @param file        the file or directory to move
      * @param destination the target directory where the file should be moved
-     * @param autostart  whether to immediately start the task upon creation
+     * @param autostart   whether to immediately start the task upon creation
      */
     public FileMoveTask(File file, File destination, boolean autostart) {
         this.files = List.of(file);
@@ -45,9 +45,9 @@ public class FileMoveTask extends FilesTask {
     /**
      * Constructs a task to move multiple files or directories to the given destination.
      *
-     * @param files      the list of files or directories to move
+     * @param files       the list of files or directories to move
      * @param destination the target directory where the files should be moved
-     * @param autostart  whether to immediately start the task upon creation
+     * @param autostart   whether to immediately start the task upon creation
      */
     public FileMoveTask(List<File> files, File destination, boolean autostart) {
         this.files = files;
@@ -96,6 +96,8 @@ public class FileMoveTask extends FilesTask {
                 updateProgress();
             }
         }
+
+        new FileDeleteTask(files, true).runTask();
 
         Platform.runLater(FilesLoader::refresh);
         return null;

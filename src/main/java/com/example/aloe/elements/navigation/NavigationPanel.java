@@ -229,7 +229,7 @@ public class NavigationPanel extends HBox {
         VBox container = new VBox();
         container.getStyleClass().add("popover-content");
         container.setAlignment(Pos.TOP_CENTER);
-        container.setSpacing(3);
+        container.setSpacing(4);
         container.setPadding(new Insets(7, 7, 10, 7));
 
         Button newFile = new Button(Translator.translate("context-menu.new-file"));
@@ -239,14 +239,13 @@ public class NavigationPanel extends HBox {
         newFolder.getStyleClass().addAll("nav-btn", "text");
         newFolder.setOnMouseClicked(e -> new DirectoryWindow());
         CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
-        VBox.setMargin(showHiddenFiles, new Insets(5, 10, 5, 10));
         showHiddenFiles.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
         showHiddenFiles.setStyle("-fx-mark-color: " + Settings.getColor() + ";");
         showHiddenFiles.setOnAction(event -> {
             Settings.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
             FilesLoader.refresh();
         });
-        showHiddenFiles.getStyleClass().add("text");
+        showHiddenFiles.getStyleClass().addAll("text", "nav-btn", "hidden-files");
         Button aboutButton = new Button(Translator.translate("navigate.about-button"));
         aboutButton.setOnMouseClicked(event -> new AboutWindow(new Main().getHostServices()));
         aboutButton.getStyleClass().addAll("nav-btn", "text");

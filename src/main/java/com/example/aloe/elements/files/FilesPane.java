@@ -12,6 +12,7 @@ public class FilesPane extends ScrollPane {
     private FilesPane() {
         filesPane = this;
         this.setFitToWidth(true);
+        this.setFitToHeight(true);
         this.getStyleClass().add("files-pane");
         this.setPadding(new Insets(7, 7, 17, 7));
         this.setOnContextMenuRequested(e -> {

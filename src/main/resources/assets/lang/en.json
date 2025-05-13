@@ -273,5 +273,6 @@
   "window.settings.menu.use-text": "Display text",
   "window.settings.title": "Settings",
   "context-menu.copy-location": "Copy location",
-  "window.settings.files.use-copy-location": "Use copy location in file context menu"
+  "window.settings.files.use-copy-location": "Use copy location in file context menu",
+  "window.empty-folder": "Empty folder"
 }

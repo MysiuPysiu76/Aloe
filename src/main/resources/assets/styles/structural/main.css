@@ -40,3 +40,8 @@
     -fx-padding: 3px 4px 5px 4px;
     -fx-border-radius: 50%;
 }
+
+.hidden-files .box {
+    -fx-background-color: transparent;
+    -fx-padding: 2px 2px 2px 8px;
+}

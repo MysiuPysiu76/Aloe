@@ -4,9 +4,13 @@ import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.Settings;
+import com.example.aloe.utils.Translator;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.util.Arrays;
@@ -27,6 +31,11 @@ public class FilesLoader {
         NavigationPanel.updateFilesPath();
         List<File> files = getSortedFiles(getFiles(directory.listFiles()));
         FilesPane.resetPosition();
+
+        if (files.isEmpty()) {
+            FilesPane.set(getEmptyFolderInfo());
+            return;
+        }
 
         if (Settings.getSetting("files", "view").equals("list")) {
             VBox list = new VBox();
@@ -88,6 +97,22 @@ public class FilesLoader {
                     }
                     return 0;
                 }).toList();
+    }
+
+    private static VBox getEmptyFolderInfo() {
+        FontIcon icon = FontIcon.of(FontAwesome.FOLDER_OPEN_O);
+        icon.setIconSize(65);
+        icon.getStyleClass().add("font-icon");
+
+        Label title = new Label(Translator.translate("window.empty-folder"));
+        title.getStyleClass().add("text");
+        title.setAlignment(Pos.CENTER);
+        title.setStyle("-fx-font-size: 17px; -fx-font-weight: bold; -fx-padding: 15px;");
+
+        VBox box = new VBox(icon, title);
+        box.setAlignment(Pos.CENTER);
+        box.setFillWidth(true);
+        return box;
     }
 
     public static void loadParent() {

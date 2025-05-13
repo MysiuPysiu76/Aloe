@@ -53,6 +53,7 @@ public final class Settings {
             trySetLanguage();
             initializeItemsInMenu();
             setTrashLocation();
+            createTrash();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,6 +82,13 @@ public final class Settings {
 
     private static void setTrashLocation() {
         Settings.setSetting("files", "trash", new File(System.getProperty("user.home"), ".trash"));
+    }
+
+    private static void createTrash() {
+        File trash = new File(Settings.getSetting("files", "trash").toString());
+        if (!trash.exists()) {
+            trash.mkdirs();
+        }
     }
 
     private static Map<String, Object> loadDefaultSettings() throws IOException {
