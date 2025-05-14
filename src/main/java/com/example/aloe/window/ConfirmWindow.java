@@ -16,17 +16,55 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * A modal confirmation window prompting the user to confirm or cancel an action.
+ * <p>
+ * This window displays a customizable title and description, and provides two buttons:
+ * one to cancel the operation and close the window, and another to confirm the operation,
+ * executing a provided {@link EventHandler}.
+ * </p>
+ *
+ * <p><b>Features:</b></p>
+ * <ul>
+ *   <li>Applies the current UI theme and styling dynamically</li>
+ *   <li>Blocks the application flow until the user responds (via {@code showAndWait()})</li>
+ *   <li>Localizes button text using the {@link Translator} utility</li>
+ * </ul>
+ *
+ * <p><b>Usage example:</b></p>
+ * <pre>{@code
+ *     new ConfirmWindow(
+ *         "Delete File",
+ *         "Are you sure you want to permanently delete this file?",
+ *         "Delete",
+ *         event -> deleteFile()
+ *     );
+ * }</pre>
+ *
+ * @since 2.4.6
+ */
 public class ConfirmWindow extends Stage {
 
+    /**
+     * Constructs and displays a confirmation dialog with the specified content and behavior.
+     *
+     * @param title               the title text displayed at the top of the window
+     * @param description         a description of the action to be confirmed
+     * @param confirm             the label for the confirmation button
+     * @param confirmEventHandler an event handler executed if the user confirms the action
+     */
     public ConfirmWindow(String title, String description, String confirm, EventHandler<ActionEvent> confirmEventHandler) {
         VBox container = new VBox();
         container.getStyleClass().addAll("background", "root");
+
         Label titleLabel = new Label(title);
         titleLabel.setWrapText(true);
         titleLabel.getStyleClass().addAll("title", "text");
+
         Label descriptionLabel = new Label(description);
         descriptionLabel.setWrapText(true);
         descriptionLabel.getStyleClass().addAll("description", "text");
+
         Button cancel = new Button(Translator.translate("button.cancel"));
         cancel.getStyleClass().add("btn");
         cancel.setOnMouseClicked(e -> this.close());
@@ -49,6 +87,7 @@ public class ConfirmWindow extends Stage {
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/confirm.css").toExternalForm());
         scene.getStylesheets().add(String.format("data:text/css, .confirm { -fx-background-color: %s; }", Settings.getColor()));
+
         this.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/folder.png")));
         this.setScene(scene);
         this.initModality(Modality.APPLICATION_MODAL);

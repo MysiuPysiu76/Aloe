@@ -188,9 +188,9 @@ public class DecisionWindow extends Stage {
     /**
      * Creates a generic styled button with the specified icon, color, and text.
      *
-     * @param icon the {@link FontIcon} to be displayed on the button
+     * @param icon  the {@link FontIcon} to be displayed on the button
      * @param color the {@link Paint} color of the icon
-     * @param text the text label of the button
+     * @param text  the text label of the button
      * @return a styled {@link Button} node
      */
     private static Button getButton(FontIcon icon, Paint color, String text) {
