@@ -10,8 +10,28 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * A simple modal informational window displaying a title, description, and a close button.
+ * <p>
+ * This window is styled according to the currently selected theme and is intended to provide
+ * users with brief, non-interactive messages or alerts. It is automatically shown upon creation.
+ * </p>
+ *
+ * <p><b>Usage example:</b></p>
+ * <pre>{@code
+ *     new InfoWindow("Information", "Operation completed successfully.");
+ * }</pre>
+ *
+ * @since 2.4.4
+ */
 public class InfoWindow extends Stage {
 
+    /**
+     * Constructs and displays an information window with the given title and description.
+     *
+     * @param title       the title text displayed at the top of the window
+     * @param description the descriptive message shown below the title
+     */
     public InfoWindow(String title, String description) {
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
@@ -23,7 +43,7 @@ public class InfoWindow extends Stage {
         titleLabel.setStyle("-fx-font-size: 20px");
         titleLabel.getStyleClass().addAll("text");
 
-        Label descriptionLabel = new Label("hh fetrhh  e efefwege g w g eg  g");
+        Label descriptionLabel = new Label(description);
         descriptionLabel.setPadding(new Insets(0, 10, 10, 10));
         descriptionLabel.getStyleClass().addAll("text");
 
