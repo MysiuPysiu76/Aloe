@@ -37,6 +37,7 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
+import java.nio.file.AccessDeniedException;
 import java.nio.file.attribute.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -123,7 +124,23 @@ public class PropertiesWindow extends Stage {
         GridPane fileData = new GridPane();
         fileData.setAlignment(Pos.TOP_CENTER);
         VBox.setMargin(fileData, new Insets(30, 15, 0, 0));
+        content.getChildren().addAll(iconWrapper, fileData);
+        this.root.getChildren().set(1, content);
+        this.setTitle(Translator.translate("window.properties"));
+        calculateFilesSizes();
         FileProperties properties = new FileProperties(file);
+
+        try {
+            Files.list(file.toPath());
+        } catch (AccessDeniedException e) {
+            Label label = new Label(Translator.translate("windows.properties.access-denied"));
+            label.getStyleClass().add("text");
+            fileData.add(label, 0, 0);
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         byte index = 0;
         for (Map.Entry<String, String> entry : properties.getProperties().entrySet()) {
@@ -136,11 +153,6 @@ public class PropertiesWindow extends Stage {
         }
 
         tryAddOtherProperties(fileData);
-
-        content.getChildren().addAll(iconWrapper, fileData);
-        this.root.getChildren().set(1, content);
-        this.setTitle(Translator.translate("window.properties"));
-        calculateFilesSizes();
     }
 
     private Label getPropertiesLabel(String text) {
