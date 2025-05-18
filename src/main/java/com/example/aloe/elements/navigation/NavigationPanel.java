@@ -47,38 +47,76 @@ public class NavigationPanel extends HBox {
 
     public static void updateFilesPath() {
         File currentDirectory = CurrentDirectory.get();
-
         HBox container = new HBox(getIcon());
         container.setAlignment(Pos.CENTER);
         container.getStyleClass().add("transparent");
+        filesPath.setContent(container);
+
         String separator = System.getProperty("file.separator");
         StringBuilder path = new StringBuilder();
 
-        for (String text : currentDirectory.getAbsolutePath().split(separator)) {
-            if (text.isBlank()) continue;
-            path.append(separator);
-            path.append(text);
-
-            Button button = new Button(text);
-            button.setUserData(path.toString());
-            button.getStyleClass().addAll("transparent", "cursor-hand", "accent-color");
-            HBox.setMargin(button, new Insets(4, 3, 0, 3));
-            String pathString = path.toString();
-            button.setOnAction(e -> FilesLoader.load(new File(pathString)));
-
-            container.getChildren().addAll(button, getStroke());
+        String currentPath = currentDirectory.toString();
+        if (currentPath.equals(Settings.getSetting("files", "trash"))) {
+            container.getChildren().set(0, getIcon(FontAwesome.TRASH));
+            container.getChildren().add(createFixedPathButton("menu.trash"));
+            return;
         }
 
-        container.getChildren().removeLast();
-        filesPath.setContent(container);
+        if (currentPath.equalsIgnoreCase("%disks%")) {
+            container.getChildren().set(0, getIcon(FontAwesome.HDD_O));
+            container.getChildren().add(createFixedPathButton("menu.disks"));
+            return;
+        }
+
+        if (FilesUtils.isRoot(currentDirectory)) {
+            container.getChildren().add(createFixedPathButton(""));
+            container.getChildren().add(createFixedPathButton(""));
+            return;
+        }
+
+        if (currentDirectory.equals(new File(System.getProperty("user.home")))) {
+            container.getChildren().add(createFixedPathButton("menu.home"));
+            return;
+        }
+
+        for (String part : currentPath.split(separator)) {
+            if (part.isBlank()) continue;
+            path.append(separator).append(part);
+            container.getChildren().addAll(createPathButton(part, path.toString()), getStroke());
+        }
+
+        if (!container.getChildren().isEmpty()) container.getChildren().removeLast();
+
+    }
+
+    private static Button createPathButton(String text, String path) {
+        Button button = new Button(text);
+        button.setUserData(path);
+        button.getStyleClass().addAll("transparent", "cursor-hand", "accent-color");
+        HBox.setMargin(button, new Insets(4, 3, 0, 3));
+        button.setOnAction(e -> FilesLoader.load(new File(path)));
+        return button;
+    }
+
+    private static Button createFixedPathButton(String translationKey) {
+        Button button = new Button(Translator.translate(translationKey));
+        button.getStyleClass().addAll("transparent", "cursor-hand", "accent-color");
+        HBox.setMargin(button, new Insets(4, 3, 0, 3));
+        return button;
     }
 
     private static FontIcon getIcon() {
-        FontIcon icon = FontIcon.of(FilesUtils.isinHomeDir(CurrentDirectory.get()) ? FontAwesome.HOME : FontAwesome.HDD_O);
+        FontIcon icon = FontIcon.of(FilesUtils.isInHomeDir(CurrentDirectory.get()) ? FontAwesome.HOME : FontAwesome.HDD_O);
         icon.setIconSize(22);
         icon.getStyleClass().add("font-icon");
         HBox.setMargin(icon, new Insets(4, 5, 0, 10));
         return icon;
+    }
+
+    private static FontIcon getIcon(FontAwesome icon) {
+        FontIcon fontIcon = getIcon();
+        fontIcon.setIconCode(icon);
+        return fontIcon;
     }
 
     private static Node getStroke() {
@@ -129,7 +167,7 @@ public class NavigationPanel extends HBox {
     private Button getRefreshButton() {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.REPEAT, 20));
-        HBox.setMargin(button, new Insets(0, 5, 0, 0));
+        HBox.setMargin(button, new Insets(0, 15, 0, 0));
         button.setOnMouseClicked(e -> FilesLoader.refresh());
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.reload")));
         return button;

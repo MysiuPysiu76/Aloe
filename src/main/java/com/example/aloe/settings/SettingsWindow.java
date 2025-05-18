@@ -1,6 +1,7 @@
 package com.example.aloe.settings;
 
 import com.example.aloe.components.draggable.DraggablePane;
+import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.window.ConfirmWindow;
 import com.example.aloe.window.MainWindow;
@@ -170,8 +171,10 @@ public class SettingsWindow extends Stage {
                         MainWindow.getStage().close();
                         Settings.loadSettings();
                         Translator.reload();
-                        MainWindow.create(new Stage());
                         settings = null;
+                        isRestartRequired = false;
+                        Menu.reload();
+                        MainWindow.create(new Stage());
                     });
                 });
             }

@@ -22,6 +22,7 @@ module com.example.aloe {
     requires org.apache.commons.io;
     requires metadata.extractor;
     requires com.github.kokorin.jaffree;
+    requires com.github.oshi;
 
     opens com.example.aloe to javafx.fxml;
     exports com.example.aloe;

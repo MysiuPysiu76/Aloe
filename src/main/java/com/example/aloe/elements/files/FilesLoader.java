@@ -19,21 +19,29 @@ import java.util.List;
 public class FilesLoader {
 
     public static void load(File directory) {
-        if (directory.toPath().toString().equalsIgnoreCase("%trash%"))
+        if (directory.toPath().toString().equalsIgnoreCase("%trash%")) {
             directory = new File(Settings.getSetting("files", "trash").toString());
+        }
         if (!directory.equals(CurrentDirectory.get())) {
             DirectoryHistory.addDirectory(directory);
             CurrentDirectory.set(directory);
             if (Settings.getSetting("files", "start-folder").equals("last"))
                 Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
         }
+        if (directory.toPath().toString().equalsIgnoreCase("%disks%")) {
+            DisksLoader.loadDisks();
+            NavigationPanel.updateFilesPath();
+            return;
+        }
 
         NavigationPanel.updateFilesPath();
         List<File> files = getSortedFiles(getFiles(directory.listFiles()));
         FilesPane.resetPosition();
+        FilesPane.get().setFitToHeight(false);
 
         if (files.isEmpty()) {
             FilesPane.set(getEmptyFolderInfo());
+            FilesPane.get().setFitToHeight(true);
             return;
         }
 

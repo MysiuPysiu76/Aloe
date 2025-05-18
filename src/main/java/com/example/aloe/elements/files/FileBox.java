@@ -15,6 +15,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -26,17 +27,16 @@ import java.util.stream.Stream;
 
 public class FileBox extends Pane {
 
-    protected final File file;
-    protected final double scale;
-    private boolean isSelected = false;
-
     private static MultiFileBoxContextMenu multiFileBoxContextMenu;
     private static final Set<FileBox> selectedFileBoxes = new LinkedHashSet<>();
 
-     FileBox(File file) {
+    protected final double scale;
+    protected File file;
+    private boolean isSelected = false;
+
+    FileBox(File file) {
         this.file = file;
         this.scale = Settings.getSetting("files", "file-box-size");
-
         this.getStyleClass().add("file-box");
         this.setContextMenu();
         this.setOnDragAndDrop();
@@ -102,6 +102,18 @@ public class FileBox extends Pane {
         ImageView icon = new ImageView();
         icon.setPreserveRatio(true);
         icon.setImage(getImage(this.file));
+        return getvBox(size, padding, icon);
+    }
+
+    protected VBox getImageBox(double size, Insets padding, String image) {
+        ImageView icon = new ImageView();
+        icon.setPreserveRatio(true);
+        icon.setImage(new Image(getImageStream(image)));
+        return getvBox(size, padding, icon);
+    }
+
+    @NotNull
+    private VBox getvBox(double size, Insets padding, ImageView icon) {
         icon.setFitHeight(size * scale);
         icon.setFitWidth(size * scale);
         VBox.setMargin(icon, padding);
@@ -125,9 +137,16 @@ public class FileBox extends Pane {
         return label;
     }
 
+    protected Label getName(String text) {
+        Label label = getName();
+        label.setText(text);
+        return label;
+    }
+
     private void setContextMenu() {
         FileBoxContextMenu fileBoxContextMenu = new FileBoxContextMenu(this.file);
         this.setOnContextMenuRequested(e -> {
+            FilesPane.hideMenu();
             if (this.isSelected() && selectedFileBoxes.size() == 1) {
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
             } else if (this.isSelected()) {
@@ -137,7 +156,6 @@ public class FileBox extends Pane {
                 FileBox.removeSelection();
                 this.setSelected();
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
-                FilesPane.hideMenu();
             }
             e.consume();
         });
@@ -145,6 +163,7 @@ public class FileBox extends Pane {
 
     private void setOnClick() {
         this.setOnMouseClicked(e -> {
+            FilesPane.hideMenu();
             int clicks = Settings.getSetting("files", "use-double-click").equals(Boolean.TRUE) ? 2 : 1;
             if (e.getButton() == MouseButton.PRIMARY) {
                 if (e.isControlDown()) {

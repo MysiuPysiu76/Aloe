@@ -275,5 +275,7 @@
   "context-menu.copy-location": "Copy location",
   "window.settings.files.use-copy-location": "Use copy location in file context menu",
   "window.empty-folder": "Empty folder",
-  "windows.properties.access-denied": "You do not have permission to view this information"
+  "windows.properties.access-denied": "You do not have permission to view this information",
+  "menu.disks": "Disks",
+  "window.interior.menu.edit": "Edit Directory in Menu"
 }

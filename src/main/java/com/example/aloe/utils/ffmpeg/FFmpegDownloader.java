@@ -33,7 +33,7 @@ public class FFmpegDownloader {
      * @throws IOException if downloading or extracting fails
      */
     public static void download() throws IOException {
-        String platform = CurrentPlatform.detectPlatform();
+        String platform = CurrentPlatform.detectPlatformAndArchitecture();
         JsonNode metadata = fetchLatestMetadata();
         JsonNode binNode = metadata.path("bin");
 
@@ -67,7 +67,7 @@ public class FFmpegDownloader {
     private static void downloadAndExtractComponent(JsonNode platformNode, String component, Path installDir) throws IOException {
         JsonNode urlNode = platformNode.path(component);
         if (urlNode.isMissingNode() || urlNode.isNull()) {
-            System.out.printf("No component: %s for platform: %s%n", component, CurrentPlatform.detectPlatform());
+            System.out.printf("No component: %s for platform: %s%n", component, CurrentPlatform.detectPlatformAndArchitecture());
             return;
         }
 

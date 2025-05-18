@@ -1,8 +1,11 @@
 package com.example.aloe.elements.files;
 
+import com.example.aloe.files.CurrentDirectory;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+
+import java.io.File;
 
 public class FilesPane extends ScrollPane {
 
@@ -12,11 +15,10 @@ public class FilesPane extends ScrollPane {
     private FilesPane() {
         filesPane = this;
         this.setFitToWidth(true);
-        this.setFitToHeight(true);
         this.getStyleClass().add("files-pane");
         this.setPadding(new Insets(7, 7, 17, 7));
         this.setOnContextMenuRequested(e -> {
-            menu.show(this, e.getScreenX(), e.getScreenY());
+            if (!CurrentDirectory.get().equals(new File("%disks%"))) menu.show(this, e.getScreenX(), e.getScreenY());
             FileBox.removeSelection();
         });
         this.setOnMouseClicked(e -> {

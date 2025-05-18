@@ -28,5 +28,9 @@ class MenuItemContextMenu extends ExtendedContextMenu {
             ExtendedMenuItem empty = new ExtendedMenuItem("context-menu.empty", e -> new FileDeleteTask(Arrays.stream(file.listFiles()).toList(), true));
             this.getItems().add(3, empty);
         }
+
+        if (item.getPath().equals("%disks%")) {
+            this.getItems().removeLast();
+        }
     }
 }

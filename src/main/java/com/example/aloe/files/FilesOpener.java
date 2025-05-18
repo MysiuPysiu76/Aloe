@@ -38,7 +38,7 @@ public class FilesOpener {
      *  </ul>
      */
     public static void open(File file) {
-        if (file.isFile()) {
+        if (file.isFile() && !file.toString().equalsIgnoreCase("%disks%")) {
             new FileOpenerTask(file, true);
         } else {
             FilesLoader.load(file);

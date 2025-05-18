@@ -14,6 +14,5 @@ public class ResponsivePane extends ScrollPane {
         this.getStyleClass().add("responsive-pane");
         this.setMaxWidth(1200);
         HBox.setHgrow(this, Priority.ALWAYS);
-
     }
 }

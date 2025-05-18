@@ -28,7 +28,7 @@ public class EditMenuItemWindow extends MenuItemWindow {
      * @param iconText  the current icon name of the menu item (as {@code FontAwesome} name)
      */
     public EditMenuItemWindow(String titleText, String pathText, String iconText) {
-        super(Translator.translate("window.interior.menu.add"), titleText, pathText, iconText);
+        super(Translator.translate("window.interior.menu.edit"), titleText, pathText, iconText);
 
         this.setOnConfirm(event -> {
             Menu.editItemInMenu(pathText, path.getText(), title.getText(), icon.getValue().toString());

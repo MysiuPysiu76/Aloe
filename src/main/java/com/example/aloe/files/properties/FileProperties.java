@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -114,8 +115,8 @@ public record FileProperties(@NotNull File file) implements Properties {
     public String getItemsCount() {
         try {
             return String.valueOf(Files.list(Path.of(this.file.getPath())).count());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return "0";
         }
     }
 

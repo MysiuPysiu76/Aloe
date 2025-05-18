@@ -143,7 +143,25 @@ public class FilesUtils {
      * @see System#getProperty(String)
      * @see File#getAbsolutePath()
      */
-    public static boolean isinHomeDir(File file) {
+    public static boolean isInHomeDir(File file) {
         return file.getAbsolutePath().startsWith(System.getProperty("user.home"));
+    }
+
+    /**
+     * Determines whether the specified {@link File} represents a root directory.
+     *
+     * <p>A file is considered a root if its absolute path is equal to its root path.
+     * For example, on Windows, {@code C:\} is a root, and on Unix-like systems, {@code /} is a root.</p>
+     *
+     * @param file the file to check; must not be {@code null}
+     * @return {@code true} if the file represents a root directory; {@code false} otherwise
+     * @throws NullPointerException if {@code file} is {@code null}
+     */
+    public static boolean isRoot(File file) {
+        try {
+            return file.toPath().getRoot().equals(file.toPath());
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 }
