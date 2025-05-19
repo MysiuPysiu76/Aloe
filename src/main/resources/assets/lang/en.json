@@ -277,5 +277,6 @@
   "window.empty-folder": "Empty folder",
   "windows.properties.access-denied": "You do not have permission to view this information",
   "menu.disks": "Disks",
-  "window.interior.menu.edit": "Edit Directory in Menu"
+  "window.interior.menu.edit": "Edit Directory in Menu",
+  "utils.available-space": "available"
 }

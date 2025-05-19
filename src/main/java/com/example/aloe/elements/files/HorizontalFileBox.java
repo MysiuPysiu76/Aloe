@@ -5,11 +5,13 @@ import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.properties.FileProperties;
 import com.example.aloe.utils.CurrentPlatform;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.utils.UnitConverter;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
 import oshi.software.os.OSFileStore;
 
 import java.io.File;
@@ -20,12 +22,7 @@ class HorizontalFileBox extends FileBox {
 
     HorizontalFileBox(File file) {
         super(file);
-
-        this.content.setMinHeight(35 * scale);
-        this.content.setPadding(new Insets(7));
-        this.content.setAlignment(Pos.CENTER);
-        this.content.setSpacing(5 * scale);
-        this.widthProperty().addListener((ob, ol, ne) -> this.content.setMinWidth(Double.parseDouble(ne.toString())));
+        initContent();
 
         Label name = getName();
         name.setMaxWidth(Double.MAX_VALUE);
@@ -38,24 +35,24 @@ class HorizontalFileBox extends FileBox {
     }
 
     HorizontalFileBox(OSFileStore store) {
-        super(new File(store.getMount()));
+        super(store);
+        initContent();
 
+        Label name = getName();
+        name.setMaxWidth(Double.MAX_VALUE);
+        name.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(this, new Insets(1, 15, 2, 15));
+
+        this.content.getChildren().addAll(getImageBox(30, new Insets(2, 10, 2, 10), "disk"), name, new HBoxSpacer(), getAvailableSpace());
+        this.getChildren().add(content);
+    }
+
+    private void initContent() {
         this.content.setMinHeight(35 * scale);
         this.content.setPadding(new Insets(7));
         this.content.setAlignment(Pos.CENTER);
         this.content.setSpacing(5 * scale);
         this.widthProperty().addListener((ob, ol, ne) -> this.content.setMinWidth(Double.parseDouble(ne.toString())));
-
-        String names = file.getName();
-        if (FilesUtils.isRoot(this.file) && CurrentPlatform.isLinux()) names = "Linux";
-
-        Label name = getName(names);
-        name.setMaxWidth(Double.MAX_VALUE);
-        name.setAlignment(Pos.CENTER_LEFT);
-        VBox.setMargin(this, new Insets(1, 15, 2, 15));
-
-        this.content.getChildren().addAll(getImageBox(30, new Insets(2, 10, 2, 10), "disk"), name, new HBoxSpacer());
-        this.getChildren().add(content);
     }
 
     static HBox getInfoPanel() {
@@ -73,7 +70,15 @@ class HorizontalFileBox extends FileBox {
         return box;
     }
 
-    static Label getInfoLabel(String key) {
+    private Label getAvailableSpace() {
+        Label label = new Label(String.format("%s / %s %s", UnitConverter.convert(this.store.getTotalSpace()), UnitConverter.convert(this.store.getUsableSpace()), Translator.translate("utils.available-space")));
+        label.setPadding(new Insets(0, 15, 0, 0));
+        label.setStyle("-fx-font-weight: bold");
+        label.getStyleClass().add("text");
+        return label;
+    }
+
+    private static Label getInfoLabel(String key) {
         Label label = new Label(Translator.translate(key));
         label.setStyle("-fx-font-weight: bold");
         label.getStyleClass().add("text");

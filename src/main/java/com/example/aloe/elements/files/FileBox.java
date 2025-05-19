@@ -4,6 +4,7 @@ import com.example.aloe.files.CurrentDirectory;
 import com.example.aloe.files.FilesOpener;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.settings.Settings;
+import com.example.aloe.utils.CurrentPlatform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
+import oshi.software.os.OSFileStore;
 
 import java.io.File;
 import java.io.InputStream;
@@ -32,15 +34,26 @@ public class FileBox extends Pane {
 
     protected final double scale;
     protected File file;
+    protected OSFileStore store;
     private boolean isSelected = false;
 
-    FileBox(File file) {
-        this.file = file;
+    FileBox() {
         this.scale = Settings.getSetting("files", "file-box-size");
         this.getStyleClass().add("file-box");
-        this.setContextMenu();
         this.setOnDragAndDrop();
         this.setOnClick();
+    }
+
+    FileBox(File file) {
+        this();
+        this.file = file;
+        this.setFileContextMenu();
+    }
+
+    FileBox(OSFileStore store) {
+        this();
+        this.store = store;
+        this.setDiskContextMenu();
     }
 
     public static Image getImage(File file) {
@@ -126,12 +139,31 @@ public class FileBox extends Pane {
     }
 
     protected Label getName() {
-        Label label = new Label(this.file.getName());
+        return store != null ? getDiskName() : getFileName();
+    }
+
+    private Label getDiskName() {
+        Label label = getNameLabel();
+        String name = new File(store.getMount()).getName();
+        if (FilesUtils.isRoot(new File(this.store.getMount())) && CurrentPlatform.isLinux()) name = "Linux";
+        label.setText(name);
+        label.setTooltip(new Tooltip(this.store.getMount()));
+        return label;
+    }
+
+    private Label getFileName() {
+        Label label = getNameLabel();
+        label.setText(this.file.getName());
+        label.setTooltip(new Tooltip(this.file.getName()));
+        return label;
+    }
+
+    private Label getNameLabel() {
+        Label label = new Label();
         label.setWrapText(true);
         label.setMaxWidth(90 * scale);
         label.setMaxHeight(35);
         label.setAlignment(Pos.TOP_CENTER);
-        label.setTooltip(new Tooltip(this.file.getName()));
         label.setStyle("-fx-font-size: 12px; -fx-text-alignment: center;");
         label.getStyleClass().add("text");
         return label;
@@ -143,7 +175,7 @@ public class FileBox extends Pane {
         return label;
     }
 
-    private void setContextMenu() {
+    private void setFileContextMenu() {
         FileBoxContextMenu fileBoxContextMenu = new FileBoxContextMenu(this.file);
         this.setOnContextMenuRequested(e -> {
             FilesPane.hideMenu();
@@ -157,6 +189,15 @@ public class FileBox extends Pane {
                 this.setSelected();
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
             }
+            e.consume();
+        });
+    }
+
+    private void setDiskContextMenu() {
+        DiskContextMenu diskContextMenu = new DiskContextMenu(this.store);
+        this.setOnContextMenuRequested(e -> {
+            FilesPane.hideMenu();
+            diskContextMenu.show(this, e.getScreenX(), e.getScreenY());
             e.consume();
         });
     }

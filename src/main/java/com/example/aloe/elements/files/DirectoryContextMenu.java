@@ -11,6 +11,7 @@ import com.example.aloe.window.interior.FileWindow;
 import javafx.scene.input.Clipboard;
 
 public class DirectoryContextMenu extends ExtendedContextMenu {
+
     public DirectoryContextMenu() {
         super();
 
