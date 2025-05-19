@@ -53,6 +53,7 @@ public class FileBox extends Pane {
     FileBox(OSFileStore store) {
         this();
         this.store = store;
+        this.file = new File(store.getMount());
         this.setDiskContextMenu();
     }
 

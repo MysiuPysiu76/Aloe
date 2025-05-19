@@ -278,5 +278,13 @@
   "windows.properties.access-denied": "You do not have permission to view this information",
   "menu.disks": "Disks",
   "window.interior.menu.edit": "Edit Directory in Menu",
-  "utils.available-space": "available"
+  "utils.available-space": "available",
+  "window.properties.disk.name": "Name: ",
+  "window.properties.disk.model": "Model: ",
+  "window.properties.disk.serial": "Serial: ",
+  "window.properties.disk.size": "Size: ",
+  "window.properties.disk.reads": "Reads count: ",
+  "window.properties.disk.writes": "Writes count: ",
+  "window.properties.disk.transfer": "Transfer: ",
+  "window.properties.disk-properties": "Disk properties"
 }

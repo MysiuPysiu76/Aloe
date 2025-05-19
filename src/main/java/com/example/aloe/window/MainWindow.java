@@ -45,7 +45,7 @@ public class MainWindow {
         interiorWindowPane.setVisible(false);
         root.getChildren().addAll(mainContainer, interiorWindowPane);
 
-        scene = new Scene(root, (double)Settings.getSetting("other", "width"), (double)Settings.getSetting("other", "height"));
+        scene = new Scene(root, Settings.getSetting("other", "width"), Settings.getSetting("other", "height"));
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/global.css").toExternalForm());
         scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/interior.css").toExternalForm());

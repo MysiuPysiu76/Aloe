@@ -7,6 +7,7 @@ import com.example.aloe.files.FilesOpener;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.CurrentPlatform;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.window.PropertiesWindow;
 import oshi.software.os.OSFileStore;
 
 import java.io.File;
@@ -19,7 +20,8 @@ public class DiskContextMenu extends ExtendedContextMenu {
         ExtendedMenuItem open = new ExtendedMenuItem(Translator.translate("context-menu.open"), e -> FilesOpener.open(new File(store.getMount())));
         ExtendedMenuItem copyLocation = new ExtendedMenuItem("context-menu.copy-location", e -> ClipboardManager.copyTextToClipboard(store.getMount()));
         ExtendedMenuItem addToMenu = new ExtendedMenuItem("context-menu.add-to-menu", e -> Menu.addItemToMenu(store.getMount(), store.getName().equals("/") && CurrentPlatform.isLinux() ? "Linux" : store.getName(), "HDD_O"));
+        ExtendedMenuItem properties = new ExtendedMenuItem("context-menu.properties", e -> new PropertiesWindow(store));
 
-        this.getItems().addAll(open, copyLocation, addToMenu);
+        this.getItems().addAll(open, copyLocation, addToMenu, properties);
     }
 }

@@ -6,12 +6,10 @@ import com.example.aloe.components.VBoxSpacer;
 import com.example.aloe.elements.files.FileBox;
 import com.example.aloe.files.Checksum;
 import com.example.aloe.files.FilesUtils;
-import com.example.aloe.files.properties.FileProperties;
-import com.example.aloe.files.properties.ImageProperties;
+import com.example.aloe.files.properties.*;
 import com.example.aloe.files.permissions.ACLPermissions;
 import com.example.aloe.files.permissions.POSIXPermissions;
 import com.example.aloe.files.properties.Properties;
-import com.example.aloe.files.properties.VideoProperties;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.ffmpeg.FFmpegDownloader;
@@ -38,6 +36,7 @@ import javafx.stage.Stage;
 import javafx.application.Platform;
 
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Path;
 import java.nio.file.attribute.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -49,16 +48,30 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import org.jetbrains.annotations.NotNull;
+import oshi.SystemInfo;
+import oshi.hardware.HWDiskStore;
+import oshi.hardware.HWPartition;
+import oshi.software.os.OSFileStore;
 
 public class PropertiesWindow extends Stage {
 
-    private final File file;
+    private File file;
     private final VBox root = new VBox();
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
     private String hash = "";
+    private OSFileStore store;
 
     public PropertiesWindow(@NotNull File file) {
         this.file = file;
+        init();
+    }
+
+    public PropertiesWindow(@NotNull OSFileStore store) {
+        this.store = store;
+        init();
+    }
+
+    private void init() {
         this.setMinHeight(440);
         this.setMinWidth(350);
 
@@ -110,6 +123,10 @@ public class PropertiesWindow extends Stage {
     }
 
     private void loadProperties() {
+        if (this.store != null) {
+            loadDiskProperties();
+            return;
+        }
         loadPropertiesButtonBar();
         VBox content = new VBox();
         VBox.setVgrow(content, Priority.ALWAYS);
@@ -153,6 +170,61 @@ public class PropertiesWindow extends Stage {
         }
 
         tryAddOtherProperties(fileData);
+    }
+
+    private void loadDiskProperties() {
+        VBox content = new VBox();
+        VBox.setVgrow(content, Priority.ALWAYS);
+        content.getStyleClass().add("background");
+
+        ImageView icon = getIcon("disk");
+        VBox iconWrapper = new VBox();
+        iconWrapper.setAlignment(Pos.TOP_CENTER);
+        iconWrapper.getChildren().add(icon);
+        VBox.setMargin(icon, new Insets(26, 10, 10, 2));
+
+        GridPane fileData = new GridPane();
+        fileData.setAlignment(Pos.TOP_CENTER);
+        VBox.setMargin(fileData, new Insets(30, 15, 0, 0));
+        content.getChildren().addAll(iconWrapper, fileData);
+        this.root.getChildren().set(1, content);
+        this.setTitle(Translator.translate("window.properties.disk-properties"));
+        calculateFilesSizes();
+        DiskProperties properties = new DiskProperties(findDiskForFileStore(this.store));
+
+        try {
+            Files.list(Path.of(store.getMount()));
+        } catch (AccessDeniedException e) {
+            Label label = new Label(Translator.translate("windows.properties.access-denied"));
+            label.getStyleClass().add("text");
+            fileData.add(label, 0, 0);
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte index = 0;
+        for (Map.Entry<String, String> entry : properties.getProperties().entrySet()) {
+            Label title = getPropertiesLabel(entry.getKey());
+            Label value = new Label(entry.getValue());
+            value.getStyleClass().add("text");
+            fileData.add(title, 0, index);
+            fileData.add(value, 1, index);
+            index++;
+        }
+    }
+
+    private static HWDiskStore findDiskForFileStore(OSFileStore fileStore) {
+        for (HWDiskStore disk : new SystemInfo().getHardware().getDiskStores()) {
+            for (HWPartition part : disk.getPartitions()) {
+                if (part.getMountPoint() != null &&
+                        part.getMountPoint().equals(fileStore.getMount())) {
+                    return disk;
+                }
+            }
+        }
+        return null;
     }
 
     private Label getPropertiesLabel(String text) {
@@ -217,6 +289,14 @@ public class PropertiesWindow extends Stage {
         } else {
             icon.setImage(FileBox.getImage(file));
         }
+        return icon;
+    }
+
+    private ImageView getIcon(String fileName) {
+        ImageView icon = new ImageView();
+        icon.setFitHeight(77);
+        icon.setFitWidth(77);
+        icon.setImage(loadIcon("/assets/icons/" + fileName + ".png"));
         return icon;
     }
 
