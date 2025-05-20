@@ -122,9 +122,18 @@ public class PropertiesWindow extends Stage {
         this.root.getChildren().set(0, bar);
     }
 
+    private void loadDiskButtonBar() {
+        BackButton propertiesButton = new BackButton(Translator.translate("window.properties.disk-properties"), true);
+        propertiesButton.setColor(Settings.getColor());
+        propertiesButton.setOnMouseClicked(e -> loadDiskProperties());
+        HBox bar = new HBox(propertiesButton, new HBoxSpacer());
+        bar.getStyleClass().add("background");
+        this.root.getChildren().set(0, bar);
+    }
+
     private void loadProperties() {
         if (this.store != null) {
-            loadDiskProperties();
+            loadPartitionProperties();
             return;
         }
         loadPropertiesButtonBar();
@@ -172,8 +181,9 @@ public class PropertiesWindow extends Stage {
         tryAddOtherProperties(fileData);
     }
 
-    private void loadDiskProperties() {
+    private void loadPartitionProperties() {
         VBox content = new VBox();
+        loadDiskButtonBar();
         VBox.setVgrow(content, Priority.ALWAYS);
         content.getStyleClass().add("background");
 
@@ -188,9 +198,9 @@ public class PropertiesWindow extends Stage {
         VBox.setMargin(fileData, new Insets(30, 15, 0, 0));
         content.getChildren().addAll(iconWrapper, fileData);
         this.root.getChildren().set(1, content);
-        this.setTitle(Translator.translate("window.properties.disk-properties"));
+        this.setTitle(Translator.translate("window.properties.partition-properties"));
         calculateFilesSizes();
-        DiskProperties properties = new DiskProperties(findDiskForFileStore(this.store));
+        PartitionProperties properties = new PartitionProperties(this.store);
 
         try {
             Files.list(Path.of(store.getMount()));
@@ -211,6 +221,69 @@ public class PropertiesWindow extends Stage {
             value.getStyleClass().add("text");
             fileData.add(title, 0, index);
             fileData.add(value, 1, index);
+            index++;
+        }
+    }
+
+    private void loadDiskProperties() {
+        VBox content = new VBox();
+        VBox.setVgrow(content, Priority.ALWAYS);
+        content.getStyleClass().add("background");
+
+        ImageView icon = getIcon("disk");
+        VBox iconWrapper = new VBox();
+        iconWrapper.setAlignment(Pos.TOP_CENTER);
+        iconWrapper.getChildren().add(icon);
+        VBox.setMargin(icon, new Insets(26, 10, 10, 2));
+
+        GridPane fileData = new GridPane();
+        fileData.setAlignment(Pos.TOP_CENTER);
+        VBox.setMargin(fileData, new Insets(30, 15, 0, 0));
+        content.getChildren().addAll(iconWrapper, fileData);
+        this.root.getChildren().clear();
+        this.root.getChildren().add(content);
+        this.setTitle(Translator.translate("window.properties.disk-properties"));
+        HWDiskStore disk = findDiskForFileStore(this.store);
+        DiskProperties properties = new DiskProperties(disk);
+
+        try {
+            Files.list(Path.of(store.getMount()));
+        } catch (AccessDeniedException e) {
+            Label label = new Label(Translator.translate("windows.properties.access-denied"));
+            label.getStyleClass().add("text");
+            fileData.add(label, 0, 0);
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte index = 0;
+        for (Map.Entry<String, String> entry : properties.getProperties().entrySet()) {
+            Label title = getPropertiesLabel(entry.getKey());
+            Label value = new Label(entry.getValue());
+            value.getStyleClass().add("text");
+            fileData.add(title, 0, index);
+            fileData.add(value, 1, index);
+            index++;
+        }
+
+        List<OSFileStore> fileStores = new SystemInfo().getOperatingSystem().getFileSystem().getFileStores();
+        for (HWPartition store : disk.getPartitions()) {
+            OSFileStore matching = fileStores.stream()
+                    .filter(fsItem -> fsItem.getMount().equals(store.getMountPoint()) || fsItem.getVolume().equals(store.getName()) || fsItem.getName().contains(store.getName()))
+                    .findFirst()
+                    .orElse(null);
+
+            Button button = getLinkButton(Translator.translate("window.properties.file.show"));
+            button.setStyle(button.getStyle() + String.format("-fx-text-fill: %s;", Settings.getColor()));
+            button.setOnAction(event -> {
+                this.store = matching;
+                loadPartitionProperties();
+            });
+
+            fileData.add(getPropertiesLabel(String.format("%s %s: ", Translator.translate("window.properties.partition"), matching.getVolume())), 0, index);
+            fileData.add(button, 1, index);
             index++;
         }
     }

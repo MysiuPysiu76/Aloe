@@ -286,5 +286,14 @@
   "window.properties.disk.reads": "Reads count: ",
   "window.properties.disk.writes": "Writes count: ",
   "window.properties.disk.transfer": "Transfer: ",
-  "window.properties.disk-properties": "Disk properties"
+  "window.properties.disk-properties": "Disk properties",
+  "window.properties.partition-properties": "Partition properties",
+  "window.properties.partition.name": "Name: ",
+  "window.properties.partition.type": "Type: ",
+  "window.properties.partition.mount": "Mount point: ",
+  "window.properties.partition.free-space": "Free space: ",
+  "window.properties.partition.total-space": "Total space: ",
+  "window.properties.partition.uuid": "UUID: ",
+  "window.properties.partition.options": "Options: ",
+  "window.properties.partition": "Partition"
 }
