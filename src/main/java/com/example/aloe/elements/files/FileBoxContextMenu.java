@@ -19,7 +19,54 @@ import com.example.aloe.window.interior.RenameWindow;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Represents the context menu for a file or directory within the file box UI component.
+ * <p>
+ * This class extends {@link ExtendedContextMenu} and provides a set of common file-related operations
+ * such as open, cut, copy, rename, duplicate, move, delete, compress, extract, and view properties.
+ * Additional options are conditionally added based on file type and application settings.
+ * </p>
+ *
+ * <p>
+ * The following context menu actions are included:
+ * <ul>
+ *     <li><strong>Open</strong> - Opens the selected file or directory.</li>
+ *     <li><strong>Cut / Copy</strong> - Copies or cuts the file to the system clipboard.</li>
+ *     <li><strong>Copy Location</strong> - (Optional) Copies the full file path to the clipboard.</li>
+ *     <li><strong>Rename</strong> - Opens a window to rename the file.</li>
+ *     <li><strong>Duplicate</strong> - Creates a duplicate of the file.</li>
+ *     <li><strong>Move To</strong> - Prompts the user to choose a target directory to move the file.</li>
+ *     <li><strong>Move To Parent</strong> - Moves the file one directory level up.</li>
+ *     <li><strong>Move To Trash</strong> - Moves the file to the application's designated trash folder.</li>
+ *     <li><strong>Compress / Extract</strong> - Compresses files or extracts contents if the file is an archive.</li>
+ *     <li><strong>Delete</strong> - Permanently deletes the file.</li>
+ *     <li><strong>Properties</strong> - Opens a properties window displaying file metadata.</li>
+ *     <li><strong>Add to Menu</strong> - (Directories only) Adds the directory as a shortcut in the application menu.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Additional items are conditionally added based on:
+ * <ul>
+ *     <li>{@code files.use-copy-location} setting - Enables "Copy Location" option.</li>
+ *     <li>If the selected file is a directory - Enables "Add to Menu" option.</li>
+ * </ul>
+ * </p>
+ *
+ * @since 2.5.2
+ */
 public class FileBoxContextMenu extends ExtendedContextMenu {
+
+    /**
+     * Constructs a new {@code FileBoxContextMenu} for the specified file or directory.
+     * <p>
+     * Initializes the context menu with various file operation options tailored to the given
+     * {@link File} instance. Menu items are conditionally added based on the file type (file or directory)
+     * and current application settings.
+     * </p>
+     *
+     * @param file the {@link File} object (file or directory) for which the context menu is being created
+     */
     public FileBoxContextMenu(File file) {
         super();
 
