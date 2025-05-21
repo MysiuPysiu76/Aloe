@@ -1,9 +1,7 @@
 package com.example.aloe.elements.files;
 
 import com.example.aloe.components.HBoxSpacer;
-import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.properties.FileProperties;
-import com.example.aloe.utils.CurrentPlatform;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.utils.UnitConverter;
 import javafx.geometry.Insets;
@@ -12,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 import oshi.software.os.OSFileStore;
 
 import java.io.File;
@@ -45,6 +44,14 @@ class HorizontalFileBox extends FileBox {
 
         this.content.getChildren().addAll(getImageBox(30, new Insets(2, 10, 2, 10), "disk"), name, new HBoxSpacer(), getAvailableSpace());
         this.getChildren().add(content);
+
+        if (new File(this.store.getMount()).listFiles() == null) {
+            FontIcon icon = FontIcon.of(FontAwesome.LOCK);
+            icon.getStyleClass().add("font-icon-red");
+            icon.setIconSize(17);
+            HBox.setMargin(icon, new Insets(5));
+            this.content.getChildren().add(2, icon);
+        }
     }
 
     private void initContent() {

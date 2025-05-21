@@ -153,3 +153,7 @@
     -fx-background-radius: 10px;
     -fx-background-color: transparent;
 }
+
+.font-icon-red {
+    -fx-fill: #ff0000;
+}
