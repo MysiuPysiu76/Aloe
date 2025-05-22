@@ -97,6 +97,7 @@ public class FileBox extends Pane {
     }
 
     public static void selectAllFiles() {
+        removeSelection();
         Stream stream;
          if (Settings.getSetting("files", "view").equals("list")) {
              VBox list = (VBox) FilesPane.get().getContent();

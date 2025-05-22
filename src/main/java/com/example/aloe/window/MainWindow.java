@@ -118,5 +118,10 @@ public class MainWindow {
                }
            }
         });
+        scene.setOnKeyPressed(event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.A) {
+                FileBox.selectAllFiles();
+            }
+        });
     }
 }
