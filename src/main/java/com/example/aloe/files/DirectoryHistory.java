@@ -48,7 +48,7 @@ public class DirectoryHistory {
     public static void loadPreviousDirectory() {
         if (position > 0) {
             position--;
-            FilesLoader.load(files.get(position));
+            FilesLoader.load(files.get(position), false);
         }
     }
 
@@ -61,7 +61,7 @@ public class DirectoryHistory {
     public static void loadNextDirectory() {
         if (position < files.size() - 1) {
             position++;
-            FilesLoader.load(files.get(position));
+            FilesLoader.load(files.get(position), false);
         }
     }
 }

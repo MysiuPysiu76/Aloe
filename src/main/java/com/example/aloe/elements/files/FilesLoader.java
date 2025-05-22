@@ -18,12 +18,12 @@ import java.util.List;
 
 public class FilesLoader {
 
-    public static void load(File directory) {
+    public static void load(File directory, boolean addToHistory) {
         if (directory.toPath().toString().equalsIgnoreCase("%trash%")) {
             directory = new File(Settings.getSetting("files", "trash").toString());
         }
+        if (addToHistory) DirectoryHistory.addDirectory(directory);
         if (!directory.equals(CurrentDirectory.get())) {
-            DirectoryHistory.addDirectory(directory);
             CurrentDirectory.set(directory);
             if (Settings.getSetting("files", "start-folder").equals("last"))
                 Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
@@ -62,6 +62,10 @@ public class FilesLoader {
             files.forEach(file -> grid.getChildren().add(new VerticalFileBox(file)));
             FilesPane.set(grid);
         }
+    }
+
+    public static void load(File directory) {
+        load(directory, true);
     }
 
     public static void refresh() {

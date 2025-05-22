@@ -132,6 +132,9 @@ public class MainWindow {
             if (e.isControlDown() && e.getCode() == KeyCode.V) {
                 new FileCopyTask(Clipboard.getSystemClipboard().getFiles(), true);
             }
+            if ((e.isControlDown() && e.getCode() == KeyCode.R) || e.getCode() == KeyCode.F5) {
+                FilesLoader.refresh();
+            }
         });
     }
 }
