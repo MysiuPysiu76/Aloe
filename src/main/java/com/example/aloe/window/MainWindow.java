@@ -6,12 +6,15 @@ import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.files.FilesPane;
 import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.elements.navigation.NavigationPanel;
+import com.example.aloe.files.tasks.FileCopyTask;
 import com.example.aloe.settings.Settings;
+import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.Translator;
 import com.example.aloe.window.interior.RenameWindow;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -112,15 +115,22 @@ public class MainWindow {
         scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; } .extended-menu-item:hover, .confirm, .radio-button:selected .dot, .progress-bar .bar { -fx-background-color: %s; } .accent-color, .menu-option:hover { -fx-text-fill: %s; }", Settings.getColor(), Settings.getColor(), Settings.getColor()));
 
         scene.setOnKeyPressed(e -> {
-           if (e.getCode() == KeyCode.F2) {
+            if (e.getCode() == KeyCode.F2) {
                if (FileBox.getSelectedFiles().size() == 1) {
                    new RenameWindow(FileBox.getSelectedFiles().getFirst());
                }
-           }
-        });
-        scene.setOnKeyPressed(event -> {
-            if (event.isControlDown() && event.getCode() == KeyCode.A) {
+            }
+            if (e.isControlDown() && e.getCode() == KeyCode.A) {
                 FileBox.selectAllFiles();
+            }
+            if (e.isControlDown() && e.getCode() == KeyCode.C) {
+                ClipboardManager.copyFilesToClipboard(FileBox.getSelectedFiles());
+            }
+            if (e.isControlDown() && e.getCode() == KeyCode.X) {
+                ClipboardManager.cutFilesToClipboard(FileBox.getSelectedFiles());
+            }
+            if (e.isControlDown() && e.getCode() == KeyCode.V) {
+                new FileCopyTask(Clipboard.getSystemClipboard().getFiles(), true);
             }
         });
     }
