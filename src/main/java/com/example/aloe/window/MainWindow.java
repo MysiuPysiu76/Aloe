@@ -1,15 +1,18 @@
 package com.example.aloe.window;
 
 import com.example.aloe.components.ExtendedContextMenu;
+import com.example.aloe.elements.files.FileBox;
 import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.files.FilesPane;
 import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.window.interior.RenameWindow;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -44,14 +47,7 @@ public class MainWindow {
         VBox.setVgrow(filesPanel, Priority.ALWAYS);
         interiorWindowPane.setVisible(false);
         root.getChildren().addAll(mainContainer, interiorWindowPane);
-
-        scene = new Scene(root, Settings.getSetting("other", "width"), Settings.getSetting("other", "height"));
-        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
-        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/global.css").toExternalForm());
-        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/interior.css").toExternalForm());
-        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/main.css").toExternalForm());
-        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/main.css").toExternalForm());
-        scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; } .extended-menu-item:hover, .confirm, .radio-button:selected .dot, .progress-bar .bar { -fx-background-color: %s; } .accent-color, .menu-option:hover { -fx-text-fill: %s; }", Settings.getColor(), Settings.getColor(), Settings.getColor()));
+        setUpScene();
         stage.getIcons().add(new Image(MainWindow.class.getResourceAsStream("/assets/icons/folder.png")));
         stage.setTitle(Translator.translate("root.title"));
         stage.setMinHeight(350);
@@ -104,5 +100,23 @@ public class MainWindow {
             SplitPane.Divider divider = filesPanel.getDividers().getFirst();
             divider.positionProperty().addListener(((observableValue, number, t1) -> Settings.setSetting("menu", "divider-position", t1)));
         }
+    }
+
+    private static void setUpScene() {
+        scene = new Scene(root, Settings.getSetting("other", "width"), Settings.getSetting("other", "height"));
+        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
+        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/global.css").toExternalForm());
+        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/interior.css").toExternalForm());
+        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/" + Settings.getTheme() + "/main.css").toExternalForm());
+        scene.getStylesheets().add(MainWindow.class.getResource("/assets/styles/structural/main.css").toExternalForm());
+        scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; } .extended-menu-item:hover, .confirm, .radio-button:selected .dot, .progress-bar .bar { -fx-background-color: %s; } .accent-color, .menu-option:hover { -fx-text-fill: %s; }", Settings.getColor(), Settings.getColor(), Settings.getColor()));
+
+        scene.setOnKeyPressed(e -> {
+           if (e.getCode() == KeyCode.F2) {
+               if (FileBox.getSelectedFiles().size() == 1) {
+                   new RenameWindow(FileBox.getSelectedFiles().getFirst());
+               }
+           }
+        });
     }
 }
