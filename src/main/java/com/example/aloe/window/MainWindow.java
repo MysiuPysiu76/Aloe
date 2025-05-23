@@ -143,6 +143,10 @@ public class MainWindow {
             if (e.isShiftDown() && e.getCode() == KeyCode.DELETE) {
                 new FileDeleteTask(FileBox.getSelectedFiles(), true);
             }
+            if (e.getCode() == KeyCode.ESCAPE) {
+                FileBox.removeSelection();
+                hideDarkeningPlate();
+            }
         });
     }
 }
