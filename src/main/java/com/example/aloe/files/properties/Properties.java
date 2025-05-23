@@ -16,6 +16,8 @@ import java.util.Map;
  * @see FileProperties
  * @see ImageProperties
  * @see VideoProperties
+ * @see DiskProperties
+ * @see PartitionProperties
  * @since 1.9.4
  */
 public interface Properties {

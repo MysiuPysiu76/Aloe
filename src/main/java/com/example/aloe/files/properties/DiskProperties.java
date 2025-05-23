@@ -18,6 +18,7 @@ import java.util.Map;
  * It implements the {@link Properties} interface to allow consistent property access.
  *
  * @param disk the {@link HWDiskStore} instance from which all disk statistics are derived
+ * @see Properties
  * @since 2.5.8
  */
 public record DiskProperties(@NotNull HWDiskStore disk) implements Properties {
