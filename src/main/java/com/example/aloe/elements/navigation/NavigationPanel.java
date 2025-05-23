@@ -11,6 +11,7 @@ import com.example.aloe.utils.Translator;
 import com.example.aloe.files.DirectoryHistory;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.window.AboutWindow;
+import com.example.aloe.window.ShortcutsWindow;
 import com.example.aloe.window.interior.DirectoryWindow;
 import com.example.aloe.window.interior.FileWindow;
 import javafx.geometry.Insets;
@@ -289,8 +290,11 @@ public class NavigationPanel extends HBox {
         aboutButton.getStyleClass().addAll("nav-btn", "text");
         Button settingsButton = new Button(Translator.translate("navigate.settings"));
         settingsButton.getStyleClass().addAll("nav-btn", "text");
-        settingsButton.setOnMouseClicked(event -> new SettingsWindow().show());
-        container.getChildren().addAll(newFile, newFolder, showHiddenFiles, aboutButton, settingsButton);
+        settingsButton.setOnMouseClicked(event -> new SettingsWindow());
+        Button shortcutsButton = new Button(Translator.translate("navigate.shortcuts"));
+        shortcutsButton.getStyleClass().addAll("nav-btn", "text");
+        shortcutsButton.setOnMouseClicked(event -> new ShortcutsWindow());
+        container.getChildren().addAll(newFile, newFolder, showHiddenFiles, aboutButton, settingsButton, shortcutsButton);
         popOver.setContentNode(container);
 
         button.setOnMouseClicked(e -> {

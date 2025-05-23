@@ -1,0 +1,21 @@
+.container {
+    -fx-padding: 15px 5px 15px 5px;
+    -fx-spacing: 6px;
+    -fx-max-width: 350px;
+    -fx-alignment: top-center;
+}
+
+.row {
+    -fx-alignment: center;
+}
+
+.box {
+    -fx-background-radius: 7px;
+    -fx-border-radius: 5px;
+    -fx-padding: 7px 15px 7px 15px;
+    -fx-alignment: center
+}
+
+.title {
+    -fx-font-size: 13px;
+}
