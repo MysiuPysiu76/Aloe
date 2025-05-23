@@ -7,6 +7,8 @@ import com.example.aloe.elements.files.FilesPane;
 import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.tasks.FileCopyTask;
+import com.example.aloe.files.tasks.FileDeleteTask;
+import com.example.aloe.files.tasks.FileMoveTask;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.Translator;
@@ -134,6 +136,12 @@ public class MainWindow {
             }
             if ((e.isControlDown() && e.getCode() == KeyCode.R) || e.getCode() == KeyCode.F5) {
                 FilesLoader.refresh();
+            }
+            if (e.getCode() == KeyCode.DELETE) {
+                new FileMoveTask(FileBox.getSelectedFiles(), new File(Settings.getSetting("files", "trash").toString()), true);
+            }
+            if (e.isShiftDown() && e.getCode() == KeyCode.DELETE) {
+                new FileDeleteTask(FileBox.getSelectedFiles(), true);
             }
         });
     }
