@@ -300,6 +300,8 @@
   "window.shortcuts.copy": "Copy",
   "window.shortcuts.cut": "Cut",
   "window.shortcuts.paste": "Paste",
+  "window.shortcuts.new-file": "New File",
+  "window.shortcuts.new-folder": "New Folder",
   "window.shortcuts.select-all": "Select all",
   "window.shortcuts.refresh": "Refresh",
   "window.shortcuts.delete": "Delete",

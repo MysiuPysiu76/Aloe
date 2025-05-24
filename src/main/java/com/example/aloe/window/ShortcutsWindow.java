@@ -163,6 +163,8 @@ public class ShortcutsWindow extends Stage {
      */
     private List<String> getTitleList() {
         List<String> titleList = new ArrayList<>();
+        titleList.add("window.shortcuts.new-folder");
+        titleList.add("window.shortcuts.new-file");
         titleList.add("window.shortcuts.copy");
         titleList.add("window.shortcuts.cut");
         titleList.add("window.shortcuts.paste");
@@ -182,6 +184,8 @@ public class ShortcutsWindow extends Stage {
      */
     private List<List<String>> getShortcutsList() {
         List<List<String>> shortcutsList = new ArrayList<>();
+        shortcutsList.add(List.of("Shift", "Ctrl", "D"));
+        shortcutsList.add(List.of("Shift", "Ctrl", "F"));
         shortcutsList.add(List.of("Ctrl", "C"));
         shortcutsList.add(List.of("Ctrl", "X"));
         shortcutsList.add(List.of("Ctrl", "V"));

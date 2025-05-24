@@ -12,6 +12,8 @@ import com.example.aloe.files.tasks.FileMoveTask;
 import com.example.aloe.settings.Settings;
 import com.example.aloe.utils.ClipboardManager;
 import com.example.aloe.utils.Translator;
+import com.example.aloe.window.interior.DirectoryWindow;
+import com.example.aloe.window.interior.FileWindow;
 import com.example.aloe.window.interior.RenameWindow;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
@@ -147,8 +149,14 @@ public class MainWindow {
                 FileBox.removeSelection();
                 hideDarkeningPlate();
             }
-            if (e.isControlDown() && e.getCode() == KeyCode.SLASH) {
+            if ((e.isControlDown() && e.getCode() == KeyCode.SLASH) || e.getCode() == KeyCode.F1) {
                 new ShortcutsWindow();
+            }
+            if (e.isControlDown() && e.getCode() == KeyCode.D && e.isShiftDown()) {
+                new DirectoryWindow();
+            }
+            if (e.isControlDown() && e.getCode() == KeyCode.F && e.isShiftDown()) {
+                new FileWindow();
             }
         });
     }
