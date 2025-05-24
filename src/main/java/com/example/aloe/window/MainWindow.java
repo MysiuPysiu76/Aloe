@@ -147,6 +147,9 @@ public class MainWindow {
                 FileBox.removeSelection();
                 hideDarkeningPlate();
             }
+            if (e.isControlDown() && e.getCode() == KeyCode.SLASH) {
+                new ShortcutsWindow();
+            }
         });
     }
 }

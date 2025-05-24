@@ -167,6 +167,7 @@ public class ShortcutsWindow extends Stage {
         titleList.add("window.shortcuts.cut");
         titleList.add("window.shortcuts.paste");
         titleList.add("window.shortcuts.select-all");
+        titleList.add("window.shortcuts");
         titleList.add("window.shortcuts.rename");
         titleList.add("window.shortcuts.refresh");
         titleList.add("window.shortcuts.move-to-trash");
@@ -185,6 +186,7 @@ public class ShortcutsWindow extends Stage {
         shortcutsList.add(List.of("Ctrl", "X"));
         shortcutsList.add(List.of("Ctrl", "V"));
         shortcutsList.add(List.of("Ctrl", "A"));
+        shortcutsList.add(List.of("Ctrl", "?"));
         shortcutsList.add(List.of("F2"));
         shortcutsList.add(List.of("F5"));
         shortcutsList.add(List.of("Delete"));
