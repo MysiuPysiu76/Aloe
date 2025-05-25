@@ -304,6 +304,7 @@
   "window.shortcuts.new-folder": "New Folder",
   "window.shortcuts.select-all": "Select all",
   "window.shortcuts.refresh": "Refresh",
+  "window.shortcuts.open": "Open",
   "window.shortcuts.delete": "Delete",
   "window.shortcuts.move-to-trash": "Move to trash",
   "window.shortcuts.rename": "Rename",

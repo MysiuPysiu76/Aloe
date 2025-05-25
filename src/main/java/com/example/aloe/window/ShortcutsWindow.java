@@ -51,7 +51,7 @@ public class ShortcutsWindow extends Stage {
             container.getChildren().add(getShortcutRow(shortcutsList.get(i), titleList.get(i)));
         }
 
-        Scene scene = new Scene(root, 300, 495);
+        Scene scene = new Scene(root, 300, 530);
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/global.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/" + Settings.getTheme() + "/shortcuts.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/assets/styles/structural/global.css").toExternalForm());
@@ -103,7 +103,7 @@ public class ShortcutsWindow extends Stage {
         for (byte i = 0; i < shortcut.size(); i++) {
             box.getChildren().addAll(getShortcutBox(shortcut.get(i)), getPlus());
         }
-        box.getChildren().removeLast(); // Remove last "+" sign
+        box.getChildren().removeLast();
         return box;
     }
 
@@ -169,6 +169,7 @@ public class ShortcutsWindow extends Stage {
         titleList.add("window.shortcuts.cut");
         titleList.add("window.shortcuts.paste");
         titleList.add("window.shortcuts.select-all");
+        titleList.add("window.shortcuts.open");
         titleList.add("window.shortcuts");
         titleList.add("window.shortcuts.rename");
         titleList.add("window.shortcuts.refresh");
@@ -190,6 +191,7 @@ public class ShortcutsWindow extends Stage {
         shortcutsList.add(List.of("Ctrl", "X"));
         shortcutsList.add(List.of("Ctrl", "V"));
         shortcutsList.add(List.of("Ctrl", "A"));
+        shortcutsList.add(List.of("Ctrl", "O"));
         shortcutsList.add(List.of("Ctrl", "?"));
         shortcutsList.add(List.of("F2"));
         shortcutsList.add(List.of("F5"));

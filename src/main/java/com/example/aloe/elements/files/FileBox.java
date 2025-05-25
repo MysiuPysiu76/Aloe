@@ -147,7 +147,10 @@ public class FileBox extends Pane {
     private Label getDiskName() {
         Label label = getNameLabel();
         String name = new File(store.getMount()).getName();
-        if (FilesUtils.isRoot(new File(this.store.getMount())) && CurrentPlatform.isLinux()) name = "Linux";
+        boolean isRoot = FilesUtils.isRoot(new File(this.store.getMount()));
+        if (isRoot && CurrentPlatform.isLinux()) name = "Linux";
+        if (isRoot  && CurrentPlatform.isWindows()) name = "Windows";
+        if (isRoot && CurrentPlatform.isMac()) name = "MacOS";
         label.setText(name);
         label.setTooltip(new Tooltip(this.store.getMount()));
         return label;

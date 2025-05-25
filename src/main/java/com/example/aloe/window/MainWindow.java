@@ -6,6 +6,7 @@ import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.files.FilesPane;
 import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.elements.navigation.NavigationPanel;
+import com.example.aloe.files.FilesOpener;
 import com.example.aloe.files.tasks.FileCopyTask;
 import com.example.aloe.files.tasks.FileDeleteTask;
 import com.example.aloe.files.tasks.FileMoveTask;
@@ -119,10 +120,13 @@ public class MainWindow {
         scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; } .extended-menu-item:hover, .confirm, .radio-button:selected .dot, .progress-bar .bar { -fx-background-color: %s; } .accent-color, .menu-option:hover { -fx-text-fill: %s; }", Settings.getColor(), Settings.getColor(), Settings.getColor()));
 
         scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.F2) {
-               if (FileBox.getSelectedFiles().size() == 1) {
-                   new RenameWindow(FileBox.getSelectedFiles().getFirst());
-               }
+            if (FileBox.getSelectedFiles().size() == 1) {
+                if (e.getCode() == KeyCode.F2) {
+                    new RenameWindow(FileBox.getSelectedFiles().getFirst());
+                }
+                if (e.isControlDown() && e.getCode() == KeyCode.O) {
+                    FilesOpener.open(FileBox.getSelectedFiles().getFirst());
+                }
             }
             if (e.isControlDown() && e.getCode() == KeyCode.A) {
                 FileBox.selectAllFiles();
