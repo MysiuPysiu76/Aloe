@@ -38,20 +38,6 @@ import java.io.File;
  * and the disk's mount point or root status.
  * </p>
  *
- * <p>
- * Dependencies:
- * <ul>
- *     <li>{@link oshi.software.os.OSFileStore} - Provides metadata about the file store</li>
- *     <li>{@link com.example.aloe.files.FilesOpener} - Handles file opening actions</li>
- *     <li>{@link com.example.aloe.utils.ClipboardManager} - Manages clipboard operations</li>
- *     <li>{@link com.example.aloe.window.PropertiesWindow} - Displays disk properties</li>
- *     <li>{@link com.example.aloe.utils.CurrentPlatform} - Detects current OS platform</li>
- *     <li>{@link com.example.aloe.elements.menu.Menu} - Manages custom menu items</li>
- *     <li>{@link com.example.aloe.files.FilesUtils} - Utility methods for file operations</li>
- *     <li>{@link com.example.aloe.components.ExtendedContextMenu} - Base class for context menus</li>
- * </ul>
- * </p>
- *
  * @since 2.6.8
  */
 public class DiskContextMenu extends ExtendedContextMenu {

@@ -131,7 +131,7 @@ public class AboutWindow extends Stage {
         Label name = new Label("Aloe");
         name.getStyleClass().addAll("name", "text");
 
-        Label version = new Label("2.6.8");
+        Label version = new Label("2.6.9");
         version.getStyleClass().addAll("version", "text");
 
         Label description = new Label(Translator.translate("window.about.description"));
