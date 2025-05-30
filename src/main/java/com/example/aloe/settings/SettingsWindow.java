@@ -1,5 +1,6 @@
 package com.example.aloe.settings;
 
+import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.draggable.DraggablePane;
 import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.utils.Translator;
@@ -14,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome.FontAwesome;
@@ -60,7 +62,6 @@ public class SettingsWindow extends Stage {
 
     static void loadMenu() {
         Label titleLabel = SettingsControls.getTitleLabel(Translator.translate("window.settings.title"));
-        titleLabel.setPadding(new Insets(20, 0, 0, 0));
 
         HBox optionMenu = SettingsControls.getMenuButton(FontIcon.of(FontAwesome.BARS), "window.settings.menu", "window.settings.menu.description");
         optionMenu.setOnMouseClicked(event -> loadMenuSettings());
@@ -74,7 +75,7 @@ public class SettingsWindow extends Stage {
         HBox optionsAppearance = SettingsControls.getMenuButton(FontIcon.of(FontAwesome.PAINT_BRUSH), "window.settings.appearance", "window.settings.appearance.description");
         optionsAppearance.setOnMouseClicked(event -> loadAppearanceSettings());
 
-        VBox content = new VBox(titleLabel, optionMenu, optionFiles, optionsLanguage, optionsAppearance);
+        VBox content = new VBox(getResetBox(), titleLabel, optionMenu, optionFiles, optionsLanguage, optionsAppearance);
         content.getStyleClass().add("background");
         content.setPadding(new Insets(0, 0, 100, 0));
         content.setMaxWidth(700);
@@ -161,6 +162,22 @@ public class SettingsWindow extends Stage {
                 SettingsControls.getTitleLabel(Translator.translate(Translator.translate("window.settings.appearance"))),
                 getSettingBox("window.settings.appearance.theme", SettingsControls.getChoiceBox("theme", true, "light", Translator.translate("window.settings.appearance.theme.light"), "dark", Translator.translate("window.settings.appearance.theme.dark"))),
                 getSettingBox("window.settings.appearance.color", SettingsControls.getColorChooser("color", true))));
+    }
+
+    private static HBox getResetBox() {
+        Button reset = new Button();
+        reset.getStyleClass().addAll("transparent", "cursor-hand");
+        reset.setTooltip(new Tooltip(Translator.translate("window.settings.reset")));
+        FontIcon icon = FontIcon.of(FontAwesome.ROTATE_LEFT);
+        icon.setIconSize(18);
+        icon.setIconColor(Color.rgb(255, 0, 0, 1));
+        reset.setGraphic(icon);
+        reset.setOnMouseClicked(e -> {
+            isRestartRequired = true;
+            Settings.initializeSettings();
+
+        });
+        return new HBox(new HBoxSpacer(), reset);
     }
 
     private void setOnClose() {

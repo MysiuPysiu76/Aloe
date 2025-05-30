@@ -45,7 +45,7 @@ public final class Settings {
         }
     }
 
-    private static void initializeSettings() {
+    static void initializeSettings() {
         try {
             Map<String, Object> defaultSettings = loadDefaultSettings();
             saveSettingsToFile(defaultSettings);

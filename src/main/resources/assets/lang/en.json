@@ -308,5 +308,6 @@
   "window.shortcuts.delete": "Delete",
   "window.shortcuts.move-to-trash": "Move to trash",
   "window.shortcuts.rename": "Rename",
-  "window.shortcuts": "Keyboard Shortcuts"
+  "window.shortcuts": "Keyboard Shortcuts",
+  "window.settings.reset": "Reset to factory settings"
 }
