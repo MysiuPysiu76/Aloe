@@ -19,11 +19,11 @@ public class FilesPane extends ScrollPane {
         this.setPadding(new Insets(7, 7, 17, 7));
         this.setOnContextMenuRequested(e -> {
             if (!CurrentDirectory.get().equals(new File("%disks%"))) menu.show(this, e.getScreenX(), e.getScreenY());
-            FileBox.removeSelection();
+            SelectedFileBoxes.removeSelection();
         });
         this.setOnMouseClicked(e -> {
             FilesPane.hideMenu();
-            FileBox.removeSelection();
+            SelectedFileBoxes.removeSelection();
         });
     }
 

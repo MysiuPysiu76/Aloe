@@ -4,6 +4,7 @@ import com.example.aloe.components.BackButton;
 import com.example.aloe.components.HBoxSpacer;
 import com.example.aloe.components.VBoxSpacer;
 import com.example.aloe.elements.files.FileBox;
+import com.example.aloe.elements.files.FileImage;
 import com.example.aloe.files.Checksum;
 import com.example.aloe.files.FilesUtils;
 import com.example.aloe.files.properties.*;
@@ -360,7 +361,7 @@ public class PropertiesWindow extends Stage {
         if (file.isDirectory()) {
             icon.setImage(loadIcon("/assets/icons/folder.png"));
         } else {
-            icon.setImage(FileBox.getImage(file));
+            icon.setImage(FileImage.from(file));
         }
         return icon;
     }

@@ -4,6 +4,7 @@ import com.example.aloe.components.ExtendedContextMenu;
 import com.example.aloe.elements.files.FileBox;
 import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.files.FilesPane;
+import com.example.aloe.elements.files.SelectedFileBoxes;
 import com.example.aloe.elements.menu.Menu;
 import com.example.aloe.elements.navigation.NavigationPanel;
 import com.example.aloe.files.FilesOpener;
@@ -120,22 +121,22 @@ public class MainWindow {
         scene.getStylesheets().add(String.format("data:text/css, .text-field { -fx-highlight-fill: %s; } .extended-menu-item:hover, .confirm, .radio-button:selected .dot, .progress-bar .bar { -fx-background-color: %s; } .accent-color, .menu-option:hover { -fx-text-fill: %s; }", Settings.getColor(), Settings.getColor(), Settings.getColor()));
 
         scene.setOnKeyPressed(e -> {
-            if (FileBox.getSelectedFiles().size() == 1) {
+            if (SelectedFileBoxes.getSelectedFiles().size() == 1) {
                 if (e.getCode() == KeyCode.F2) {
-                    new RenameWindow(FileBox.getSelectedFiles().getFirst());
+                    new RenameWindow(SelectedFileBoxes.getSelectedFiles().getFirst());
                 }
                 if (e.isControlDown() && e.getCode() == KeyCode.O) {
-                    FilesOpener.open(FileBox.getSelectedFiles().getFirst());
+                    FilesOpener.open(SelectedFileBoxes.getSelectedFiles().getFirst());
                 }
             }
             if (e.isControlDown() && e.getCode() == KeyCode.A) {
                 FileBox.selectAllFiles();
             }
             if (e.isControlDown() && e.getCode() == KeyCode.C) {
-                ClipboardManager.copyFilesToClipboard(FileBox.getSelectedFiles());
+                ClipboardManager.copyFilesToClipboard(SelectedFileBoxes.getSelectedFiles());
             }
             if (e.isControlDown() && e.getCode() == KeyCode.X) {
-                ClipboardManager.cutFilesToClipboard(FileBox.getSelectedFiles());
+                ClipboardManager.cutFilesToClipboard(SelectedFileBoxes.getSelectedFiles());
             }
             if (e.isControlDown() && e.getCode() == KeyCode.V) {
                 new FileCopyTask(Clipboard.getSystemClipboard().getFiles(), true);
@@ -144,13 +145,13 @@ public class MainWindow {
                 FilesLoader.refresh();
             }
             if (e.getCode() == KeyCode.DELETE) {
-                new FileMoveTask(FileBox.getSelectedFiles(), new File(Settings.getSetting("files", "trash").toString()), true);
+                new FileMoveTask(SelectedFileBoxes.getSelectedFiles(), new File(Settings.getSetting("files", "trash").toString()), true);
             }
             if (e.isShiftDown() && e.getCode() == KeyCode.DELETE) {
-                new FileDeleteTask(FileBox.getSelectedFiles(), true);
+                new FileDeleteTask(SelectedFileBoxes.getSelectedFiles(), true);
             }
             if (e.getCode() == KeyCode.ESCAPE) {
-                FileBox.removeSelection();
+                SelectedFileBoxes.removeSelection();
                 hideDarkeningPlate();
             }
             if ((e.isControlDown() && e.getCode() == KeyCode.SLASH) || e.getCode() == KeyCode.F1) {

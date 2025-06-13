@@ -22,15 +22,12 @@ import oshi.software.os.OSFileStore;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class FileBox extends Pane {
 
     private static MultiFileBoxContextMenu multiFileBoxContextMenu;
-    private static final Set<FileBox> selectedFileBoxes = new LinkedHashSet<>();
 
     protected final double scale;
     protected File file;
@@ -57,47 +54,12 @@ public class FileBox extends Pane {
         this.setDiskContextMenu();
     }
 
-    public static Image getImage(File file) {
-        if (file.isDirectory()) {
-            return new Image(getImageStream("folder"));
-        } else {
-            switch (FilesUtils.getExtension(file.getName()).toLowerCase()) {
-                case "jpg", "jpeg", "png", "gif" -> {
-                    if (Boolean.TRUE.equals(Settings.getSetting("files", "display-thumbnails"))) { return new Image(new File(CurrentDirectory.get(), file.getName()).toURI().toString()); }
-                    else { return new Image(getImageStream("image")); } }
-                case "webp", "heif", "raw" -> { return new Image(getImageStream("image")); }
-                case "mp4", "mkv", "ts", "mov" -> { return new Image(getImageStream("video")); }
-                case "mp3", "ogg" -> { return new Image(getImageStream("music")); }
-                case "epub", "mobi" -> { return new Image(getImageStream("book")); }
-                case "pdf" -> { return new Image(getImageStream("pdf")); }
-                case "exe", "msi", "deb", "rpm", "snap", "flatpak", "flatpakref", "dmg", "apk" -> { return new Image(getImageStream("installer")); }
-                case "torrent" -> { return new Image(getImageStream("torrent")); }
-                case "tar", "tar.gz" -> { return new Image(getImageStream("tar")); }
-                case "zip", "7z" -> { return new Image(getImageStream("zip")); }
-                case "rar" -> { return new Image(getImageStream("rar")); }
-                case "sh", "bat" -> { return new Image(getImageStream("terminal")); }
-                case "jar" -> { return new Image(getImageStream("jar")); }
-                case "iso" -> { return new Image(getImageStream("cd")); }
-                default -> { return new Image(getImageStream("file")); }
-            }
-        }
-    }
-
     private static InputStream getImageStream(String image) {
         return FileBox.class.getResourceAsStream("/assets/icons/" + image + ".png");
     }
 
-    public static void removeSelection() {
-        selectedFileBoxes.forEach(FileBox::removeSelectedStyle);
-        selectedFileBoxes.clear();
-    }
-
-    public static List<File> getSelectedFiles() {
-        return selectedFileBoxes.stream().map(FileBox::getFile).toList();
-    }
-
     public static void selectAllFiles() {
-        removeSelection();
+        SelectedFileBoxes.removeSelection();
         Stream stream;
          if (Settings.getSetting("files", "view").equals("list")) {
              VBox list = (VBox) FilesPane.get().getContent();
@@ -116,7 +78,7 @@ public class FileBox extends Pane {
     protected VBox getImageBox(double size, Insets padding) {
         ImageView icon = new ImageView();
         icon.setPreserveRatio(true);
-        icon.setImage(getImage(this.file));
+        icon.setImage(FileImage.from(this.file));
         return getvBox(size, padding, icon);
     }
 
@@ -184,13 +146,13 @@ public class FileBox extends Pane {
         FileBoxContextMenu fileBoxContextMenu = new FileBoxContextMenu(this.file);
         this.setOnContextMenuRequested(e -> {
             FilesPane.hideMenu();
-            if (this.isSelected() && selectedFileBoxes.size() == 1) {
+            if (SelectedFileBoxes.isSelected(this) && SelectedFileBoxes.getSelectedFiles().size() == 1) {
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
-            } else if (this.isSelected()) {
-                multiFileBoxContextMenu = new MultiFileBoxContextMenu(getSelectedFiles());
+            } else if (SelectedFileBoxes.isSelected(this)) {
+                multiFileBoxContextMenu = new MultiFileBoxContextMenu(SelectedFileBoxes.getSelectedFiles());
                 multiFileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
             } else {
-                FileBox.removeSelection();
+                SelectedFileBoxes.removeSelection();
                 this.setSelected();
                 fileBoxContextMenu.show(this, e.getScreenX(), e.getScreenY());
             }
@@ -217,10 +179,10 @@ public class FileBox extends Pane {
                 } else if (e.getClickCount() == clicks) {
                     FilesOpener.open(this.getFile());
                 } else if (e.getClickCount() == 1) {
-                    FileBox.removeSelection();
+                    SelectedFileBoxes.removeSelection();
                     this.setSelected();
                 } else {
-                    FileBox.removeSelection();
+                    SelectedFileBoxes.removeSelection();
                 }
             }
             e.consume();
@@ -228,14 +190,23 @@ public class FileBox extends Pane {
     }
 
     public void setSelected() {
-        if (this.isSelected()) {
-            selectedFileBoxes.remove(this);
+        if (SelectedFileBoxes.isSelected(this)) {
+            SelectedFileBoxes.remove(this);
             this.removeSelectedStyle();
         } else {
-            selectedFileBoxes.add(this);
+            SelectedFileBoxes.add(this);
             this.setSelectedStyle();
         }
         this.isSelected = !isSelected;
+    }
+
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+        if (isSelected) {
+            SelectedFileBoxes.add(this);
+        } else {
+            SelectedFileBoxes.remove(this);
+        }
     }
 
     private void setSelectedStyle() {
@@ -246,17 +217,13 @@ public class FileBox extends Pane {
         this.getStyleClass().remove("selected");
     }
 
-    public boolean isSelected() {
-        return selectedFileBoxes.contains(this);
-    }
-
     private void setOnDragAndDrop() {
         this.setOnDragDetected(event -> {
             Dragboard db = this.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             List<String> fileNamesToDrag = new ArrayList<>();
-            if (selectedFileBoxes.contains(this)) {
-                for (Pane selectedFile : selectedFileBoxes) {
+            if (SelectedFileBoxes.isSelected(this)) {
+                for (Pane selectedFile : SelectedFileBoxes.getSelectedFileBoxes()) {
                     Label fileNameLabel = (Label) selectedFile.getChildren().get(1);
                     fileNamesToDrag.add(fileNameLabel.getText());
                 }
