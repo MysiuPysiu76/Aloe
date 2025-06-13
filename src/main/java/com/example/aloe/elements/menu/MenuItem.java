@@ -16,6 +16,25 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.File;
 import java.util.Map;
 
+/**
+ * Represents a customizable menu item component within the application's user interface.
+ * <p>
+ * Each {@code MenuItem} can display an icon, a title, and is bound to a file path.
+ * Clicking the item with the primary mouse button will open the associated file or folder.
+ * A context menu is also provided for additional operations.
+ * </p>
+ *
+ * <p>
+ * Icon and text visibility, as well as icon alignment (left or right),
+ * are determined by user-configurable settings under the "menu" section.
+ * </p>
+ *
+ * <p>
+ * This class also implements {@link ObjectProperties} for property serialization and display.
+ * </p>
+ *
+ * @since 2.7.5
+ */
 public class MenuItem extends Button implements ObjectProperties {
 
     private final String icon;
@@ -32,6 +51,13 @@ public class MenuItem extends Button implements ObjectProperties {
         iconOnRight = "right".equalsIgnoreCase(Settings.getSetting("menu", "icon-position").toString());
     }
 
+    /**
+     * Constructs a new {@code MenuItem} with the given icon, title, and associated file path.
+     *
+     * @param icon  the FontAwesome icon name to display
+     * @param title the display name of the menu item
+     * @param path  the file system path the item points to
+     */
     public MenuItem(String icon, String title, String path) {
         this.icon = icon;
         this.title = title;
@@ -40,6 +66,11 @@ public class MenuItem extends Button implements ObjectProperties {
         initialize();
     }
 
+    /**
+     * Initializes the visual and behavioral properties of the menu item.
+     * This includes icon display, text display, alignment, click handlers,
+     * and context menu registration.
+     */
     private void initialize() {
         this.setFocusTraversable(false);
         this.setMaxWidth(Double.MAX_VALUE);
@@ -58,6 +89,10 @@ public class MenuItem extends Button implements ObjectProperties {
         });
     }
 
+    /**
+     * Configures and displays the icon using the FontAwesome library,
+     * applying user-defined alignment (left or right).
+     */
     private void setupIcon() {
         FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
         fontIcon.setIconSize(18);
@@ -74,25 +109,49 @@ public class MenuItem extends Button implements ObjectProperties {
         }
     }
 
+    /**
+     * @return the icon identifier (FontAwesome name)
+     */
     public String getIcon() {
         return icon;
     }
 
+    /**
+     * @return the visible title of the menu item
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * @return the file system path the menu item points to
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * Returns a flat map of properties used for serialization or saving.
+     *
+     * @return a map containing "name", "icon", and "path"
+     */
     @Override
     public Map<String, String> getObjectProperties() {
         return Map.of("name", title, "icon", icon, "path", path);
     }
 
+    /**
+     * Returns a localized and user-friendly map of the item's properties,
+     * suitable for display in UI views.
+     *
+     * @return a map with translated keys for title, icon, and path
+     */
     @Override
     public Map<String, String> getObjectPropertiesView() {
-        return Map.of(Translator.translate("menu.title"), title, Translator.translate("menu.icon"), icon, Translator.translate("menu.path"), path);
+        return Map.of(
+                Translator.translate("menu.title"), title,
+                Translator.translate("menu.icon"), icon,
+                Translator.translate("menu.path"), path
+        );
     }
 }
