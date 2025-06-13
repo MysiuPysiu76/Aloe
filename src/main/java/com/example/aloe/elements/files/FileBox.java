@@ -54,10 +54,6 @@ public class FileBox extends Pane {
         this.setDiskContextMenu();
     }
 
-    private static InputStream getImageStream(String image) {
-        return FileBox.class.getResourceAsStream("/assets/icons/" + image + ".png");
-    }
-
     public static void selectAllFiles() {
         SelectedFileBoxes.removeSelection();
         Stream stream;
@@ -85,7 +81,7 @@ public class FileBox extends Pane {
     protected VBox getImageBox(double size, Insets padding, String image) {
         ImageView icon = new ImageView();
         icon.setPreserveRatio(true);
-        icon.setImage(new Image(getImageStream(image)));
+        icon.setImage(new Image(FileImage.getImageStream(image)));
         return getvBox(size, padding, icon);
     }
 
