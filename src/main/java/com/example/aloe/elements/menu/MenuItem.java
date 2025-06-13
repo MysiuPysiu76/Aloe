@@ -21,50 +21,57 @@ public class MenuItem extends Button implements ObjectProperties {
     private final String icon;
     private final String title;
     private final String path;
+
     private static final boolean useIcon;
     private static final boolean useText;
-    private static final boolean rightPageIcon;
+    private static final boolean iconOnRight;
 
     static {
         useIcon = Boolean.TRUE.equals(Settings.getSetting("menu", "use-icon"));
         useText = Boolean.TRUE.equals(Settings.getSetting("menu", "use-text"));
-        rightPageIcon = Settings.getSetting("menu", "icon-position").toString().equalsIgnoreCase("right");
+        iconOnRight = "right".equalsIgnoreCase(Settings.getSetting("menu", "icon-position").toString());
     }
 
     public MenuItem(String icon, String title, String path) {
         this.icon = icon;
         this.title = title;
         this.path = path;
-        this.setFocusTraversable(false);
-        if (useIcon) {
-            FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
-            fontIcon.setIconSize(18);
-            fontIcon.getStyleClass().add("font-icon");
-            fontIcon.setWrappingWidth(20);
-            this.setGraphicTextGap(10);
-            this.setGraphic(fontIcon);
-            if (rightPageIcon) {
-                this.setAlignment(Pos.CENTER_RIGHT);
-                this.setContentDisplay(ContentDisplay.RIGHT);
-            } else {
-                this.setAlignment(Pos.CENTER_LEFT);
-            }
-        }
-        if (useText) {
-            this.setText(title);
-        }
-        HBox.setHgrow(this, Priority.ALWAYS);
-        this.setMaxWidth(Double.MAX_VALUE);
-        MenuItemContextMenu menu = new MenuItemContextMenu(this);
-        this.setContextMenu(menu);
-        this.getStyleClass().addAll("transparent", "text", "menu-option");
-        this.setOnContextMenuRequested(e -> Menu.hideOptions());
 
+        initialize();
+    }
+
+    private void initialize() {
+        this.setFocusTraversable(false);
+        this.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(this, Priority.ALWAYS);
+        this.getStyleClass().addAll("transparent", "text", "menu-option");
+
+        if (useIcon) setupIcon();
+        if (useText) this.setText(title);
+
+        this.setContextMenu(new MenuItemContextMenu(this));
+        this.setOnContextMenuRequested(e -> Menu.hideContextMenu());
         this.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 FilesOpener.open(new File(path));
             }
         });
+    }
+
+    private void setupIcon() {
+        FontIcon fontIcon = FontIcon.of(FontAwesome.valueOf(icon));
+        fontIcon.setIconSize(18);
+        fontIcon.getStyleClass().add("font-icon");
+        fontIcon.setWrappingWidth(20);
+        this.setGraphicTextGap(10);
+        this.setGraphic(fontIcon);
+
+        if (iconOnRight) {
+            this.setAlignment(Pos.CENTER_RIGHT);
+            this.setContentDisplay(ContentDisplay.RIGHT);
+        } else {
+            this.setAlignment(Pos.CENTER_LEFT);
+        }
     }
 
     public String getIcon() {
@@ -81,11 +88,11 @@ public class MenuItem extends Button implements ObjectProperties {
 
     @Override
     public Map<String, String> getObjectProperties() {
-        return Map.of("name", this.title, "icon", this.icon, "path", this.path);
+        return Map.of("name", title, "icon", icon, "path", path);
     }
 
     @Override
     public Map<String, String> getObjectPropertiesView() {
-        return Map.of(Translator.translate("menu.title"), this.title, Translator.translate("menu.icon"), this.icon, Translator.translate("menu.path"), this.path);
+        return Map.of(Translator.translate("menu.title"), title, Translator.translate("menu.icon"), icon, Translator.translate("menu.path"), path);
     }
 }

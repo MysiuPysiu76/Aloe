@@ -12,10 +12,10 @@ import com.example.aloe.elements.menu.Menu;
  * All labels and buttons are localized using the {@link Translator} utility.</p>
  *
  * <p>Upon confirmation, the window applies changes by invoking
- * {@link Menu#editItemInMenu(String, String, String, String)}, then closes the overlay.</p>
+ * {@link Menu#editItem(String, String, String, String)}, then closes the overlay.</p>
  *
  * @see MenuItemWindow
- * @see Menu#editItemInMenu(String, String, String, String)
+ * @see Menu#editItem(String, String, String, String)
  * @since 2.3.0
  */
 public class EditMenuItemWindow extends MenuItemWindow {
@@ -31,7 +31,7 @@ public class EditMenuItemWindow extends MenuItemWindow {
         super(Translator.translate("window.interior.menu.edit"), titleText, pathText, iconText);
 
         this.setOnConfirm(event -> {
-            Menu.editItemInMenu(pathText, path.getText(), title.getText(), icon.getValue().toString());
+            Menu.editItem(pathText, path.getText(), title.getText(), icon.getValue().toString());
             hideOverlay();
         });
     }

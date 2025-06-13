@@ -12,10 +12,10 @@ import com.example.aloe.elements.menu.Menu;
  * and uses localized labels for multilingual support.</p>
  *
  * <p>Once the user confirms, the new item is added to the menu via
- * {@link Menu#addItemToMenu(String, String, String)}.</p>
+ * {@link Menu#addItem(String, String, String)}.</p>
  *
  * @see MenuItemWindow
- * @see Menu#addItemToMenu(String, String, String)
+ * @see Menu#addItem(String, String, String)
  * @since 2.2.9
  */
 public class AddMenuItemWindow extends MenuItemWindow {
@@ -29,7 +29,7 @@ public class AddMenuItemWindow extends MenuItemWindow {
         super(Translator.translate("window.interior.menu.add"), "", "", "FOLDER_OPEN_O");
 
         this.setOnConfirm(event -> {
-            Menu.addItemToMenu(path.getText(), title.getText(), icon.getValue().toString());
+            Menu.addItem(path.getText(), title.getText(), icon.getValue().toString());
             hideOverlay();
         });
     }

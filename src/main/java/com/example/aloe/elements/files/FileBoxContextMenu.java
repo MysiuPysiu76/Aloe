@@ -92,7 +92,7 @@ public class FileBoxContextMenu extends ExtendedContextMenu {
         }
 
         if (file.isDirectory()) {
-            ExtendedMenuItem addToMenu = new ExtendedMenuItem("context-menu.add-to-menu", e -> Menu.addItemToMenu(file.getPath(), file.getName(), "FOLDER_OPEN_O"));
+            ExtendedMenuItem addToMenu = new ExtendedMenuItem("context-menu.add-to-menu", e -> Menu.addItem(file.getPath(), file.getName(), "FOLDER_OPEN_O"));
             this.getItems().add(9, addToMenu);
         }
     }

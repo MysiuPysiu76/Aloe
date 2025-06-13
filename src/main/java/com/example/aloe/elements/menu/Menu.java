@@ -9,89 +9,113 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Menu extends ScrollPane {
 
-    private static Menu menu;
-    private static MenuContextMenu contextMenu;
+    private static Menu instance;
+    private static final MenuContextMenu contextMenu = new MenuContextMenu();
+
+    private final VBox content = new VBox();
 
     private Menu() {
-        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
-        VBox content = new VBox();
-        content.setAlignment(Pos.TOP_CENTER);
-        if (!(items == null || items.isEmpty())) {
-            for (Map<String, Object> item : items) {
-                content.getChildren().add(new com.example.aloe.elements.menu.MenuItem((String) item.get("icon"), (String) item.get("name"), (String) item.get("path")));
+        setupContent();
+        setupScrollPane();
+        setupContextMenu();
+    }
+
+    public static Menu get() {
+        if (instance == null) instance = new Menu();
+        return instance;
+    }
+
+    public static void reload() {
+        instance = new Menu();
+        MainWindow.loadMenu();
+    }
+
+    public static void addItem(String path, String name, String icon) {
+        List<Map<String, Object>> items = getMenuItems();
+        items.add(createItemMap(path, name, icon));
+        saveMenuItems(items);
+        reload();
+    }
+
+    public static void editItem(String oldPath, String newPath, String name, String icon) {
+        List<Map<String, Object>> items = getMenuItems();
+        for (Map<String, Object> item : items) {
+            if (Objects.equals(item.get("path"), oldPath)) {
+                item.put("path", newPath);
+                item.put("name", name);
+                item.put("icon", icon);
+                break;
             }
         }
+        saveMenuItems(items);
+        reload();
+    }
 
+    public static void removeItem(String path) {
+        List<Map<String, Object>> items = getMenuItems();
+        items.removeIf(item -> Objects.equals(item.get("path"), path));
+        saveMenuItems(items);
+        reload();
+    }
+
+    public static void hideContextMenu() {
+        contextMenu.hide();
+    }
+
+    private void setupContent() {
+        content.setAlignment(Pos.TOP_CENTER);
+        content.setSpacing(0);
+        content.getChildren().setAll(buildMenuItems());
         this.setContent(content);
+    }
+
+    private void setupScrollPane() {
         this.setFitToWidth(true);
         this.setFitToHeight(true);
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
-        this.setMenuOptions(this);
         this.setPadding(new Insets(5));
         this.getStyleClass().add("menu");
     }
 
-    public static Menu get() {
-        if (menu == null) menu = new Menu();
-        return menu;
-    }
-
-    public static void reload() {
-        menu = new Menu();
-        MainWindow.loadMenu();
-    }
-
-     private void setMenuOptions(Menu content) {
-        contextMenu = new MenuContextMenu();
-
-        content.setOnContextMenuRequested(event -> {
-            contextMenu.show(content, event.getScreenX(), event.getScreenY());
-        });
-        content.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                contextMenu.hide();
-            }
+    private void setupContextMenu() {
+        this.setOnContextMenuRequested(event -> contextMenu.show(this, event.getScreenX(), event.getScreenY()));
+        this.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton() == MouseButton.PRIMARY) contextMenu.hide();
         });
     }
 
-    public static void addItemToMenu(String path, String name, String icon) {
-        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
-        items.add(Map.of("path", path, "name", name, "icon", icon));
-        Settings.setSetting("menu", "items", items);
-        reload();
-    }
+    private List<MenuItem> buildMenuItems() {
+        List<Map<String, Object>> items = getMenuItems();
+        if (items == null) return Collections.emptyList();
 
-    public static void editItemInMenu(String oldPath, String newPath, String name, String icon) {
-        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
+        List<MenuItem> result = new ArrayList<>();
         for (Map<String, Object> item : items) {
-            if (item.get("path").equals(oldPath)) {
-                item.put("path", newPath);
-                item.put("name", name);
-                item.put("icon", icon);
-            }
+            result.add(new MenuItem(
+                    (String) item.get("icon"),
+                    (String) item.get("name"),
+                    (String) item.get("path")
+            ));
         }
-        Settings.setSetting("menu", "items", items);
-        reload();
+        return result;
     }
 
-    static void removeItemFromMenu(String path) {
-        List<Map<String, Object>> items = Settings.getSetting("menu", "items");
-        for (Map<String, Object> item : items) {
-            if (item.get("path").equals(path)) {
-                items.remove(item);
-                break;
-            }
-        }
-        Settings.setSetting("menu", "items", items);
-        reload();
+    private static Map<String, Object> createItemMap(String path, String name, String icon) {
+        Map<String, Object> item = new HashMap<>();
+        item.put("path", path);
+        item.put("name", name);
+        item.put("icon", icon);
+        return item;
     }
 
-    static void hideOptions() {
-        contextMenu.hide();
+    private static List<Map<String, Object>> getMenuItems() {
+        return Settings.getSetting("menu", "items");
+    }
+
+    private static void saveMenuItems(List<Map<String, Object>> items) {
+        Settings.setSetting("menu", "items", items);
     }
 }
