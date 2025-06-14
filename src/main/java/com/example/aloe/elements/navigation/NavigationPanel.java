@@ -27,11 +27,23 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 
+/**
+ * Represents the top navigation panel containing file navigation buttons,
+ * sorting, view settings, and access to general options like settings and about.
+ *
+ * @since 2.8.0
+ */
 public class NavigationPanel extends HBox {
 
+    /** Toggle group for sorting radio buttons */
     private static ToggleGroup group = new ToggleGroup();
+
+    /** Container for the file path UI */
     private static ResponsivePane filesPath = new ResponsivePane();
 
+    /**
+     * Constructs a new NavigationPanel and initializes its layout and components.
+     */
     public NavigationPanel() {
         HBoxSpacer leftSpacer = new HBoxSpacer();
         leftSpacer.setMaxWidth(80);
@@ -39,7 +51,7 @@ public class NavigationPanel extends HBox {
         rightSpacer.setMaxWidth(80);
         filesPath.setMaxHeight(30);
         filesPath.setMaxWidth(Double.MAX_VALUE);
-        filesPath.setPadding(new Insets(0, 0, 0, 0));
+        filesPath.setPadding(new Insets(0));
         filesPath.getStyleClass().add("files-path");
 
         this.setPadding(new Insets(5, 8, 5, 8));
@@ -47,6 +59,9 @@ public class NavigationPanel extends HBox {
         initializeLayout();
     }
 
+    /**
+     * Initializes the panel layout with all buttons and spacers.
+     */
     private void initializeLayout() {
         HBoxSpacer leftSpacer = createSpacer(80);
         HBoxSpacer rightSpacer = createSpacer(80);
@@ -65,12 +80,21 @@ public class NavigationPanel extends HBox {
         );
     }
 
+    /**
+     * Creates an HBox spacer with the specified width.
+     *
+     * @param width the width of the spacer
+     * @return the configured spacer
+     */
     private HBoxSpacer createSpacer(double width) {
         HBoxSpacer spacer = new HBoxSpacer();
         spacer.setMaxWidth(width);
         return spacer;
     }
 
+    /**
+     * Updates the path navigation UI based on the current directory.
+     */
     public static void updateFilesPath() {
         File currentDirectory = CurrentDirectory.get();
         HBox container = new HBox(getIcon());
@@ -97,6 +121,14 @@ public class NavigationPanel extends HBox {
         }
     }
 
+    /**
+     * Handles special paths like trash or home, adding custom buttons or icons.
+     *
+     * @param dir       the current directory
+     * @param path      string representation of the path
+     * @param container the UI container
+     * @return true if a special path was handled
+     */
     private static boolean handleSpecialPaths(File dir, String path, HBox container) {
         if (path.equals(Settings.getSetting("files", "trash"))) {
             container.getChildren().set(0, getIcon(FontAwesome.TRASH));
@@ -119,6 +151,13 @@ public class NavigationPanel extends HBox {
         return false;
     }
 
+    /**
+     * Creates a clickable button for a path segment.
+     *
+     * @param text the button label
+     * @param path the full path
+     * @return the configured button
+     */
     private static Button createPathButton(String text, String path) {
         Button button = new Button(text);
         button.setUserData(path);
@@ -128,6 +167,12 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates a fixed path button using a translation key.
+     *
+     * @param translationKey the translation key
+     * @return the button with localized text
+     */
     private static Button createFixedPathButton(String translationKey) {
         Button button = new Button(Translator.translate(translationKey));
         button.getStyleClass().addAll("transparent", "cursor-hand", "accent-color");
@@ -135,6 +180,11 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Returns a font icon representing the current directory (home or disk).
+     *
+     * @return the font icon
+     */
     private static FontIcon getIcon() {
         FontIcon icon = FontIcon.of(FilesUtils.isInHomeDir(CurrentDirectory.get()) ? FontAwesome.HOME : FontAwesome.HDD_O);
         icon.setIconSize(22);
@@ -143,12 +193,23 @@ public class NavigationPanel extends HBox {
         return icon;
     }
 
+    /**
+     * Returns a font icon with the specified icon type.
+     *
+     * @param icon the FontAwesome icon
+     * @return the configured font icon
+     */
     private static FontIcon getIcon(FontAwesome icon) {
         FontIcon fontIcon = getIcon();
         fontIcon.setIconCode(icon);
         return fontIcon;
     }
 
+    /**
+     * Returns a separator icon (angle right) for the file path UI.
+     *
+     * @return the separator node
+     */
     private static Node getStroke() {
         FontIcon icon = FontIcon.of(FontAwesome.ANGLE_RIGHT);
         icon.setIconSize(22);
@@ -157,6 +218,11 @@ public class NavigationPanel extends HBox {
         return icon;
     }
 
+    /**
+     * Creates a standardized navigation button with base styling.
+     *
+     * @return the navigation button
+     */
     private Button getNavigationButton() {
         Button button = new Button();
         button.setFocusTraversable(false);
@@ -167,6 +233,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the 'Previous Directory' button.
+     */
     private Button getPreviousButton() {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.ANGLE_LEFT, 30));
@@ -175,6 +244,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the 'Next Directory' button.
+     */
     private Button getNextButton() {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.ANGLE_RIGHT, 30));
@@ -184,6 +256,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the 'Parent Directory' button.
+     */
     private Button getParentButton() {
         Button button = getNavigationButton();
         FontIcon icon = getIcon(FontAwesome.ANGLE_UP, 30);
@@ -194,6 +269,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the 'Refresh' button.
+     */
     private Button getRefreshButton() {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.REPEAT, 20));
@@ -203,6 +281,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the 'Task Progress' button.
+     */
     private Button getTasksButton() {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.HOURGLASS_HALF, 20));
@@ -216,6 +297,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the 'Sort' button with sorting options.
+     */
     private Button getSortButton() {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.SORT_ALPHA_ASC, 20));
@@ -233,6 +317,11 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the sort option UI.
+     *
+     * @return the VBox containing radio buttons for sorting
+     */
     private VBox createSortContent() {
         VBox content = new VBox();
         content.setPadding(new Insets(10, 7, 10, 7));
@@ -248,7 +337,6 @@ public class NavigationPanel extends HBox {
 
         for (Sorting sorting : Sorting.values()) {
             RadioButton radio = getRadioButton(sorting.name().toLowerCase(), group, sorting);
-            System.out.println(sorting.name().toLowerCase());
             content.getChildren().add(radio);
             if (sorting == Sorting.safeValueOf(Settings.getSetting("files", "sorting").toString().toUpperCase())) {
                 group.selectToggle(radio);
@@ -263,6 +351,9 @@ public class NavigationPanel extends HBox {
         return content;
     }
 
+    /**
+     * Creates a sorting radio button.
+     */
     private RadioButton getRadioButton(String text, ToggleGroup group, Sorting method) {
         RadioButton radioButton = new RadioButton(Translator.translate("navigation.sorting." + text));
         radioButton.setToggleGroup(group);
@@ -271,6 +362,9 @@ public class NavigationPanel extends HBox {
         return radioButton;
     }
 
+    /**
+     * Creates the 'Change View' button (list/grid).
+     */
     private Button getViewButton() {
         Button button = getNavigationButton();
         final boolean[] isGrid = {Settings.getSetting("files", "view").equals("grid")};
@@ -287,6 +381,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the 'Options' button showing popover with additional actions.
+     */
     private Button getOptionsButton() {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.NAVICON, 20));
@@ -304,6 +401,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates the content shown in the options popover.
+     */
     private VBox createOptionsContent() {
         VBox container = new VBox();
         container.setSpacing(4);
@@ -322,6 +422,9 @@ public class NavigationPanel extends HBox {
         return container;
     }
 
+    /**
+     * Creates an option button with a localized label and attached action.
+     */
     private Button createOptionButton(String translationKey, Runnable action) {
         Button button = new Button(Translator.translate(translationKey));
         button.getStyleClass().addAll("nav-btn", "text");
@@ -329,6 +432,9 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    /**
+     * Creates a checkbox to toggle hidden files visibility.
+     */
     private CheckBox createHiddenFilesCheckBox() {
         CheckBox checkBox = new CheckBox(Translator.translate("navigate.hidden-files"));
         checkBox.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
@@ -341,6 +447,9 @@ public class NavigationPanel extends HBox {
         return checkBox;
     }
 
+    /**
+     * Returns a styled FontAwesome icon.
+     */
     private FontIcon getIcon(FontAwesome iconName, int size) {
         FontIcon icon = FontIcon.of(iconName);
         icon.setIconSize(size);
