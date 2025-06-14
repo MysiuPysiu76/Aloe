@@ -1,4 +1,4 @@
-package com.example.aloe.elements.navigation;
+package com.example.aloe.components;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;

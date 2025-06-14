@@ -2,6 +2,7 @@ package com.example.aloe.elements.navigation;
 
 import com.example.aloe.Main;
 import com.example.aloe.components.HBoxSpacer;
+import com.example.aloe.components.ResponsivePane;
 import com.example.aloe.elements.files.FilesLoader;
 import com.example.aloe.elements.files.Sorting;
 import com.example.aloe.files.CurrentDirectory;
@@ -43,7 +44,31 @@ public class NavigationPanel extends HBox {
 
         this.setPadding(new Insets(5, 8, 5, 8));
         this.getStyleClass().add("background");
-        this.getChildren().addAll(getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(), leftSpacer, filesPath, rightSpacer, getSortButton(), getTasksButton(), getViewButton(), getOptionsButton());
+        initializeLayout();
+    }
+
+    private void initializeLayout() {
+        HBoxSpacer leftSpacer = createSpacer(80);
+        HBoxSpacer rightSpacer = createSpacer(80);
+
+        filesPath.setMaxHeight(30);
+        filesPath.setMaxWidth(Double.MAX_VALUE);
+        filesPath.setPadding(new Insets(0));
+        filesPath.getStyleClass().add("files-path");
+
+        this.setPadding(new Insets(5, 8, 5, 8));
+        this.getStyleClass().add("background");
+        this.getChildren().addAll(
+                getPreviousButton(), getNextButton(), getParentButton(), getRefreshButton(),
+                leftSpacer, filesPath, rightSpacer,
+                getSortButton(), getTasksButton(), getViewButton(), getOptionsButton()
+        );
+    }
+
+    private HBoxSpacer createSpacer(double width) {
+        HBoxSpacer spacer = new HBoxSpacer();
+        spacer.setMaxWidth(width);
+        return spacer;
     }
 
     public static void updateFilesPath() {
@@ -53,41 +78,45 @@ public class NavigationPanel extends HBox {
         container.getStyleClass().add("transparent");
         filesPath.setContent(container);
 
-        String separator = System.getProperty("file.separator");
-        StringBuilder path = new StringBuilder();
-
         String currentPath = currentDirectory.toString();
-        if (currentPath.equals(Settings.getSetting("files", "trash"))) {
-            container.getChildren().set(0, getIcon(FontAwesome.TRASH));
-            container.getChildren().add(createFixedPathButton("menu.trash"));
+        String separator = System.getProperty("file.separator");
+
+        if (handleSpecialPaths(currentDirectory, currentPath, container)) {
             return;
         }
 
-        if (currentPath.equalsIgnoreCase("%disks%")) {
-            container.getChildren().set(0, getIcon(FontAwesome.HDD_O));
-            container.getChildren().add(createFixedPathButton("menu.disks"));
-            return;
-        }
-
-        if (FilesUtils.isRoot(currentDirectory)) {
-            container.getChildren().add(createFixedPathButton(""));
-            container.getChildren().add(createFixedPathButton(""));
-            return;
-        }
-
-        if (currentDirectory.equals(new File(System.getProperty("user.home")))) {
-            container.getChildren().add(createFixedPathButton("menu.home"));
-            return;
-        }
-
+        StringBuilder fullPath = new StringBuilder();
         for (String part : currentPath.split(separator)) {
             if (part.isBlank()) continue;
-            path.append(separator).append(part);
-            container.getChildren().addAll(createPathButton(part, path.toString()), getStroke());
+            fullPath.append(separator).append(part);
+            container.getChildren().addAll(createPathButton(part, fullPath.toString()), getStroke());
         }
 
-        if (!container.getChildren().isEmpty()) container.getChildren().removeLast();
+        if (!container.getChildren().isEmpty()) {
+            container.getChildren().removeLast();
+        }
+    }
 
+    private static boolean handleSpecialPaths(File dir, String path, HBox container) {
+        if (path.equals(Settings.getSetting("files", "trash"))) {
+            container.getChildren().set(0, getIcon(FontAwesome.TRASH));
+            container.getChildren().add(createFixedPathButton("menu.trash"));
+            return true;
+        }
+        if (path.equalsIgnoreCase("%disks%")) {
+            container.getChildren().set(0, getIcon(FontAwesome.HDD_O));
+            container.getChildren().add(createFixedPathButton("menu.disks"));
+            return true;
+        }
+        if (FilesUtils.isRoot(dir)) {
+            container.getChildren().addAll(createFixedPathButton(""), createFixedPathButton(""));
+            return true;
+        }
+        if (dir.equals(new File(System.getProperty("user.home")))) {
+            container.getChildren().add(createFixedPathButton("menu.home"));
+            return true;
+        }
+        return false;
     }
 
     private static Button createPathButton(String text, String path) {
@@ -189,40 +218,11 @@ public class NavigationPanel extends HBox {
 
     private Button getSortButton() {
         Button button = getNavigationButton();
-        HBox.setMargin(button, new Insets(0, 5, 0, 15));
         button.setGraphic(getIcon(FontAwesome.SORT_ALPHA_ASC, 20));
+        HBox.setMargin(button, new Insets(0, 5, 0, 15));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.sort")));
 
-        RadioButton nameAsc = getRadioButton("name-asc", group, Sorting.NAMEASC);
-        RadioButton nameDesc = getRadioButton("name-desc", group, Sorting.NAMEDESC);
-        RadioButton dateAsc = getRadioButton("date-asc", group, Sorting.DATEASC);
-        RadioButton dateDesc = getRadioButton("date-desc", group, Sorting.DATEDESC);
-        RadioButton sizeAsc = getRadioButton("size-asc", group, Sorting.SIZEASC);
-        RadioButton sizeDesc = getRadioButton("size-desc", group, Sorting.SIZEDESC);
-
-        Label choseSortingLabel = new Label(Translator.translate("tooltip.navigate.sort"));
-        choseSortingLabel.setPadding(new Insets(2, 5, 5, 5));
-        choseSortingLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
-        choseSortingLabel.getStyleClass().add("text");
-        VBox content = new VBox(choseSortingLabel, nameAsc, nameDesc, dateAsc, dateDesc, sizeAsc, sizeDesc);
-        content.getStyleClass().add("popover-content");
-        content.setFillWidth(true);
-        content.setAlignment(Pos.TOP_CENTER);
-        content.setPadding(new Insets(10, 7, 10, 7));
-
-        switch (Sorting.safeValueOf(Settings.getSetting("files", "sorting").toString().toUpperCase())) {
-            case NAMEASC -> group.selectToggle(nameAsc);
-            case NAMEDESC -> group.selectToggle(nameDesc);
-            case DATEASC -> group.selectToggle(dateAsc);
-            case DATEDESC -> group.selectToggle(dateDesc);
-            case SIZEASC -> group.selectToggle(sizeAsc);
-            case SIZEDESC -> group.selectToggle(sizeDesc);
-        }
-
-        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            Settings.setSetting("files", "sorting", group.getSelectedToggle().getUserData().toString());
-            FilesLoader.refresh();
-        });
+        VBox content = createSortContent();
 
         PopOver popOver = new PopOver();
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
@@ -233,11 +233,41 @@ public class NavigationPanel extends HBox {
         return button;
     }
 
+    private VBox createSortContent() {
+        VBox content = new VBox();
+        content.setPadding(new Insets(10, 7, 10, 7));
+        content.setSpacing(4);
+        content.setAlignment(Pos.TOP_CENTER);
+        content.getStyleClass().add("popover-content");
+
+        Label label = new Label(Translator.translate("tooltip.navigate.sort"));
+        label.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
+        label.getStyleClass().add("text");
+
+        content.getChildren().add(label);
+
+        for (Sorting sorting : Sorting.values()) {
+            RadioButton radio = getRadioButton(sorting.name().toLowerCase(), group, sorting);
+            System.out.println(sorting.name().toLowerCase());
+            content.getChildren().add(radio);
+            if (sorting == Sorting.safeValueOf(Settings.getSetting("files", "sorting").toString().toUpperCase())) {
+                group.selectToggle(radio);
+            }
+        }
+
+        group.selectedToggleProperty().addListener((obs, old, selected) -> {
+            Settings.setSetting("files", "sorting", selected.getUserData().toString());
+            FilesLoader.refresh();
+        });
+
+        return content;
+    }
+
     private RadioButton getRadioButton(String text, ToggleGroup group, Sorting method) {
         RadioButton radioButton = new RadioButton(Translator.translate("navigation.sorting." + text));
         radioButton.setToggleGroup(group);
         radioButton.setUserData(method);
-        radioButton.getStyleClass().addAll("text", "r");
+        radioButton.getStyleClass().add("text");
         return radioButton;
     }
 
@@ -261,46 +291,54 @@ public class NavigationPanel extends HBox {
         Button button = getNavigationButton();
         button.setGraphic(getIcon(FontAwesome.NAVICON, 20));
         button.setTooltip(new Tooltip(Translator.translate("tooltip.navigate.options")));
+
         PopOver popOver = new PopOver();
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
         popOver.setDetachable(false);
         popOver.getStyleClass().add("background");
+
+        VBox content = createOptionsContent();
+        popOver.setContentNode(content);
+
+        button.setOnMouseClicked(e -> popOver.show(button));
+        return button;
+    }
+
+    private VBox createOptionsContent() {
         VBox container = new VBox();
-        container.getStyleClass().add("popover-content");
-        container.setAlignment(Pos.TOP_CENTER);
         container.setSpacing(4);
         container.setPadding(new Insets(7, 7, 10, 7));
+        container.setAlignment(Pos.TOP_CENTER);
+        container.getStyleClass().add("popover-content");
 
-        Button newFile = new Button(Translator.translate("context-menu.new-file"));
-        newFile.getStyleClass().addAll("nav-btn", "text");
-        newFile.setOnMouseClicked(e -> new FileWindow());
-        Button newFolder = new Button(Translator.translate("context-menu.new-folder"));
-        newFolder.getStyleClass().addAll("nav-btn", "text");
-        newFolder.setOnMouseClicked(e -> new DirectoryWindow());
-        CheckBox showHiddenFiles = new CheckBox(Translator.translate("navigate.hidden-files"));
-        showHiddenFiles.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
-        showHiddenFiles.setStyle("-fx-mark-color: " + Settings.getColor() + ";");
-        showHiddenFiles.setOnAction(event -> {
-            Settings.setSetting("files", "show-hidden", showHiddenFiles.isSelected());
+        Button newFile = createOptionButton("context-menu.new-file", () -> new FileWindow());
+        Button newFolder = createOptionButton("context-menu.new-folder", () -> new DirectoryWindow());
+        CheckBox hiddenFiles = createHiddenFilesCheckBox();
+        Button about = createOptionButton("navigate.about-button", () -> new AboutWindow(new Main().getHostServices()));
+        Button settings = createOptionButton("navigate.settings", SettingsWindow::new);
+        Button shortcuts = createOptionButton("navigate.shortcuts", ShortcutsWindow::new);
+
+        container.getChildren().addAll(newFile, newFolder, hiddenFiles, about, settings, shortcuts);
+        return container;
+    }
+
+    private Button createOptionButton(String translationKey, Runnable action) {
+        Button button = new Button(Translator.translate(translationKey));
+        button.getStyleClass().addAll("nav-btn", "text");
+        button.setOnMouseClicked(e -> action.run());
+        return button;
+    }
+
+    private CheckBox createHiddenFilesCheckBox() {
+        CheckBox checkBox = new CheckBox(Translator.translate("navigate.hidden-files"));
+        checkBox.setSelected(Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden")));
+        checkBox.setStyle("-fx-mark-color: " + Settings.getColor() + ";");
+        checkBox.getStyleClass().addAll("text", "nav-btn", "hidden-files");
+        checkBox.setOnAction(e -> {
+            Settings.setSetting("files", "show-hidden", checkBox.isSelected());
             FilesLoader.refresh();
         });
-        showHiddenFiles.getStyleClass().addAll("text", "nav-btn", "hidden-files");
-        Button aboutButton = new Button(Translator.translate("navigate.about-button"));
-        aboutButton.setOnMouseClicked(event -> new AboutWindow(new Main().getHostServices()));
-        aboutButton.getStyleClass().addAll("nav-btn", "text");
-        Button settingsButton = new Button(Translator.translate("navigate.settings"));
-        settingsButton.getStyleClass().addAll("nav-btn", "text");
-        settingsButton.setOnMouseClicked(event -> new SettingsWindow());
-        Button shortcutsButton = new Button(Translator.translate("navigate.shortcuts"));
-        shortcutsButton.getStyleClass().addAll("nav-btn", "text");
-        shortcutsButton.setOnMouseClicked(event -> new ShortcutsWindow());
-        container.getChildren().addAll(newFile, newFolder, showHiddenFiles, aboutButton, settingsButton, shortcutsButton);
-        popOver.setContentNode(container);
-
-        button.setOnMouseClicked(e -> {
-            popOver.show(button);
-        });
-        return button;
+        return checkBox;
     }
 
     private FontIcon getIcon(FontAwesome iconName, int size) {
