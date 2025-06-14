@@ -9,38 +9,51 @@ import java.io.File;
 
 public class FilesPane extends ScrollPane {
 
-    private static FilesPane filesPane;
-    private static DirectoryContextMenu menu = new DirectoryContextMenu();
+    private static FilesPane instance;
+    private static final DirectoryContextMenu contextMenu = new DirectoryContextMenu();
 
     private FilesPane() {
-        filesPane = this;
-        this.setFitToWidth(true);
-        this.getStyleClass().add("files-pane");
-        this.setPadding(new Insets(7, 7, 17, 7));
-        this.setOnContextMenuRequested(e -> {
-            if (!CurrentDirectory.get().equals(new File("%disks%"))) menu.show(this, e.getScreenX(), e.getScreenY());
+        configurePane();
+    }
+
+    private void configurePane() {
+        setFitToWidth(true);
+        setPadding(new Insets(7, 7, 17, 7));
+        getStyleClass().add("files-pane");
+
+        setOnContextMenuRequested(event -> {
+            if (!isDisksView()) {
+                contextMenu.show(this, event.getScreenX(), event.getScreenY());
+            }
             SelectedFileBoxes.removeSelection();
         });
-        this.setOnMouseClicked(e -> {
-            FilesPane.hideMenu();
+
+        setOnMouseClicked(event -> {
+            hideMenu();
             SelectedFileBoxes.removeSelection();
         });
     }
 
-    public static void set(Node content) {
-        filesPane.setContent(content);
+    private boolean isDisksView() {
+        return CurrentDirectory.get().equals(new File("%disks%"));
     }
 
     public static FilesPane get() {
-        if (filesPane == null) new FilesPane();
-        return filesPane;
+        if (instance == null) {
+            instance = new FilesPane();
+        }
+        return instance;
+    }
+
+    public static void set(Node content) {
+        get().setContent(content);
     }
 
     public static void hideMenu() {
-        menu.hide();
+        contextMenu.hide();
     }
 
     public static void resetPosition() {
-        filesPane.setVvalue(0);
+        get().setVvalue(0);
     }
 }

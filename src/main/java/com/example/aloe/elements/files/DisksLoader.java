@@ -10,18 +10,25 @@ import java.util.List;
 
 class DisksLoader {
 
-    static void loadDisks() {
-        VBox content = new VBox();
-        content.setSpacing(3);
-        content.setOnContextMenuRequested(Event::consume);
-
-        FileSystem fs = new SystemInfo().getOperatingSystem().getFileSystem();
-        List<OSFileStore> fileStores = fs.getFileStores();
+    static void load() {
+        VBox content = createContentContainer();
+        List<OSFileStore> fileStores = getFileStores();
 
         for (OSFileStore store : fileStores) {
             content.getChildren().add(new HorizontalFileBox(store));
         }
 
         FilesPane.set(content);
+    }
+
+    private static VBox createContentContainer() {
+        VBox box = new VBox(3);
+        box.setOnContextMenuRequested(Event::consume);
+        return box;
+    }
+
+    private static List<OSFileStore> getFileStores() {
+        FileSystem fs = new SystemInfo().getOperatingSystem().getFileSystem();
+        return fs.getFileStores();
     }
 }

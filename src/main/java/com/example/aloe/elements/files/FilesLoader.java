@@ -19,49 +19,36 @@ import java.util.List;
 public class FilesLoader {
 
     public static void load(File directory, boolean addToHistory) {
-        if (directory.toPath().toString().equalsIgnoreCase("%trash%")) {
-            directory = new File(Settings.getSetting("files", "trash").toString());
+        directory = resolveSpecialDirectory(directory);
+
+        if (addToHistory) {
+            DirectoryHistory.addDirectory(directory);
         }
-        if (addToHistory) DirectoryHistory.addDirectory(directory);
+
         if (!directory.equals(CurrentDirectory.get())) {
             CurrentDirectory.set(directory);
-            if (Settings.getSetting("files", "start-folder").equals("last"))
-                Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
+            rememberLastFolder(directory);
         }
-        if (directory.toPath().toString().equalsIgnoreCase("%disks%")) {
-            DisksLoader.loadDisks();
+
+        if (isDisksView(directory)) {
+            DisksLoader.load();
             NavigationPanel.updateFilesPath();
             return;
         }
 
         NavigationPanel.updateFilesPath();
-        List<File> files = getSortedFiles(getFiles(directory.listFiles()));
         FilesPane.resetPosition();
         FilesPane.get().setFitToHeight(false);
 
+        List<File> files = getSortedFiles(filterFiles(directory.listFiles()));
+
         if (files.isEmpty()) {
-            FilesPane.set(getEmptyFolderInfo());
+            FilesPane.set(createEmptyFolderMessage());
             FilesPane.get().setFitToHeight(true);
             return;
         }
 
-        if (Settings.getSetting("files", "view").equals("list")) {
-            VBox list = new VBox();
-            list.setAlignment(Pos.TOP_CENTER);
-            list.setFillWidth(true);
-            list.getChildren().add(HorizontalFileBox.getInfoPanel());
-            list.getStyleClass().add("transparent");
-
-            files.forEach(file -> list.getChildren().add(new HorizontalFileBox(file)));
-            FilesPane.set(list);
-        } else {
-            FlowPane grid = new FlowPane();
-            grid.setVgap(5);
-            grid.setHgap(5);
-
-            files.forEach(file -> grid.getChildren().add(new VerticalFileBox(file)));
-            FilesPane.set(grid);
-        }
+        displayFiles(files);
     }
 
     public static void load(File directory) {
@@ -72,46 +59,81 @@ public class FilesLoader {
         load(CurrentDirectory.get());
     }
 
-    private static List<File> getFiles(File[] files) {
+    public static void loadParent() {
+        File parent = CurrentDirectory.get().getParentFile();
+        if (parent != null) {
+            load(parent);
+        }
+    }
+
+    private static File resolveSpecialDirectory(File directory) {
+        if ("%trash%".equalsIgnoreCase(directory.toPath().toString())) {
+            return new File(Settings.getSetting("files", "trash").toString());
+        }
+        return directory;
+    }
+
+    private static boolean isDisksView(File directory) {
+        return "%disks%".equalsIgnoreCase(directory.toPath().toString());
+    }
+
+    private static void rememberLastFolder(File directory) {
+        if ("last".equals(Settings.getSetting("files", "start-folder"))) {
+            Settings.setSetting("files", "start-folder-location", directory.toPath().toString());
+        }
+    }
+
+    private static List<File> filterFiles(File[] files) {
+        if (files == null) return List.of();
         boolean showHidden = Boolean.TRUE.equals(Settings.getSetting("files", "show-hidden"));
-        return Arrays.stream(files).filter(file -> !file.isHidden() || showHidden).toList();
+        return Arrays.stream(files)
+                .filter(file -> showHidden || !file.isHidden())
+                .toList();
     }
 
     private static List<File> getSortedFiles(List<File> files) {
         boolean directoriesFirst = Boolean.TRUE.equals(Settings.getSetting("files", "display-directories-before-files"));
         Sorting sorting = Sorting.safeValueOf(Settings.getSetting("files", "sorting").toString().toUpperCase());
-        return files.stream()
-                .sorted((file1, file2) -> {
-                    if (directoriesFirst) {
-                        if (file1.isDirectory() && !file2.isDirectory()) return -1;
-                        if (!file1.isDirectory() && file2.isDirectory()) return 1;
-                    }
 
-                    switch (sorting) {
-                        case NAMEASC -> {
-                            return file1.getName().compareToIgnoreCase(file2.getName());
-                        }
-                        case NAMEDESC -> {
-                            return file2.getName().compareToIgnoreCase(file1.getName());
-                        }
-                        case DATEASC -> {
-                            return Long.compare(file1.lastModified(), file2.lastModified());
-                        }
-                        case DATEDESC -> {
-                            return Long.compare(file2.lastModified(), file1.lastModified());
-                        }
-                        case SIZEASC -> {
-                            return Long.compare(file1.length(), file2.length());
-                        }
-                        case SIZEDESC -> {
-                            return Long.compare(file2.length(), file1.length());
-                        }
-                    }
-                    return 0;
-                }).toList();
+        return files.stream()
+                .sorted((f1, f2) -> compareFiles(f1, f2, directoriesFirst, sorting))
+                .toList();
     }
 
-    private static VBox getEmptyFolderInfo() {
+    private static int compareFiles(File f1, File f2, boolean directoriesFirst, Sorting sorting) {
+        if (directoriesFirst) {
+            if (f1.isDirectory() && !f2.isDirectory()) return -1;
+            if (!f1.isDirectory() && f2.isDirectory()) return 1;
+        }
+
+        return switch (sorting) {
+            case NAMEASC -> f1.getName().compareToIgnoreCase(f2.getName());
+            case NAMEDESC -> f2.getName().compareToIgnoreCase(f1.getName());
+            case DATEASC -> Long.compare(f1.lastModified(), f2.lastModified());
+            case DATEDESC -> Long.compare(f2.lastModified(), f1.lastModified());
+            case SIZEASC -> Long.compare(f1.length(), f2.length());
+            case SIZEDESC -> Long.compare(f2.length(), f1.length());
+        };
+    }
+
+    private static void displayFiles(List<File> files) {
+        boolean listView = "list".equals(Settings.getSetting("files", "view"));
+        if (listView) {
+            VBox list = new VBox();
+            list.setAlignment(Pos.TOP_CENTER);
+            list.setFillWidth(true);
+            list.getStyleClass().add("transparent");
+            list.getChildren().add(HorizontalFileBox.getInfoPanel());
+            files.forEach(file -> list.getChildren().add(new HorizontalFileBox(file)));
+            FilesPane.set(list);
+        } else {
+            FlowPane grid = new FlowPane(5, 5);
+            files.forEach(file -> grid.getChildren().add(new VerticalFileBox(file)));
+            FilesPane.set(grid);
+        }
+    }
+
+    private static VBox createEmptyFolderMessage() {
         FontIcon icon = FontIcon.of(FontAwesome.FOLDER_OPEN_O);
         icon.setIconSize(65);
         icon.getStyleClass().add("font-icon");
@@ -125,11 +147,5 @@ public class FilesLoader {
         box.setAlignment(Pos.CENTER);
         box.setFillWidth(true);
         return box;
-    }
-
-    public static void loadParent() {
-        if (CurrentDirectory.get().getParent() != null) {
-            FilesLoader.load(CurrentDirectory.get().getParentFile());
-        }
     }
 }
