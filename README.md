@@ -15,6 +15,10 @@ It features a clean and intuitive interface designed for ease of use, while offe
    - Customize the appearance, color scheme, behavior, and layout of the application
    - A rich settings panel lets you tailor the experience to your workflow
 - 🌙 **Built-in Dark Mode** — automatic or manual switching
+- 🖼️ **File metadata preview**:
+  - Displays extended properties for **images** (e.g. resolution, type)
+  - Shows technical details for **videos** (e.g. duration, resolution, codec)
+- 🌐  **Multilingual support** — Aloe is available in multiple languages via dynamic translation files
 - 🎨 **Style and color palette inspired by Nautilus and Cosmic Files**, with a focus on aesthetics and clarity
 
 ## 🚀 Requirements
@@ -31,7 +35,7 @@ mvn -version
 If Maven is not installed, please install it first. Refer to the [Maven installation guide](https://maven.apache.org/install.html) for details.
 
 ### Step 2: Verify Java Installation
-Ensure you have JDK version **22 or higher** installed:
+Ensure you have JDK version **23 or higher** installed:
 ```bash
 java --version
 ```
