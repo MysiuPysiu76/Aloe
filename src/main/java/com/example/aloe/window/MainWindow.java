@@ -24,6 +24,21 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+/**
+ * The {@code MainWindow} class is responsible for creating and managing the main
+ * user interface window of the Aloe file manager application.
+ *
+ * This class handles:
+ * <ul>
+ *     <li>Initializing the primary JavaFX {@link Stage} and {@link Scene}</li>
+ *     <li>Loading and displaying the file browser, navigation, and menu UI</li>
+ *     <li>Applying user settings such as theme, colors, and layout</li>
+ *     <li>Responding to global keyboard shortcuts for file operations</li>
+ *     <li>Managing modal overlays for dialogs and windows</li>
+ * </ul>
+ *
+ * @since 2.8.3
+ */
 public class MainWindow {
 
     private static Stage stage;
@@ -32,6 +47,11 @@ public class MainWindow {
     private static Pane interiorWindowPane;
     private static SplitPane filesPanel;
 
+    /**
+     * Creates and initializes the main application window.
+     *
+     * @param primaryStage the primary JavaFX stage
+     */
     public static void create(Stage primaryStage) {
         stage = primaryStage;
         ExtendedContextMenu.setStage(stage);
@@ -54,12 +74,19 @@ public class MainWindow {
         setupStage();
     }
 
+    /**
+     * Loads the initial directory based on user settings (home or custom path).
+     */
     private static void loadInitialDirectory() {
         String folderSetting = Settings.getSetting("files", "start-folder");
         String path = folderSetting.equals("home") ? System.getProperty("user.home") : Settings.getSetting("files", "start-folder-location");
         FilesLoader.load(new File(path));
     }
 
+    /**
+     * Configures and shows the main application window with settings like title,
+     * icon, and size persistence on close.
+     */
     private static void setupStage() {
         stage.getIcons().add(new Image(MainWindow.class.getResourceAsStream("/assets/icons/folder.png")));
         stage.setTitle(Translator.translate("root.title"));
@@ -74,27 +101,52 @@ public class MainWindow {
         });
     }
 
+    /**
+     * Displays the darkening overlay, used for modal or secondary windows.
+     */
     public static void showDarkeningPlate() {
         interiorWindowPane.setVisible(true);
     }
 
+    /**
+     * Hides the darkening overlay and removes any child content from it.
+     */
     public static void hideDarkeningPlate() {
         interiorWindowPane.setVisible(false);
         interiorWindowPane.getChildren().clear();
     }
 
+    /**
+     * Returns the overlay pane used for displaying modal or interior windows.
+     *
+     * @return the interior overlay pane
+     */
     public static Pane getInteriorPane() {
         return interiorWindowPane;
     }
 
+    /**
+     * Returns the main JavaFX scene for the application.
+     *
+     * @return the main scene
+     */
     public static Scene getScene() {
         return scene;
     }
 
+    /**
+     * Returns the primary stage (window) of the application.
+     *
+     * @return the primary JavaFX stage
+     */
     public static Stage getStage() {
         return stage;
     }
 
+    /**
+     * Loads the menu component based on user settings and attaches it
+     * to either the left or right side of the file panel.
+     */
     public static void loadMenu() {
         if (!Boolean.TRUE.equals(Settings.getSetting("menu", "use-menu"))) return;
 
@@ -116,6 +168,9 @@ public class MainWindow {
         );
     }
 
+    /**
+     * Sets up the main application scene including size, stylesheets, and key bindings.
+     */
     private static void setupScene() {
         double width = Settings.getSetting("other", "width");
         double height = Settings.getSetting("other", "height");
@@ -135,6 +190,10 @@ public class MainWindow {
         setupShortcuts();
     }
 
+    /**
+     * Binds global keyboard shortcuts to application actions like file copy,
+     * rename, open, delete, and selection.
+     */
     private static void setupShortcuts() {
         scene.setOnKeyPressed(e -> {
             var selectedFiles = SelectedFileBoxes.getSelectedFiles();
