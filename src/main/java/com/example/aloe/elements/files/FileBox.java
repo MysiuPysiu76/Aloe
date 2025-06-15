@@ -20,20 +20,59 @@ import org.jetbrains.annotations.NotNull;
 import oshi.software.os.OSFileStore;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Represents a visual component for a file or disk in the file manager interface.
+ * <p>
+ * A {@code FileBox} can display file or disk information with an icon and label,
+ * support selection, context menus, drag-and-drop operations, and respond to user clicks.
+ * </p>
+ *
+ * <p>This class supports:
+ * <ul>
+ *     <li>Display of both file system files and mounted disks</li>
+ *     <li>Context menus based on selection and file type</li>
+ *     <li>Single or multiple selection</li>
+ *     <li>Drag-and-drop operations for file moving</li>
+ *     <li>Custom styling and scaling according to user settings</li>
+ * </ul>
+ * </p>
+ *
+ * @since 2.8.4
+ */
 public class FileBox extends Pane {
 
+    /**
+     * Context menu for multiple selected files.
+     */
     private static MultiFileBoxContextMenu multiFileBoxContextMenu;
 
+    /**
+     * Scaling factor from user settings to resize file boxes.
+     */
     protected final double scale;
+
+    /**
+     * The file or directory represented by this FileBox.
+     */
     protected File file;
+
+    /**
+     * Disk store object, used when displaying mounted disks.
+     */
     protected OSFileStore store;
+
+    /**
+     * Indicates whether this file box is currently selected.
+     */
     private boolean isSelected = false;
 
+    /**
+     * Constructs a base FileBox and applies styling and mouse listeners.
+     */
     FileBox() {
         this.scale = Settings.getSetting("files", "file-box-size");
         this.getStyleClass().add("file-box");
@@ -41,12 +80,22 @@ public class FileBox extends Pane {
         this.setOnClick();
     }
 
+    /**
+     * Constructs a FileBox for a given file.
+     *
+     * @param file the file or directory this FileBox represents
+     */
     FileBox(File file) {
         this();
         this.file = file;
         this.setFileContextMenu();
     }
 
+    /**
+     * Constructs a FileBox for a mounted disk volume.
+     *
+     * @param store the OSFileStore representing the disk
+     */
     FileBox(OSFileStore store) {
         this();
         this.store = store;
@@ -54,6 +103,9 @@ public class FileBox extends Pane {
         this.setDiskContextMenu();
     }
 
+    /**
+     * Selects all FileBox elements in the current view pane.
+     */
     public static void selectAllFiles() {
         SelectedFileBoxes.removeSelection();
         Stream stream;
@@ -67,10 +119,22 @@ public class FileBox extends Pane {
          stream.filter(node -> node instanceof FileBox).forEach(node -> ((FileBox) node).setSelected());
     }
 
+    /**
+     * Returns the file associated with this FileBox.
+     *
+     * @return the file object
+     */
     public File getFile() {
         return this.file;
     }
 
+    /**
+     * Builds a vertical container with an image icon.
+     *
+     * @param size    size of the icon
+     * @param padding padding around the icon
+     * @return VBox containing the icon
+     */
     protected VBox getImageBox(double size, Insets padding) {
         ImageView icon = new ImageView();
         icon.setPreserveRatio(true);
@@ -78,6 +142,14 @@ public class FileBox extends Pane {
         return getvBox(size, padding, icon);
     }
 
+    /**
+     * Builds a vertical container with a custom image icon.
+     *
+     * @param size    size of the icon
+     * @param padding padding around the icon
+     * @param image   image name for icon
+     * @return VBox containing the icon
+     */
     protected VBox getImageBox(double size, Insets padding, String image) {
         ImageView icon = new ImageView();
         icon.setPreserveRatio(true);
@@ -85,6 +157,14 @@ public class FileBox extends Pane {
         return getvBox(size, padding, icon);
     }
 
+    /**
+     * Helper to generate a VBox containing an icon with proper scaling.
+     *
+     * @param size  icon size
+     * @param padding padding for layout
+     * @param icon  the ImageView to wrap
+     * @return configured VBox
+     */
     @NotNull
     private VBox getvBox(double size, Insets padding, ImageView icon) {
         icon.setFitHeight(size * scale);
@@ -98,10 +178,20 @@ public class FileBox extends Pane {
         return box;
     }
 
+    /**
+     * Returns the name label for this FileBox, using either disk or file name.
+     *
+     * @return label with file or disk name
+     */
     protected Label getName() {
         return store != null ? getDiskName() : getFileName();
     }
 
+    /**
+     * Generates a label for a disk name, applying system-specific naming.
+     *
+     * @return label representing the disk
+     */
     private Label getDiskName() {
         Label label = getNameLabel();
         String name = new File(store.getMount()).getName();
@@ -114,6 +204,11 @@ public class FileBox extends Pane {
         return label;
     }
 
+    /**
+     * Generates a label for a file or folder name.
+     *
+     * @return label representing the file
+     */
     private Label getFileName() {
         Label label = getNameLabel();
         label.setText(this.file.getName());
@@ -121,6 +216,11 @@ public class FileBox extends Pane {
         return label;
     }
 
+    /**
+     * Prepares a reusable label for file or disk names.
+     *
+     * @return base label styled for display
+     */
     private Label getNameLabel() {
         Label label = new Label();
         label.setWrapText(true);
@@ -132,12 +232,21 @@ public class FileBox extends Pane {
         return label;
     }
 
+    /**
+     * Returns the label for this FileBox with custom override text.
+     *
+     * @param text custom text to display
+     * @return label with overridden text
+     */
     protected Label getName(String text) {
         Label label = getName();
         label.setText(text);
         return label;
     }
 
+    /**
+     * Sets up the context menu for this file box, depending on selection state.
+     */
     private void setFileContextMenu() {
         FileBoxContextMenu fileBoxContextMenu = new FileBoxContextMenu(this.file);
         this.setOnContextMenuRequested(e -> {
@@ -156,6 +265,9 @@ public class FileBox extends Pane {
         });
     }
 
+    /**
+     * Sets up a context menu specific to a disk volume.
+     */
     private void setDiskContextMenu() {
         DiskContextMenu diskContextMenu = new DiskContextMenu(this.store);
         this.setOnContextMenuRequested(e -> {
@@ -165,6 +277,9 @@ public class FileBox extends Pane {
         });
     }
 
+    /**
+     * Defines mouse click behavior for the FileBox (selection, opening, multi-select).
+     */
     private void setOnClick() {
         this.setOnMouseClicked(e -> {
             FilesPane.hideMenu();
@@ -185,6 +300,10 @@ public class FileBox extends Pane {
         });
     }
 
+    /**
+     * Toggles the selection state of this FileBox.
+     * Adds or removes visual styling and updates selection list.
+     */
     public void setSelected() {
         if (SelectedFileBoxes.isSelected(this)) {
             SelectedFileBoxes.remove(this);
@@ -196,6 +315,11 @@ public class FileBox extends Pane {
         this.isSelected = !isSelected;
     }
 
+    /**
+     * Explicitly sets the selection state of this FileBox.
+     *
+     * @param isSelected whether the file is selected
+     */
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
         if (isSelected) {
@@ -205,14 +329,23 @@ public class FileBox extends Pane {
         }
     }
 
+    /**
+     * Applies visual styling for a selected file.
+     */
     private void setSelectedStyle() {
         this.getStyleClass().add("selected");
     }
 
+    /**
+     * Removes the visual selection style from this FileBox.
+     */
     public void removeSelectedStyle() {
         this.getStyleClass().remove("selected");
     }
 
+    /**
+     * Configures drag-and-drop behavior for moving files between directories.
+     */
     private void setOnDragAndDrop() {
         this.setOnDragDetected(event -> {
             Dragboard db = this.startDragAndDrop(TransferMode.MOVE);
